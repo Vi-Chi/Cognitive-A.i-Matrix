@@ -4,7 +4,7 @@
 **Status:** Working Draft  
 **Extends:** SIGMABUS-CM-SPEC.md v0.1  
 **Date:** 2025-05-18  
-**License:** Apache-2.0  
+**License:** GPL-3.0-only  
 **Repository:** https://github.com/Vi-Chi/sigmabus  
 
 ---

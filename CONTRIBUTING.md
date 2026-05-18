@@ -4,7 +4,7 @@ SIGMABUS welcomes implementations, schema fixes, protocol review, and transport
 binding experiments.
 
 By submitting a contribution, you agree that your contribution is provided under
-the Apache License 2.0 unless you clearly state otherwise.
+the GNU General Public License v3.0 unless you clearly state otherwise.
 
 For safety-impacting changes, include:
 

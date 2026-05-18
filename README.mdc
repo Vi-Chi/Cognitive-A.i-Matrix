@@ -2,7 +2,7 @@
 
 **A semantic stream and interaction substrate for AI agents and autonomous systems.**
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Status: Specification Draft](https://img.shields.io/badge/status-draft%20v0.2-orange)]()
 [![Domain: Maritime / Edge / Autonomous](https://img.shields.io/badge/domain-maritime%20%7C%20edge%20%7C%20autonomous-green)]()
 
@@ -174,8 +174,9 @@ effective_trust(path) = 0 if path ∉ authority_scope
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE).
+GNU General Public License v3.0 — see [LICENSE](LICENSE).
 
-Apache-2.0 is intentional for protocol and hardware adoption: it stays
-permissive while preserving the explicit patent grant and warranty limitations
-needed by an edge-native, safety-critical ecosystem.
+Any derivative work, including hardware implementations of this protocol, must be
+released under the same terms when distributed. This is intentional: ΣBUS is
+infrastructure for autonomous systems that affect physical safety. It must
+remain open.

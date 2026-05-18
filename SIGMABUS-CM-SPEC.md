@@ -4,7 +4,7 @@
 **Status:** Working Draft  
 **Date:** 2025-05-18  
 **Authors:** Wibo835 Autonomous Vessel Project  
-**License:** Apache-2.0  
+**License:** GPL-3.0-only  
 **Repository:** https://github.com/Vi-Chi/sigmabus  
 
 ---
@@ -1586,5 +1586,5 @@ See [Terminology](#2-terminology) and inline definitions throughout this documen
 ---
 
 *ΣBUS CM Specification — Draft v0.1*  
-*Released under Apache License 2.0*  
+*Released under GNU General Public License v3.0*  
 *Contributions welcome via pull request*
