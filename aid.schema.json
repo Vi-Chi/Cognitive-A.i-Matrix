@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sigmabus.io/schemas/aid/1.0",
+  "title": "Agent Identity Descriptor",
+  "description": "SIGMABUS CM Agent Identity Descriptor (AID) v1.0",
+  "type": "object",
+  "required": ["aid_version", "identity", "provenance", "capabilities", "performance", "trust", "operational"],
+  "properties": {
+
+    "aid_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+
+    "identity": {
+      "type": "object",
+      "required": ["uid", "platform_id", "role", "tier"],
+      "properties": {
+        "uid": {
+          "type": "string",
+          "pattern": "^agt-[a-z0-9_]+-[a-z0-9_]+-[0-9]{3}$",
+          "description": "Globally unique agent identifier. Stable across restarts."
+        },
+        "platform_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["navigation", "engine", "safety", "communications", "power",
+                   "weather", "command", "gateway", "observer", "custom"]
+        },
+        "tier": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "description": "1=rule/local model <100ms, 2=small LLM ~500ms, 3=large LLM 1-5s"
+        },
+        "cm_conformance_level": {
+          "type": "integer",
+          "enum": [1, 2, 3]
+        },
+        "display_name": {"type": "string"},
+        "description": {"type": "string", "maxLength": 200}
+      }
+    },
+
+    "provenance": {
+      "type": "object",
+      "required": ["created_at", "software_version"],
+      "properties": {
+        "created_at": {"type": "string", "format": "date-time"},
+        "software_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "model_id": {"type": "string"},
+        "model_quantization": {
+          "type": "string",
+          "enum": ["int4", "int8", "fp16", "fp32", "bf16", "q4_k_m", "q8_0", "none"]
+        },
+        "runtime": {
+          "type": "string",
+          "enum": ["llama.cpp", "ollama", "vllm", "tgi", "onnx", "hailo", "custom", "none"]
+        },
+        "hardware": {"type": "string"}
+      }
+    },
+
+    "capabilities": {
+      "type": "object",
+      "required": ["perceives", "controls", "reasoning_domains", "cm_message_types"],
+      "properties": {
+        "perceives": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Path patterns agent subscribes to. Wildcards (.*) permitted."
+        },
+        "controls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+\\.[a-z0-9_\\.]+$"
+          },
+          "description": "Exact paths agent is authorised to write. No wildcards."
+        },
+        "reasoning_domains": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "cm_message_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["ANNOUNCE", "WITHDRAW", "HEARTBEAT",
+                     "QUERY", "INFORM",
+                     "REQUEST", "CONFIRM", "FAIL",
+                     "PROPOSE", "AGREE", "REFUSE", "RETRACT",
+                     "DELEGATE", "RESUME",
+                     "ALERT"]
+          }
+        }
+      }
+    },
+
+    "performance": {
+      "type": "object",
+      "required": ["update_rate_hz", "offline_capable"],
+      "properties": {
+        "latency_p50_ms": {"type": "number", "minimum": 0},
+        "latency_p99_ms": {"type": "number", "minimum": 0},
+        "update_rate_hz": {"type": "number", "minimum": 0.001, "maximum": 100},
+        "max_context_tokens": {"type": "integer", "minimum": 512},
+        "offline_capable": {"type": "boolean"},
+        "degraded_mode": {"type": "string"}
+      }
+    },
+
+    "trust": {
+      "type": "object",
+      "required": ["trust_class", "pubkey_algorithm", "pubkey"],
+      "properties": {
+        "trust_class": {
+          "type": "string",
+          "enum": ["sovereign", "trusted_peer", "federated", "claimed", "anonymous"]
+        },
+        "pubkey_algorithm": {"type": "string", "const": "ed25519"},
+        "pubkey": {"type": "string", "pattern": "^base64:"},
+        "cert_issuer": {"type": "string"},
+        "cert_expires": {"type": "string", "format": "date-time"}
+      },
+      "if": {
+        "properties": {"trust_class": {"enum": ["sovereign", "federated"]}}
+      },
+      "then": {
+        "required": ["cert_issuer", "cert_expires"]
+      }
+    },
+
+    "operational": {
+      "type": "object",
+      "required": ["authority_scope", "human_override_path", "emergency_stop_path"],
+      "properties": {
+        "authority_scope": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "human_override_path": {"type": "string"},
+        "emergency_stop_path": {"type": "string"},
+        "max_rudder_deg": {"type": "number"},
+        "requires_confirmation_above_priority": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "allow_sub_delegation": {"type": "boolean", "default": false}
+      }
+    },
+
+    "signature": {
+      "type": "string",
+      "pattern": "^base64:"
+    }
+  }
+}

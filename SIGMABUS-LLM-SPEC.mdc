@@ -1,0 +1,560 @@
+# SIGMABUS-LLM-SPEC
+## Sigma Bus — Large Language Model Extension Specification
+
+```
+Version:    0.2-draft
+Status:     DRAFT — not yet stable
+Date:       2026-05
+License:    Apache-2.0
+Depends:    SIGMABUS-CORE-SPEC.md v0.2, SIGMABUS-CM-SPEC.md v0.2
+```
+
+---
+
+## Table of Contents
+
+1. [Introduction](#1-introduction)
+2. [The Confidence / Trust Separation](#2-the-confidence--trust-separation)
+3. [LLM Tier Architecture](#3-llm-tier-architecture)
+4. [Context Budget Enforcement](#4-context-budget-enforcement)
+5. [Entropy-Based Sanity Checking](#5-entropy-based-sanity-checking)
+6. [UNCERTAINTY Escalation Cascade](#6-uncertainty-escalation-cascade)
+7. [Sovereign Orchestrator](#7-sovereign-orchestrator)
+8. [CONTEXT_SHARE Protocol](#8-context_share-protocol)
+9. [Brier Scoring for Behavioral Trust](#9-brier-scoring-for-behavioral-trust)
+10. [World Model Construction](#10-world-model-construction)
+11. [Safety Constraints for LLM Output](#11-safety-constraints-for-llm-output)
+12. [Conformance](#12-conformance)
+
+---
+
+## 1. Introduction
+
+LLMs are stochastic engines. They do not fail with an error code — they degrade
+gracefully into plausible-sounding wrong answers. Running LLMs in a physical autonomous
+system without a formal theory of when to trust their output is not a system design
+choice; it is a defect.
+
+This specification defines:
+
+- The structural separation between an LLM's internal confidence and external trust
+- A three-tier inference architecture matched to latency and compute constraints
+- Entropy-based self-sanity checking so edge models know when they are failing
+- The UNCERTAINTY escalation cascade that keeps edge execution safe
+- The CONTEXT_SHARE protocol for efficient tier-to-tier context handoff
+
+This spec governs L6 (Agents & Policy) of the Sigma Stack.
+
+---
+
+## 2. The Confidence / Trust Separation
+
+**Confidence** is internal to the LLM: the model's self-assessed certainty about its output.
+**Trust** is external: the peer-evaluated score assigned by the ΣBUS trust model.
+
+These are never the same thing and must never be conflated.
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│ LLM output:  "heading = 185°"                                           │
+│                                                                          │
+│ Internal confidence (logit-derived):       0.94  ← model says this      │
+│ External identity_trust (PKI verified):    0.92  ← who is this agent    │
+│ External behavioral_trust (Brier-scored):  0.87  ← track record         │
+│ External evidence_trust (envelope-derived): 0.91 ← how good was input   │
+│                                                                          │
+│ effective_trust = 0.92×0.25 + 0.87×0.50 + 0.91×0.25 = 0.893           │
+│                                                                          │
+│ Minimum for cmd.* direct write: 0.92  → PROPOSE required instead        │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+An LLM claiming high internal confidence does not raise its external trust score.
+External trust only moves via Brier-scored outcomes and PKI verification.
+
+---
+
+## 3. LLM Tier Architecture
+
+Three inference tiers, each with distinct latency, compute, and authority envelopes.
+
+```
+┌────────────────────────────────────────────────────────────────────────────┐
+│  TIER 1 — EDGE FAST                                                        │
+│  Hardware:    Hailo-10H NPU                                                │
+│  Model:       Phi-3-mini (3.8B), Moondream-2 (1.8B), Qwen2.5-0.5B        │
+│  Latency:     < 200ms                                                      │
+│  Authority:   PROPOSE only. Cannot directly write cmd.* paths.            │
+│  Escalates:   When H_sem > 0.35 (see §5)                                  │
+│  Context:     ≤ 1,024 tokens (hard cap enforced at world model build)     │
+│  Use cases:   Routine navigation, sensor anomaly detection, UI parsing    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  TIER 2 — MEDIUM VERIFICATION                                              │
+│  Hardware:    RPi 5 CPU (llama.cpp)                                        │
+│  Model:       Qwen2.5-7B-Instruct (INT4 GGUF)                             │
+│  Latency:     < 2s                                                         │
+│  Authority:   AGREE / REFUSE on Tier 1 proposals. PROPOSE with CRITIQUE.  │
+│  Escalates:   When H_sem > 0.45 or confidence < 0.70                      │
+│  Context:     ≤ 4,096 tokens                                               │
+│  Use cases:   Proposal critique, collision analysis, complex routing       │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  TIER 3 — SOVEREIGN / CLOUD                                                │
+│  Hardware:    Remote (Anthropic API) or local large GPU (future)           │
+│  Model:       Claude Sonnet 4+ or equivalent                               │
+│  Latency:     < 10s (cloud) or < 30s (local large)                        │
+│  Authority:   Full DELEGATE authority. Can override Tier 1 and 2.         │
+│  Escalates:   Never (terminal tier — escalation loops are a defect)       │
+│  Context:     ≤ 32,768 tokens                                              │
+│  Use cases:   Emergency resolution, voyage planning, policy decisions     │
+└────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 3.1 Tier Escalation Rules
+
+1. Tier 1 **always** operates first on new data.
+2. Tier 1 escalates to Tier 2 via UNCERTAINTY when entropy exceeds threshold.
+3. Tier 2 escalates to Tier 3 only for: safety-critical events, multi-day planning, or
+   when behavioral_trust of all available Tier 2 agents is below 0.60.
+4. Escalation loops (Tier 3 → Tier 2 → Tier 3) are a protocol defect and must be detected
+   and broken by the sovereign.
+5. **Cloud access is optional.** All tiers operate in offline mode. Tier 3 degrades to
+   "best available local model" when cloud is unreachable.
+
+---
+
+## 4. Context Budget Enforcement
+
+Context budget enforcement prevents LLM reasoning degradation from overfull context windows.
+The budget is declared in the AID and enforced at world model build time.
+
+### 4.1 Token Budget in AID
+
+```json
+"reasoning": {
+  "context_budget_tokens":       1024,
+  "world_model_token_budget":    768,
+  "system_prompt_token_budget":  128,
+  "headroom_tokens":             128
+}
+```
+
+### 4.2 World Model Truncation
+
+When the world model exceeds `world_model_token_budget`, the MatrixBus applies:
+
+```python
+def build_world_model_for_agent(agent: AID, registry: MatrixRegistry) -> dict:
+    full_model = registry.get_world_model(consumer=agent.uid)
+
+    # Priority sort: critical > nominal, then by effective_trust descending
+    sorted_streams = sorted(
+        full_model.items(),
+        key=lambda x: (
+            -x[1]['priority'],          # highest priority first
+            -x[1]['effective_trust'],   # then highest trust
+        )
+    )
+
+    budget_remaining = agent.reasoning.world_model_token_budget
+    result = {}
+
+    for path, data in sorted_streams:
+        entry_tokens = estimate_tokens(path, data)
+        if entry_tokens > budget_remaining:
+            break   # stop adding — do not truncate mid-entry
+        result[path] = data
+        budget_remaining -= entry_tokens
+
+    return result
+```
+
+The world model snapshot passed to the LLM is **always complete entries** — never a
+truncated value. Truncation happens at the stream level, not the field level.
+
+### 4.3 Context Overflow as Escalation Trigger
+
+When the world model cannot fit critical streams within budget, the agent must escalate
+via UNCERTAINTY rather than proceeding with incomplete context.
+
+```python
+CRITICAL_PATHS = [
+    "*.nav.position.gps_primary.*",
+    "*.nav.ais.target_*.cpa",
+    "*.power.bank_*.soc_pct",
+    "*.engine.*.oil_pressure",
+]
+
+if not all_critical_paths_fit(world_model, CRITICAL_PATHS):
+    publish_uncertainty(reason="context_window_full")
+    return
+```
+
+---
+
+## 5. Entropy-Based Sanity Checking
+
+Edge models must continuously evaluate the quality of their own generation before
+publishing output as a PROPOSE. This is done via logit-space entropy analysis.
+
+### 5.1 Semantic Entropy
+
+```
+H_sem = -∑ p_i × log(p_i)   over the top-K candidate tokens at each decision step
+
+where p_i = softmax(logit_i) of the top-K tokens
+```
+
+A low H_sem means the model is confident about what comes next.
+A high H_sem means the model is uncertain — multiple tokens are nearly equally likely.
+
+### 5.2 Entropy Decision Tree
+
+```
+                ┌──────────────────────────────────────┐
+                │  Generate action/trajectory tokens   │
+                │  (Tier 1, Hailo-10H)                 │
+                └──────────────────┬───────────────────┘
+                                   │ Extract token logits
+                                   ▼
+                ┌──────────────────────────────────────┐
+                │  Compute H_sem across output tokens  │
+                └──────────────────┬───────────────────┘
+                                   │
+        ┌──────────────────────────┴──────────────────────────┐
+        ▼  H_sem ≤ 0.20                                       ▼  H_sem > 0.35
+  ┌─────────────────┐                                   ┌──────────────────┐
+  │  HIGH CERTAINTY │                                   │  UNCERTAIN       │
+  │  Publish PROPOSE│                                   │  Publish         │
+  │  with confidence│                                   │  UNCERTAINTY     │
+  └─────────────────┘                                   │  escalate Tier 2 │
+                                                         └──────────────────┘
+        ▼  0.20 < H_sem ≤ 0.35
+  ┌─────────────────────────┐
+  │  MODERATE CERTAINTY     │
+  │  Publish PROPOSE with   │
+  │  reduced confidence,    │
+  │  cross-validation check │
+  └─────────────────────────┘
+```
+
+### 5.3 Entropy Thresholds by Tier
+
+| Tier | Escalate threshold | Action |
+|---|---|---|
+| Tier 1 | H_sem > 0.35 | Publish UNCERTAINTY, hand to Tier 2 |
+| Tier 2 | H_sem > 0.45 | Publish UNCERTAINTY, hand to Tier 3 |
+| Tier 3 | H_sem > 0.60 | Publish ALERT, request human decision |
+
+### 5.4 Context Fill Level Check
+
+Additionally to entropy, check context fill before every generation:
+
+```python
+def pre_generation_check(context_tokens: int, budget: int) -> bool:
+    fill_ratio = context_tokens / budget
+    if fill_ratio > 0.60:
+        # Reasoning degrades above 60% fill — escalate rather than proceed
+        publish_uncertainty(reason="context_fill_above_threshold",
+                            fill_ratio=fill_ratio)
+        return False
+    return True
+```
+
+---
+
+## 6. UNCERTAINTY Escalation Cascade
+
+### 6.1 Cascade Flow
+
+```
+Tier 1 publishes UNCERTAINTY
+    │
+    ▼
+Tier 2 receives UNCERTAINTY
+    │  Fetches context_reference from ΣMatrix
+    │  Runs deeper inference on the same context
+    │
+    ├─► If resolved: Tier 2 publishes PROPOSE (on behalf of original context)
+    │
+    └─► If not resolved: Tier 2 publishes UNCERTAINTY with tier=2
+        │
+        ▼
+    Tier 3 (Sovereign) receives UNCERTAINTY
+        │  Pulls full context from ΣMatrix
+        │  Runs heavy inference
+        │
+        ├─► If resolved: Sovereign publishes PROPOSE + DELEGATE to execute
+        │
+        └─► If not resolved: Sovereign publishes ALERT
+                              Requests human decision (VHF, visual, UI)
+                              Executes fallback from original PROPOSE
+```
+
+### 6.2 Cascade Timeout
+
+Each tier has a maximum response time after receiving UNCERTAINTY:
+
+| Tier | Maximum response time |
+|---|---|
+| Tier 2 responds to Tier 1 | ≤ 5 seconds |
+| Tier 3 responds to Tier 2 | ≤ 15 seconds |
+| Human responds to ALERT | No timeout — execute fallback if human doesn't respond in scenario TTL |
+
+If a tier does not respond within its timeout, the UNCERTAINTY is escalated
+immediately to the next tier. The original PROPOSE's fallback remains armed.
+
+---
+
+## 7. Sovereign Orchestrator
+
+The Sovereign Orchestrator is the Tier 3 node responsible for:
+
+- Receiving UNCERTAINTY escalations from Tier 1/2
+- Managing the cluster registry (which agents are alive and trusted)
+- Issuing DELEGATE grants to capable agents
+- Running adversarial CRITIQUE before authorising actuation
+- Resolving conflicts between simultaneous proposals
+
+### 7.1 Cluster Registry
+
+```python
+@dataclass
+class ClusterEntry:
+    uid:               str
+    tier:              int
+    last_heartbeat:    float   # unix timestamp
+    behavioral_trust:  float   # current score
+    identity_trust:    float   # static
+    authority_scope:   list
+    state:             str     # idle | proposing | delegated | uncertain
+```
+
+The sovereign maintains one ClusterEntry per registered agent. Agents that miss 3
+consecutive heartbeats are marked `state: absent` and their pending proposals are
+cancelled with reason `AGENT_TIMEOUT`.
+
+### 7.2 Adversarial Critique
+
+Before the sovereign issues AGREE on any PROPOSE, it runs an adversarial evaluation:
+
+```python
+async def critique_proposal(proposal: ProposeFrame) -> CritiqueFrame:
+    critique_prompt = f"""
+    You are a safety-critical maritime navigation auditor.
+    
+    A Tier 1 agent has proposed:
+    Action: {proposal.proposed_action}
+    Rationale: {proposal.rationale}
+    Evidence: {proposal.evidence_values}
+    Evidence trust scores: {proposal.evidence_trust}
+    Internal confidence: {proposal.step_confidence.internal_confidence_score}
+    
+    Evaluate:
+    1. Is the evidence sufficient and trustworthy?
+    2. Does the action comply with COLREGs?
+    3. Are there alternatives with better outcomes?
+    4. What is the worst-case failure mode?
+    5. Is the fallback adequate?
+    
+    Respond in structured JSON only.
+    """
+
+    response = await llm.complete(critique_prompt, max_tokens=512)
+    return parse_critique_response(response)
+```
+
+Critique results are written to the decision journal regardless of outcome.
+
+---
+
+## 8. CONTEXT_SHARE Protocol
+
+The CONTEXT_SHARE protocol allows the sovereign or Tier 2 agents to pass compressed
+world model context to a Tier 1 agent before assigning a task.
+
+### 8.1 Context Compression Strategy
+
+```python
+def compress_context_for_tier1(full_state: dict, scope: str, budget_tokens: int) -> dict:
+    """
+    Build a compressed state delta for a Tier 1 agent.
+    Only includes paths within scope and within token budget.
+    Uses delta encoding from the agent's last known state.
+    """
+    scoped = {k: v for k, v in full_state.items() if k.startswith(scope)}
+
+    # Delta encode: only send changed values since last CONTEXT_SHARE to this agent
+    delta = compute_delta(scoped, agent_last_known_state)
+
+    # Prioritise: critical paths first
+    sorted_delta = sorted(delta.items(), key=lambda x: x[1]['priority'])
+
+    result = {}
+    token_count = 0
+    for path, value in sorted_delta:
+        tokens = estimate_tokens(path, value)
+        if token_count + tokens > budget_tokens:
+            break
+        result[path] = value
+        token_count += tokens
+
+    return result, token_count
+```
+
+### 8.2 CONTEXT_SHARE Validity
+
+A CONTEXT_SHARE frame carries a `valid_until_us` field. The receiving agent must
+discard it after expiry and request a fresh CONTEXT_SHARE rather than reasoning
+from stale context.
+
+---
+
+## 9. Brier Scoring for Behavioral Trust
+
+Behavioral trust is updated using Brier scoring — the standard proper scoring rule for
+probability predictions.
+
+### 9.1 Brier Score
+
+```
+B = (forecast_probability - actual_outcome)²
+
+where:
+  forecast_probability = agent's internal_confidence_score at time of PROPOSE
+  actual_outcome       = 1 if CONFIRM received, 0 if FAIL received
+```
+
+Lower B = better calibration.
+
+### 9.2 Behavioral Trust Update Rule
+
+```python
+def update_behavioral_trust(record: BehavioralRecord, confidence: float, success: bool) -> float:
+    actual = 1.0 if success else 0.0
+    brier = (confidence - actual) ** 2
+
+    # Well-calibrated agent (brier near 0) gets rewarded
+    # Overconfident agent (claimed 0.95, got FAIL) gets penalised more
+    delta = (0.25 - brier) * 0.20  # max ±0.05 per outcome
+
+    new_trust = max(0.10, min(1.0, record.score + delta))
+    record.score = new_trust
+    record.n_actions += 1
+    if success:
+        record.n_confirmed += 1
+    else:
+        record.n_failed += 1
+    return new_trust
+```
+
+### 9.3 Behavioral Trust Decay
+
+Without activity, behavioral trust decays slowly toward 0.50 (neutral):
+
+```
+score_t = 0.50 + (score_0 - 0.50) × e^(-days_since_last_action / 90)
+
+An agent idle for 90 days is halfway back to neutral.
+An agent idle for 365 days is essentially at neutral (0.52 if it started at 0.90).
+```
+
+This prevents a historically trusted but long-idle agent from getting unearned trust.
+
+---
+
+## 10. World Model Construction
+
+### 10.1 World Model Snapshot
+
+The world model is a point-in-time snapshot of all streams accessible to an agent,
+enriched with effective_trust and age metadata.
+
+```python
+@dataclass
+class WorldModelEntry:
+    path:             str
+    value:            Any
+    effective_trust:  float     # computed at snapshot time
+    age_ms:           float
+    health:           str       # nominal | degraded | absent
+    data_class:       str       # sensor | derived | inferred | command
+    priority:         int
+```
+
+### 10.2 Stale Stream Handling
+
+Streams marked `degraded` are included in the world model with a warning annotation.
+Streams marked `absent` are **not** included — they are listed separately as
+`missing_streams`.
+
+```python
+world_model = {
+    "streams":         {path: WorldModelEntry, ...},  # nominal + degraded
+    "missing_streams": [path, ...],                    # absent
+    "snapshot_us":     timestamp,
+    "total_streams":   42,
+    "degraded_count":  3,
+    "absent_count":    1
+}
+```
+
+The agent prompt must include `missing_streams` so the LLM knows what it cannot see.
+A world model with missing critical streams must trigger UNCERTAINTY.
+
+---
+
+## 11. Safety Constraints for LLM Output
+
+### 11.1 Output Validation
+
+All LLM output that targets a `cmd.*` path must pass through a deterministic validator
+before being serialised into a ΣFrame. This is structural — it runs outside the LLM.
+
+```python
+def validate_cmd_output(path: str, value: Any, card: SigmaCard) -> ValidationResult:
+    # 1. Type check
+    if not isinstance(value, expected_type(card.what.data_type)):
+        return ValidationResult.fail(f"Type mismatch: expected {card.what.data_type}")
+
+    # 2. Range check
+    if card.what.valid_range:
+        lo, hi = card.what.valid_range
+        if not (lo <= value <= hi):
+            return ValidationResult.fail(f"Value {value} outside valid range {lo}–{hi}")
+
+    # 3. Rate-of-change check
+    current = registry.get_current_value(path)
+    if current and abs(value - current.value) > card.max_change_per_step:
+        return ValidationResult.fail(f"Rate of change exceeded")
+
+    return ValidationResult.ok()
+```
+
+### 11.2 Forbidden Outputs
+
+The following LLM output patterns are always blocked, regardless of confidence:
+
+- Any `cmd.*` write that would set a physical parameter to zero (engine stop, 0° rudder, 0V)
+  **unless** the path is explicitly designated as a safe-stop path in the ΣCard.
+- Any write to a path not in the agent's `authority_scope`.
+- Any write while `human_override_active = true`.
+- Any write with `internal_confidence_score < safety.confidence_threshold` from the AID.
+
+---
+
+## 12. Conformance
+
+An LLM integration is conformant if it:
+
+1. Maintains strict separation between internal confidence and external trust (§2).
+2. Enforces context budget at world model build time (§4).
+3. Implements entropy-based sanity checking before every PROPOSE (§5).
+4. Publishes UNCERTAINTY via the CM protocol rather than silently degrading (§6).
+5. Applies Brier scoring to behavioral trust updates (§9).
+6. Includes `missing_streams` in world model snapshots (§10.2).
+7. Runs deterministic output validation before any `cmd.*` write (§11.1).
+8. Enforces the forbidden output list (§11.2) at the bus level, not in agent logic.

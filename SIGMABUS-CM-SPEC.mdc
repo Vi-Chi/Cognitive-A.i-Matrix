@@ -1,0 +1,709 @@
+# SIGMABUS-CM-SPEC
+## Sigma Bus — Cognitive Matrix Agent Communication Specification
+
+```
+Version:    0.2-draft
+Status:     DRAFT — not yet stable
+Date:       2026-05
+License:    Apache-2.0
+Depends:    SIGMABUS-CORE-SPEC.md v0.2
+```
+
+---
+
+## Table of Contents
+
+1. [Introduction](#1-introduction)
+2. [Agent Identity Descriptor (AID)](#2-agent-identity-descriptor-aid)
+3. [ΣCard for Agents](#3-σcard-for-agents)
+4. [CM Message Types](#4-cm-message-types)
+5. [Conversation State Machine](#5-conversation-state-machine)
+6. [Trust Model — Four Dimensions](#6-trust-model--four-dimensions)
+7. [Negotiation Protocol](#7-negotiation-protocol)
+8. [Control Delegation — DELEGATE / RESUME](#8-control-delegation--delegate--resume)
+9. [LLM Integration Points](#9-llm-integration-points)
+10. [Human Override Gate](#10-human-override-gate)
+11. [Decision Journal](#11-decision-journal)
+12. [Security](#12-security)
+13. [Conformance](#13-conformance)
+
+---
+
+## 1. Introduction
+
+SIGMABUS-CM defines how agents identify themselves, communicate intent, negotiate actions,
+and delegate control. It is the conversation layer of ΣBUS — analogous to the application
+layer in OSI, but defined for agents that reason rather than services that respond.
+
+### 1.1 What CM Is
+
+- Agent identity and discovery
+- Intent announcement and negotiation
+- Authority-scoped control delegation
+- Structured critique and confidence escalation
+- Traceable decision journals
+
+### 1.2 What CM Is Not
+
+- A replacement for MCP (tool access) or A2A (cross-framework task delegation)
+- A general-purpose messaging protocol
+- An agent execution framework
+
+CM sits **above** the ΣBUS core transport. Every CM message is a ΣFrame with a CM-specific
+`msg_type`. The SemanticEnvelope rules defined in CORE-SPEC apply without exception.
+
+---
+
+## 2. Agent Identity Descriptor (AID)
+
+The AID is the agent's signed passport. It declares what the agent perceives, what it
+controls, how it reasons, and what its authority boundaries are.
+
+### 2.1 AID Schema
+
+```json
+{
+  "uid":          "string — globally unique, format: agt-{platform}-{role}-{index}",
+  "name":         "string — human-readable name",
+  "version":      "string — semver",
+  "tier":         "integer (1=fast/edge, 2=medium, 3=sovereign/cloud)",
+  "platform":     "string — platform identifier this agent operates on",
+
+  "perceives": ["list of path prefixes this agent subscribes to"],
+  "controls":  ["list of path prefixes this agent may write (cmd.* paths only)"],
+
+  "reasoning": {
+    "model_id":              "string — model name or 'deterministic'",
+    "inference_engine":      "string — llama.cpp | hailo-sdk | rule-engine | etc.",
+    "max_latency_ms":        "integer — worst-case reasoning latency",
+    "context_budget_tokens": "integer — max tokens this agent may use per decision",
+    "world_model_token_budget": "integer — max tokens for world model context"
+  },
+
+  "trust": {
+    "initial_identity_trust":   "float — assigned at registration by sovereign/operator",
+    "initial_behavioral_trust": "float — defaults to 0.50 for new agents",
+    "authority_scope":          ["list of cmd.* path prefixes this agent may issue"]
+  },
+
+  "safety": {
+    "human_override_path":    "string — meta path checked before any cmd.* write",
+    "confidence_threshold":   "float — minimum internal confidence before actuation",
+    "fallback_action":        "string — what to do if negotiation fails (see §7.4)",
+    "max_consecutive_actions": "integer — circuit breaker: halt after N actions without human confirm"
+  },
+
+  "comms": {
+    "heartbeat_interval_s": "integer — how often to publish HEARTBEAT",
+    "announce_on_startup":  "bool",
+    "public_key_ed25519":   "string — base64:ed25519-public-key"
+  },
+
+  "metadata": {
+    "description": "string",
+    "tags":        ["list of capability tags"],
+    "registered_at_us": "integer"
+  }
+}
+```
+
+### 2.2 UID Convention
+
+```
+agt-{platform}-{role}-{index}
+
+agt-wibo835-nav-001          Navigation agent, Wibo 835, instance 1
+agt-wibo835-engine-001       Engine monitoring agent
+agt-wibo835-power-001        Power management agent
+agt-wibo835-comms-001        Communications agent
+agt-wibo835-desktop-001      Desktop operator agent
+agt-wibo835-sovereign-001    Sovereign orchestrator (highest tier)
+```
+
+### 2.3 AID Registration
+
+On startup, every agent:
+
+1. Generates or loads its Ed25519 keypair.
+2. Constructs its AID including its public key.
+3. Signs the AID with its private key.
+4. Publishes an ANNOUNCE frame to `{platform}.meta.agent.{uid}`.
+5. Begins publishing HEARTBEAT at `heartbeat_interval_s`.
+
+---
+
+## 3. ΣCard for Agents
+
+Agent streams (agent-generated data) are registered in the MatrixRegistry like any other
+stream. The key difference: all agent paths live under `{platform}.agent.*` and are
+automatically tagged `data_class: "inferred"`.
+
+Agents must not write to `{platform}.nav.*`, `{platform}.engine.*` etc. directly.
+They write to `{platform}.cmd.*` paths and `{platform}.agent.*` paths only.
+
+---
+
+## 4. CM Message Types
+
+All CM messages are ΣFrames. The `msg_type` field identifies the conversation act.
+
+### 4.1 Lifecycle Messages
+
+| Type | Sender | Description |
+|---|---|---|
+| `ANNOUNCE` | Agent | Publishes AID on startup or reconfiguration |
+| `HEARTBEAT` | Agent | Liveness signal, includes current state and effective trust scores |
+| `SHUTDOWN` | Agent | Graceful shutdown notification |
+
+### 4.2 Negotiation Messages
+
+| Type | Sender | Description |
+|---|---|---|
+| `PROPOSE` | Agent | Proposes an action or course change. Must include fallback. |
+| `AGREE` | Agent | Accepts a PROPOSE from another agent |
+| `REFUSE` | Agent | Rejects a PROPOSE, must include reason code |
+| `RETRACT` | Agent | Withdraws a previous PROPOSE before TTL expiry |
+| `COUNTER` | Agent | Counter-proposes alternative to a PROPOSE |
+
+### 4.3 Control Messages
+
+| Type | Sender | Description |
+|---|---|---|
+| `DELEGATE` | Sovereign/Operator | Transfers authority scope to another agent |
+| `RESUME` | Any | Signals handback of previously delegated authority |
+| `ALERT` | Any | Urgent broadcast, priority 1, bypasses normal queuing |
+
+### 4.4 LLM Extension Messages
+
+| Type | Sender | Description |
+|---|---|---|
+| `CONTEXT_SHARE` | Any | Shares compressed world model context with another agent |
+| `UNCERTAINTY` | Agent | Declares reasoning uncertainty, requests escalation |
+| `CRITIQUE` | Sovereign | Adversarial review of a PROPOSE before authorising actuation |
+| `CONFIRM` | Any | Confirms successful execution of an action |
+| `FAIL` | Any | Signals failed execution with reason |
+
+### 4.5 PROPOSE Frame Structure
+
+```json
+{
+  "msg_type": "PROPOSE",
+  "sender":   "agt-wibo835-nav-001",
+  "subject":  "wibo835.cmd.autopilot.heading",
+
+  "payload": {
+    "conversation_id":    "string (uuid-v4)",
+    "proposed_action": {
+      "path":    "wibo835.cmd.autopilot.heading",
+      "value":   185.0,
+      "unit":    "degrees_true",
+      "duration_s": 300
+    },
+    "rationale": {
+      "rule_applied":    "COLREG_RULE_16",
+      "evidence_paths":  ["wibo835.nav.ais.target_987654321.cpa"],
+      "evidence_values": {"cpa_nm": 0.28, "tcpa_min": 6.5}
+    },
+    "fallback": {
+      "action":  "alter_course_starboard_20_deg",
+      "trigger": "ttl_expiry",
+      "autonomous": true
+    },
+    "ttl_us":              "integer — proposal expires at this time",
+    "requires_agreement":  ["agt-wibo835-sovereign-001"],
+    "step_confidence": {
+      "internal_confidence_score": 0.96,
+      "entropy_at_decision":       0.18
+    }
+  }
+}
+```
+
+### 4.6 REFUSE Reason Codes
+
+| Code | Meaning |
+|---|---|
+| `CONFIDENCE_BELOW_THRESHOLD` | Proposer's confidence < required minimum |
+| `AUTHORITY_SCOPE_VIOLATION` | Proposed action outside proposer's authority |
+| `HUMAN_OVERRIDE_ACTIVE` | Human override gate is active |
+| `CONFLICTING_PROPOSAL` | A conflicting PROPOSE is already in negotiation |
+| `INSUFFICIENT_EVIDENCE` | Evidence paths are stale or absent |
+| `SAFETY_CONSTRAINT_VIOLATED` | Action would exceed physical limits (rudder, speed) |
+| `TTL_EXPIRED` | PROPOSE TTL elapsed before agreement reached |
+
+---
+
+## 5. Conversation State Machine
+
+```
+                      ┌──────────┐
+           startup    │ OFFLINE  │
+    ───────────────►  └────┬─────┘
+                           │ keypair loaded
+                           ▼
+                      ┌──────────┐
+                      │ STARTING │
+                      └────┬─────┘
+                           │ ANNOUNCE published
+                           ▼
+                      ┌──────────┐  ◄──────────────────────────────────────┐
+                      │  IDLE    │  HEARTBEAT published every N seconds     │
+                      └────┬─────┘                                          │
+                           │ PROPOSE sent or received                       │
+                           ▼                                                 │
+                      ┌──────────────┐                                       │
+                      │  PROPOSING   │                                       │
+                      └──────┬───────┘                                       │
+                             │                                               │
+           ┌─────────────────┼──────────────────┐                          │
+           ▼                 ▼                  ▼                           │
+      ┌─────────┐       ┌─────────┐       ┌──────────┐                     │
+      │ AGREED  │       │ REFUSED │       │ FALLBACK │                     │
+      └────┬────┘       └────┬────┘       └────┬─────┘                     │
+           │ DELEGATE        │ re-evaluate      │ execute fallback          │
+           ▼                 │                  │                           │
+      ┌──────────────┐       └──────────────────┘                          │
+      │  DELEGATED   │                           │                          │
+      └──────┬───────┘                           ▼                          │
+             │ RESUME / handback trigger   ┌──────────┐                    │
+             └───────────────────────────► │  IDLE    │ ─────────────────┘
+                                           └──────────┘
+```
+
+---
+
+## 6. Trust Model — Four Dimensions
+
+> **Critical correction from v0.1:** The previous model used `sovereign = 1.00` as full trust.
+> This is wrong. An agent with verified identity can still behave incorrectly, present bad
+> evidence, or act outside its appropriate scope. The four-dimension model separates these
+> concerns structurally.
+
+### 6.1 The Four Dimensions
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ Dimension 1: IDENTITY TRUST                                             │
+│   Cryptographic identity verification score.                           │
+│   Set at registration time by the sovereign or operator.               │
+│   Based on PKI verification of Ed25519 public key.                     │
+│   STATIC between registrations. Does not decay.                        │
+│   Range: 0.0 – 1.0                                                     │
+│                                                                         │
+│   Native/operator-registered agent:  0.90 – 1.00                       │
+│   Peer agent (verified via PKI):     0.70 – 0.90                       │
+│   External agent (unknown PKI):      0.30 – 0.70                       │
+│   Unregistered:                      0.00 (REJECT)                     │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ Dimension 2: BEHAVIORAL TRUST                                           │
+│   Rolling score computed from outcome history.                         │
+│   Updated using Brier scoring: accuracy of past predictions.           │
+│   Persisted across sessions. Decays slowly toward 0.50 without updates.│
+│   Range: 0.0 – 1.0 (new agent starts at 0.50)                         │
+│                                                                         │
+│   Scoring events:                                                       │
+│     CONFIRM after AGREE:    +0.05 (capped at 1.0)                     │
+│     FAIL after AGREE:       -0.10                                       │
+│     REFUSE upheld by audit: +0.02                                      │
+│     PROPOSE retracted:      -0.01                                       │
+│     Human override invoked: -0.15 (agent was about to do wrong thing)  │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ Dimension 3: EVIDENCE TRUST                                             │
+│   Per-message quality of the evidence chain in the ΣFrame envelope.   │
+│   Computed at read time from:                                           │
+│     - effective_trust of cited evidence_paths                           │
+│     - cross_validation status                                           │
+│     - anomaly_score of inputs                                           │
+│     - derivation chain length                                           │
+│   Range: 0.0 – 1.0                                                     │
+│   DYNAMIC — different for every ΣFrame, even from the same agent.      │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ Dimension 4: AUTHORITY SCOPE                                            │
+│   Declared and enforced write boundaries.                              │
+│   Hard gate — effective_trust returns 0.0 if target path is outside.  │
+│   Set in AID. Cannot be self-modified. Only sovereign/operator can     │
+│   expand scope via formal DELEGATE.                                     │
+│   Format: list of path prefix patterns (cmd.* paths only)              │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### 6.2 Effective Trust Computation
+
+```python
+def effective_trust(agent_trust: AgentTrust, target_path: str) -> float:
+    # Hard gate: scope check first
+    if not any(target_path.startswith(s) for s in agent_trust.authority_scope):
+        return 0.0
+
+    # Weighted combination
+    # Behavioral is heaviest — past performance is the best predictor
+    return (
+        agent_trust.identity_trust   * 0.25 +
+        agent_trust.behavioral_trust * 0.50 +
+        agent_trust.evidence_trust   * 0.25
+    )
+```
+
+### 6.3 Trust Thresholds for Action Categories
+
+| Action Category | Minimum effective_trust | Notes |
+|---|---|---|
+| Read any stream | 0.00 | ACL-controlled by consumer_acl, not trust |
+| Publish agent-generated data | 0.40 | Inferred data, always flagged |
+| PROPOSE a reversible action | 0.60 | e.g., course change that can be undone |
+| PROPOSE an irreversible action | 0.85 | e.g., anchor drop, engine stop |
+| Direct `cmd.*` write (no proposal) | 0.92 | Emergency actions only |
+| DELEGATE authority to another agent | 1.00 | Sovereign/operator only |
+
+### 6.4 Behavioral Trust Persistence
+
+```python
+@dataclass
+class BehavioralRecord:
+    agent_uid:      str
+    score:          float          # current behavioral_trust
+    n_actions:      int            # total actions taken
+    n_confirmed:    int            # CONFIRM received after action
+    n_failed:       int            # FAIL received after action
+    n_overridden:   int            # human override invoked
+    last_updated:   float          # unix timestamp
+    session_id:     str            # voyage/session identifier
+```
+
+Behavioral records are persisted to SQLite with `retention: permanent`.
+They survive restarts, software updates, and voyage boundaries.
+An agent that has been operating for 6 months with a high CONFIRM rate
+is trusted differently from a freshly instantiated agent — as it should be.
+
+---
+
+## 7. Negotiation Protocol
+
+### 7.1 Basic Proposal Flow
+
+```
+NavAgent                              SovereignAgent
+    │                                      │
+    │── PROPOSE ──────────────────────────►│
+    │   conversation_id: uuid-1            │
+    │   action: heading = 185°             │
+    │   evidence: cpa=0.28nm, tcpa=6.5min  │
+    │   fallback: alter +20° at ttl_expiry │
+    │   ttl: now + 30s                     │
+    │                                      │
+    │                                ┌─────┴──────┐
+    │                                │ CRITIQUE   │
+    │                                │ evidence   │
+    │                                │ confidence │
+    │                                └─────┬──────┘
+    │                                      │
+    │◄─ AGREE ────────────────────────────│
+    │   conversation_id: uuid-1            │
+    │   authorised_action: heading = 185°  │
+    │                                      │
+    │── COMMAND ──────────────────────────►│ (cmd.autopilot.heading = 185)
+    │                                      │
+    │── CONFIRM ──────────────────────────►│
+    │   conversation_id: uuid-1            │
+    │   outcome: new_cpa = 0.85nm          │
+```
+
+### 7.2 CRITIQUE Check (before AGREE)
+
+Before issuing AGREE, the receiving agent MUST perform:
+
+```python
+def critique_proposal(proposal: ProposeFrame) -> CritiqueResult:
+    checks = [
+        check_confidence(proposal.step_confidence.internal_confidence_score >= 0.80),
+        check_evidence_trust(min(effective_trust(e) for e in proposal.evidence_paths) >= 0.60),
+        check_authority(proposal.sender in allowed_proposers),
+        check_scope(proposal.proposed_action.path in sender.authority_scope),
+        check_physical_limits(proposal.proposed_action.value),
+        check_human_override(),
+    ]
+    return CritiqueResult(all_passed=all(c.passed for c in checks), checks=checks)
+```
+
+### 7.3 Fallback Mandate
+
+**Every PROPOSE must include a fallback.**
+
+The fallback defines what happens if no agreement is reached before TTL expires.
+It is never "do nothing" — that is a separate, explicit fallback value.
+
+```json
+"fallback": {
+  "action":     "alter_course_starboard_20_deg | maintain_course | heave_to | anchor",
+  "trigger":    "ttl_expiry | refuse_received | uncertainty_declared",
+  "autonomous": true,
+  "notify":     ["human_operator_vhf_ch16", "log_decision_journal"]
+}
+```
+
+When a fallback executes, it is logged as a FAIL-SAFE event in the decision journal with
+full provenance. It is not treated as a negotiation failure — it is normal protocol operation
+in a time-critical environment.
+
+### 7.4 Negotiation TTL
+
+TTL (time-to-live) for a PROPOSE is mandatory. Recommended values:
+
+| Scenario | TTL |
+|---|---|
+| Collision avoidance (CPA < 0.5nm, TCPA < 10min) | 10 – 30 s |
+| Routine course change | 120 – 300 s |
+| Engine parameter adjustment | 30 – 60 s |
+| Anchoring / mooring | 300 – 600 s |
+
+---
+
+## 8. Control Delegation — DELEGATE / RESUME
+
+### 8.1 DELEGATE Frame
+
+```json
+{
+  "msg_type": "DELEGATE",
+  "sender":   "agt-wibo835-sovereign-001",
+
+  "payload": {
+    "conversation_id":  "uuid-v4",
+    "assignee":         "agt-wibo835-nav-001",
+    "authority_scope":  ["wibo835.cmd.autopilot.*"],
+    "active_context_ref": "ctx-delta-1716123456",
+    "valid_until_us":   "integer — hard expiry",
+    "handback_triggers": [
+      "uncertainty_declared",
+      "human_override_active",
+      "valid_until_us_reached",
+      "cpa_below_0.3nm"
+    ],
+    "constraints": {
+      "max_heading_change_deg": 40,
+      "max_speed_change_kn":    2.0,
+      "forbidden_paths":        []
+    }
+  }
+}
+```
+
+### 8.2 RESUME Frame
+
+```json
+{
+  "msg_type": "RESUME",
+  "sender":   "agt-wibo835-nav-001",
+
+  "payload": {
+    "conversation_id": "uuid-of-original-delegate",
+    "trigger":         "uncertainty_declared",
+    "final_state": {
+      "heading_set": 185.0,
+      "cpa_at_handback_nm": 0.85
+    }
+  }
+}
+```
+
+### 8.3 Delegation Rules
+
+1. Only agents with `behavioral_trust ≥ 0.80` and `effective_trust ≥ 0.90` may receive DELEGATE.
+2. Delegated authority is bounded by `constraints` — the delegate cannot exceed them.
+3. DELEGATE has a hard `valid_until_us` expiry. After expiry, authority automatically reverts.
+4. Any handback trigger fires RESUME automatically. The delegate does not decide when to hand back.
+5. Delegation is never recursive — a delegate cannot re-delegate.
+
+---
+
+## 9. LLM Integration Points
+
+See `SIGMABUS-LLM-SPEC.md` for full specification. CM defines the message types;
+the LLM spec defines the internal reasoning protocols.
+
+### 9.1 UNCERTAINTY Message
+
+Published by a Tier 1 agent when it detects its own reasoning is unreliable:
+
+```json
+{
+  "msg_type": "UNCERTAINTY",
+  "payload": {
+    "conversation_id":   "uuid — the PROPOSE this uncertainty relates to",
+    "context_reference": "ctx-delta-id — the context snapshot at failure point",
+    "reason":            "entropy_threshold_exceeded | context_window_full | low_confidence",
+    "entropy_at_trigger": 0.42,
+    "handback_required":  true
+  }
+}
+```
+
+### 9.2 CONTEXT_SHARE Message
+
+Used to pass compressed world model state from a higher-tier agent to a lower-tier agent:
+
+```json
+{
+  "msg_type": "CONTEXT_SHARE",
+  "payload": {
+    "context_id":            "ctx-delta-1716123456",
+    "target_scope":          "wibo835.nav.*",
+    "compressed_state_delta": {
+      "nav.position.gps_primary.lat":  51.9225,
+      "nav.ais.target_987654321.cpa":  0.28,
+      "agent.nav_agent.last_decision": "hold_course"
+    },
+    "token_count":    412,
+    "compression":    "delta_from_last_known",
+    "valid_until_us": 1716123486000000
+  }
+}
+```
+
+---
+
+## 10. Human Override Gate
+
+### 10.1 The Gate
+
+The human override gate is not an agent. It is a **structural enforcement layer** in the
+MatrixBus publish pipeline. It cannot be bypassed by any agent, including the sovereign.
+
+```python
+def cmd_write_gate(frame: SigmaFrame, registry: MatrixRegistry) -> GateResult:
+    """
+    Called for every frame targeting a cmd.* path.
+    Executes BEFORE any other validation.
+    """
+    override_path = f"{frame.platform}.meta.human.override_active"
+    override_state = registry.get_current_value(override_path)
+
+    if override_state and override_state.value is True:
+        return GateResult(
+            allowed=False,
+            reason="AUTHORITY_SUSPENDED",
+            response_type="FAIL",
+            log_level="CRITICAL"
+        )
+
+    return GateResult(allowed=True)
+```
+
+### 10.2 Activating Human Override
+
+The human operator activates override by writing to the override path through a
+**hardware-confirmed input** (physical button, dedicated UI, not a software API call).
+
+```
+wibo835.meta.human.override_active  →  true
+```
+
+When active:
+- All `cmd.*` writes from all agents are blocked.
+- All pending PROPOSE negotiations are cancelled with `AUTHORITY_SUSPENDED`.
+- All DELEGATE grants are suspended.
+- ALERT messages still flow (read-only).
+- The decision journal continues recording.
+
+### 10.3 Override Event in Decision Journal
+
+Every override activation/deactivation is recorded as a `permanent` retention journal entry
+with `priority: 1`. It is never deletable.
+
+---
+
+## 11. Decision Journal
+
+The decision journal is **load-bearing structure** — it is the mechanism by which every
+autonomous action is traceable to its inputs. It is not a log file that can be deleted.
+
+### 11.1 Journal Entry Schema
+
+```json
+{
+  "journal_id":      "string (uuid-v4)",
+  "conversation_id": "string — links to the PROPOSE/AGREE chain",
+  "timestamp_us":    "integer",
+  "event_type":      "PROPOSE | AGREE | REFUSE | DELEGATE | FALLBACK | CONFIRM | FAIL | OVERRIDE | CRITIQUE",
+
+  "agent":           "string (agent UID)",
+  "action_path":     "string (cmd.* path affected)",
+  "action_value":    "any",
+
+  "inputs": {
+    "evidence_paths":  ["list of paths consulted"],
+    "evidence_values": {"path": "value at decision time"},
+    "evidence_trust":  {"path": "effective_trust at decision time"},
+    "world_model_age_ms": "integer"
+  },
+
+  "reasoning": {
+    "rule_applied":               "string or null",
+    "internal_confidence_score":  "float",
+    "entropy_at_decision":        "float",
+    "alternatives_considered":    ["list of rejected alternatives"]
+  },
+
+  "outcome": {
+    "result":         "SUCCESS | FAILURE | FALLBACK | OVERRIDE",
+    "confirmed_at_us": "integer or null",
+    "post_action_values": {"path": "value after action"}
+  },
+
+  "retention": "permanent"
+}
+```
+
+### 11.2 Journal Persistence
+
+- Stored in SQLite with `retention: permanent`.
+- Never deleted automatically.
+- Voyage-stamped for retrieval.
+- Exported to human-readable markdown on voyage completion.
+
+---
+
+## 12. Security
+
+CM security inherits all CORE-SPEC security requirements (§15). CM-specific additions:
+
+### 12.1 AID Authentication
+
+- AID frames must be self-signed with the agent's Ed25519 private key.
+- The public key in the AID is the verification key.
+- AID updates (re-registration) require the same key to sign the update.
+- Key rotation requires out-of-band confirmation from operator (hardware button + new ANNOUNCE).
+
+### 12.2 Conversation Integrity
+
+- All frames in a conversation carry the same `conversation_id`.
+- The first PROPOSE sets the `conversation_id`. Subsequent frames must match.
+- Frames with mismatched `conversation_id` are rejected.
+
+### 12.3 Authority Scope Enforcement
+
+- `authority_scope` in the AID is set by the operator at registration.
+- Agents cannot self-expand their scope.
+- DELEGATE can temporarily expand scope, but only within the delegating agent's own scope.
+- Scope expansion via forged frames is detectable via signature verification.
+
+---
+
+## 13. Conformance
+
+A CM implementation is conformant if it:
+
+1. Implements all message types in §4 with correct fields.
+2. Enforces the four-dimension trust model (§6) without collapsing dimensions.
+3. Requires a fallback in every PROPOSE (§7.3).
+4. Enforces CRITIQUE checks before issuing AGREE (§7.2).
+5. Implements the human override gate as a structural enforcement layer, not agent logic (§10).
+6. Persists behavioral trust across sessions (§6.4).
+7. Writes every decision to the decision journal with full provenance (§11).
+8. Enforces delegation rules (§8.3) including the no-recursive-delegation rule.

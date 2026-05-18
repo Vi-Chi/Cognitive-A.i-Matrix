@@ -1,0 +1,782 @@
+# SIGMABUS-CORE-SPEC
+## Sigma Bus — Core Specification
+### Stream, Envelope, Metadata, Registry, and Addressing
+
+```
+Version:    0.2-draft
+Status:     DRAFT — not yet stable
+Date:       2026-05
+License:    Apache-2.0
+```
+
+---
+
+## Table of Contents
+
+1. [Introduction](#1-introduction)
+2. [Scope and Non-Scope](#2-scope-and-non-scope)
+3. [The Sigma Stack](#3-the-sigma-stack)
+4. [Path Naming Convention](#4-path-naming-convention)
+5. [ΣCard — Stream Registration](#5-σcard--stream-registration)
+6. [ΣFrame — The Message Unit](#6-σframe--the-message-unit)
+7. [SemanticEnvelope — Metadata Plane](#7-semanticenvelope--metadata-plane)
+8. [ΣTags Reference](#8-σtags-reference)
+9. [Data Schemas](#9-data-schemas)
+10. [MatrixRegistry](#10-matrixregistry)
+11. [MatrixBus](#11-matrixbus)
+12. [Trust Decay Model](#12-trust-decay-model)
+13. [Retention Classes](#13-retention-classes)
+14. [Stream Health Model](#14-stream-health-model)
+15. [Security Baseline](#15-security-baseline)
+16. [Conformance](#16-conformance)
+
+---
+
+## 1. Introduction
+
+ΣBUS (Sigma Bus) is a semantic stream and interaction substrate for AI agents and autonomous
+physical systems. It defines:
+
+- How every data source in a system is **registered** with a typed identity (ΣCard)
+- How every message in the system is **wrapped** with provenance, trust, and temporal metadata (ΣFrame / SemanticEnvelope)
+- How all active streams are **tracked** and queried through a living registry (MatrixRegistry)
+- How messages are **routed and validated** through the bus (MatrixBus)
+
+ΣBUS is not an agent framework, a message broker, or a competing protocol to MCP or A2A. It is
+the **substrate beneath** those systems — the layer that ensures every message has provenance,
+every source has an identity, and every consumer knows how much to trust what it reads.
+
+### 1.1 Motivating Problem
+
+Current maritime and autonomous embedded systems trust every value they receive
+unconditionally. NMEA has no trust field. Signal K has no provenance. AIS has no signature.
+This is safe when a human is watching and filtering. It is not safe when an agent is acting
+autonomously on what it reads.
+
+ΣBUS solves this structurally, at the data architecture level.
+
+### 1.2 Design Principles
+
+1. **Fail-safe over fail-smart.** Deterministic safety layers are never delegated to AI.
+2. **Human authority is inalienable.** No agent-to-agent agreement can override it.
+3. **Every decision is traceable.** The decision journal is load-bearing structure, not a log.
+4. **Trust decays with age.** Stale data is not trusted. Half-lives are per data-type.
+5. **Metadata is richer than data.** The envelope always carries more information than the payload.
+6. **Offline sovereign.** The system must operate without any cloud or external dependency.
+7. **Unknown paths fail closed.** Messages on unregistered paths are rejected in strict mode.
+
+---
+
+## 2. Scope and Non-Scope
+
+**In scope (this document):**
+- Path naming grammar and rules
+- ΣCard stream registration schema
+- ΣFrame and SemanticEnvelope wire format
+- ΣTags vocabulary
+- Data type schemas for all first-class stream domains
+- MatrixRegistry and MatrixBus interfaces
+- Trust decay model
+- Retention classes and health model
+- Security baseline (signing, replay protection)
+
+**Delegated to companion specs:**
+- Agent identity, communication, and negotiation → `SIGMABUS-CM-SPEC.md`
+- LLM tier management, entropy gating, escalation → `SIGMABUS-LLM-SPEC.md`
+- Desktop perception and GUI control → `SIGMABUS-UI-DESKTOP-SPEC.md`
+- Wibo 835 / Omni-AI implementation profile → `SIGMABUS-OMNIBUS-PROFILE.md`
+
+---
+
+## 3. The Sigma Stack
+
+ΣBUS defines a seven-layer stack. Unlike OSI, these layers are not numbered to suggest
+correspondence with OSI — they are an independent model for autonomous agent systems.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  L7  ACTION & VERIFICATION                                          │
+│      Physical or digital actuation. AHK · PyAutoGUI · AT-SPI       │
+│      Post-action verification loop. Outcome ΣFrames emitted.       │
+├─────────────────────────────────────────────────────────────────────┤
+│  L6  AGENTS & POLICY                                                │
+│      LLM inference tiers. CrewAI / LangGraph crews.                │
+│      Policy engine. Human override gate (inalienable).             │
+├─────────────────────────────────────────────────────────────────────┤
+│  L5  CONTEXT & MATRIX                                               │
+│      ΣMatrix — in-memory graph (networkx) + SQLite persistence.    │
+│      World model slices. Semantic query. Cross-source correlation. │
+├─────────────────────────────────────────────────────────────────────┤
+│  L4  SEMANTIC NORMALIZATION                                         │
+│      OmniParser (GUI) · NMEA parser · SigMF (SDR) · AIS decoder   │
+│      Transaction parsers. Domain parsers → typed entities/events.  │
+├─────────────────────────────────────────────────────────────────────┤
+│  L3  METADATA & IDENTITY                                            │
+│      AID — Agent Identity Descriptor.                              │
+│      ΣCard — stream registration. ΣTags — metadata vocabulary.    │
+│      Trust · provenance · retention · ACL · anomaly scoring.      │
+├─────────────────────────────────────────────────────────────────────┤
+│  L2  TRANSPORT & ENVELOPE                                           │
+│      NATS JetStream (primary). asyncio queues (fallback).          │
+│      ΣFrame wire format. SemanticEnvelope. Ed25519 signing.        │
+├─────────────────────────────────────────────────────────────────────┤
+│  L1  CAPTURE                                                        │
+│      mss (screenshots). UI Automation tree. NMEA/0183 serial.      │
+│      SDR IQ. AIS over UDP. Logs. Camera frames.                    │
+├─────────────────────────────────────────────────────────────────────┤
+│  L0  SUBSTRATE                                                      │
+│      Hardware. Operating system. Screens. Sensors. RF spectrum.    │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Data flows **upward** from L0 to L6. Commands flow **downward** from L6 to L7.
+The ΣBUS core (this document) governs L2 through L4.
+
+---
+
+## 4. Path Naming Convention
+
+Every data item in ΣBUS is addressed by a fully-qualified, hierarchical path.
+
+### 4.1 Grammar
+
+```
+path         ::= platform "." domain "." entity "." attribute
+platform     ::= identifier                    # vessel name, host ID
+domain       ::= identifier                    # nav | engine | power | comms | agent | meta | desktop | rf
+entity       ::= identifier ("." identifier)*  # may be nested
+attribute    ::= identifier                    # leaf — always a scalar or typed compound
+
+identifier   ::= [a-z0-9_]+                    # lowercase, underscores only
+```
+
+### 4.2 Rules
+
+1. **Always fully qualified.** No short names or aliases on the bus.
+2. **Lowercase, dots as separators, underscores within segments.**
+3. **Leaf nodes are attributes, never containers.** `wibo835.nav.position` is not a valid path; `wibo835.nav.position.gps_primary.lat` is.
+4. `meta.*` is reserved for system self-description.
+5. `agent.*` is reserved for agent-generated data. Consumers must treat it as `data_class: "inferred"`.
+6. Raw sensor paths never share a path prefix with derived data.
+7. Command paths always live under `{platform}.cmd.*`.
+
+### 4.3 Domain Vocabulary
+
+| Domain | Description | Examples |
+|---|---|---|
+| `nav` | Navigation and position | `nav.position.gps_primary.lat`, `nav.ais.target_{mmsi}.cpa` |
+| `engine` | Propulsion systems | `engine.port.rpm`, `engine.port.temp_coolant` |
+| `power` | Electrical systems | `power.bank_a.voltage`, `power.solar.current` |
+| `comms` | Communications | `comms.hf.js8call.last_rx`, `comms.vhf.channel` |
+| `agent` | Agent-generated state | `agent.nav_agent.state`, `agent.nav_agent.last_decision` |
+| `meta` | System self-description | `meta.stream.health`, `meta.world_model.version` |
+| `desktop` | GUI / screen streams | `desktop.monitor.0.state`, `desktop.window.opencpn.state` |
+| `rf` | Radio / SDR streams | `rf.sdr.iq.channel_0`, `rf.burst.detected` |
+| `cmd` | Commands (write paths) | `cmd.autopilot.heading`, `cmd.engine.throttle` |
+
+### 4.4 Wibo 835 Example Paths
+
+```
+wibo835.nav.position.gps_primary.lat
+wibo835.nav.position.gps_primary.lon
+wibo835.nav.position.gps_primary.trust
+wibo835.nav.ais.target_987654321.cpa
+wibo835.nav.ais.target_987654321.tcpa
+wibo835.nav.ais.target_987654321.bearing
+wibo835.engine.port.rpm
+wibo835.engine.port.temp_coolant
+wibo835.engine.port.temp_exhaust
+wibo835.engine.port.oil_pressure
+wibo835.power.bank_a.voltage
+wibo835.power.bank_a.current
+wibo835.power.bank_a.soc_pct
+wibo835.power.solar_0.current
+wibo835.comms.hf.js8call.last_rx
+wibo835.comms.hf.pactor.link_status
+wibo835.agent.nav_agent.state
+wibo835.agent.nav_agent.last_decision
+wibo835.agent.engine_agent.state
+wibo835.cmd.autopilot.heading
+wibo835.cmd.autopilot.mode
+wibo835.cmd.engine.throttle
+wibo835.meta.stream.health
+wibo835.meta.world_model.version
+wibo835.meta.bus.stats
+```
+
+---
+
+## 5. ΣCard — Stream Registration
+
+Every source that publishes to the bus must register a ΣCard before its first message.
+The MatrixRegistry rejects messages from unregistered sources in strict mode.
+
+### 5.1 ΣCard Schema
+
+```json
+{
+  "card_id": "string (uuid-v4)",
+  "path": "string (fully-qualified path)",
+  "schema_id": "string (schema name + version)",
+  "registered_by": "string (agent UID)",
+  "registered_at_us": "integer (unix microseconds)",
+
+  "what": {
+    "data_type": "float64 | float32 | int32 | uint16 | uint8 | string | bool | compound",
+    "unit": "string (SI unit or 'none')",
+    "valid_range": [null, null],
+    "modality": "sensor | derived | agent | command | desktop | rf | transaction"
+  },
+
+  "where": {
+    "source_id": "string",
+    "source_type": "hardware | software | agent | external",
+    "interface": "nmea0183 | nmea2000 | signalk | can | serial | sdr | screenshot | api"
+  },
+
+  "when": {
+    "update_rate_hz": "number",
+    "max_age_ms": "number",
+    "half_life_s": "number",
+    "timestamp_resolution": "us | ms | s"
+  },
+
+  "trust": {
+    "trust_class": "hardware | calculated | inferred | external | command",
+    "base_trust": "number (0.0–1.0)",
+    "cross_validators": ["list of sibling paths that validate this one"]
+  },
+
+  "access": {
+    "consumer_acl": ["list of agent UIDs or * for unrestricted"],
+    "producer_acl": ["list of agent UIDs allowed to write"]
+  },
+
+  "retention": {
+    "class": "ephemeral | realtime | voyage | permanent",
+    "archive_priority": "integer (1=always, 10=drop first)"
+  }
+}
+```
+
+### 5.2 Trust Classes
+
+| Class | Base Trust | Description |
+|---|---|---|
+| `hardware` | 0.95–1.00 | Direct physical sensor reading, calibrated hardware |
+| `calculated` | 0.70–0.95 | Derived from hardware via deterministic formula (Kalman, CPA) |
+| `inferred` | 0.40–0.70 | Agent-generated inference — always flagged as such |
+| `external` | 0.50–0.80 | Data received from external system (AIS, weather API) |
+| `command` | N/A | Write-only path — trust applies to issuing agent, not value |
+
+### 5.3 Half-Life Reference Table
+
+| Data Type | Half-Life | Rationale |
+|---|---|---|
+| GPS position | 2 s | Vessel moves; stale position is wrong position |
+| Speed over ground | 5 s | Inertia — changes more slowly |
+| AIS target position | 10 s | Remote vessel; update rate limited by AIS itself |
+| AIS target CPA/TCPA | 5 s | Derived, depends on own position staleness |
+| Engine RPM | 3 s | Mechanical; fast-changing |
+| Engine temperature | 30 s | Thermal mass; slow-changing |
+| Battery voltage | 10 s | Moderate change rate |
+| Battery SoC | 60 s | Integrated quantity; slow |
+| Weather forecast | 21600 s | 6 hours |
+| Agent decision | 30 s | Reasoning validity window |
+| Desktop UI state | 0.5 s | Screen changes rapidly |
+| SDR burst event | 1 s | Transient RF event |
+| Chart data | ∞ | Edition-stamped; expires on edition change only |
+
+---
+
+## 6. ΣFrame — The Message Unit
+
+Every message on the bus is a ΣFrame. A ΣFrame is a typed payload plus a SemanticEnvelope.
+
+### 6.1 Wire Format
+
+```json
+{
+  "msg_id":       "string (uuid-v4)",
+  "msg_type":     "string (see §6.2)",
+  "sender":       "string (agent UID)",
+  "subject":      "string (fully-qualified path)",
+  "timestamp_us": "integer (unix microseconds at time of creation)",
+  "schema_id":    "string (payload schema name + version)",
+  "payload":      "object (typed per schema_id)",
+  "envelope":     "SemanticEnvelope (see §7)",
+  "signature":    "string (base64:ed25519-signature)"
+}
+```
+
+### 6.2 Message Type Vocabulary
+
+The `msg_type` field classifies the intent of the frame. CM-level message types (ANNOUNCE,
+PROPOSE, etc.) are defined in `SIGMABUS-CM-SPEC.md`. Core data types are:
+
+| Type | Direction | Description |
+|---|---|---|
+| `OBSERVATION` | Source → Bus | Raw or derived sensor reading |
+| `COMMAND` | Agent → Actuator | Write instruction to a controlled system |
+| `EVENT` | Any → Bus | Discrete occurrence (alarm triggered, waypoint reached) |
+| `HEARTBEAT` | Agent → Bus | Liveness signal (see CM spec) |
+| `SCHEMA_ANNOUNCE` | Registry → Bus | New path registered on the bus |
+| `HEALTH_REPORT` | Registry → Bus | Periodic system health summary |
+
+### 6.3 Constraints
+
+- `msg_id` must be globally unique. Use UUIDv4.
+- `timestamp_us` must be set at **origin**, not at relay. Never overwrite.
+- `payload` must validate against the schema identified in `schema_id`.
+- `signature` must cover the canonical JSON of all fields except `signature` itself (fields sorted, no whitespace).
+- Maximum frame size: **1 MB**. Frames exceeding this are rejected at the transport layer.
+
+---
+
+## 7. SemanticEnvelope — Metadata Plane
+
+The SemanticEnvelope is the load-bearing metadata layer. It travels with every ΣFrame.
+It is never stripped in transit. Consumers may cache it separately for performance.
+
+```json
+{
+  "identity_trust":    "float (0.0–1.0) — PKI verification score of sender",
+  "behavioral_trust":  "float (0.0–1.0) — rolling Brier-scored outcome history",
+  "evidence_trust":    "float (0.0–1.0) — provenance chain quality of this message",
+  "authority_scope":   ["list of path prefixes this sender may write"],
+
+  "half_life_s":       "float — data type half-life in seconds",
+  "t_origin_us":       "integer — when the physical event occurred (if known)",
+  "t_sensed_us":       "integer — when the sensor measured it",
+  "t_encoded_us":      "integer — when it was serialised into the frame",
+  "t_expires_us":      "integer or null — null = never expires",
+
+  "path":              ["ordered list of nodes this frame passed through"],
+  "derived_from":      ["list of msg_ids this frame was derived from"],
+  "data_class":        "sensor | derived | inferred | command | negotiation",
+  "cross_validated":   "bool",
+  "validators":        ["list of source_ids that cross-validated this value"],
+  "anomaly_score":     "float (0.0–1.0) — 0=normal, 1=extreme anomaly",
+
+  "priority":          "integer (1=critical, 10=background)",
+  "retention":         "ephemeral | realtime | voyage | permanent",
+  "consumer_acl":      ["list of agent UIDs or * for unrestricted"],
+
+  "annotations":       "object — agent-written shadow stream (see §7.1)"
+}
+```
+
+### 7.1 Shadow Annotations
+
+Agents may attach annotations to any ΣFrame they process. These are written to
+the `annotations` field and do not modify the primary payload. This is the NTFS
+Alternate Data Streams pattern applied to the message bus.
+
+```json
+"annotations": {
+  "nav_agent": {
+    "agent_confidence": 0.94,
+    "cross_check_delta_kn": 0.1,
+    "historical_mean_kn": 6.1,
+    "anomaly_note": null,
+    "t_annotated_us": 1716123456892000
+  }
+}
+```
+
+### 7.2 Effective Trust Computation
+
+```
+effective_trust(T) = base_trust × (0.5) ^ (delta_t_s / half_life_s)
+
+where:
+  base_trust  = trust_class baseline adjusted for anomaly_score and cross_validation
+  delta_t_s   = (now_us - t_origin_us) / 1_000_000
+  half_life_s = from ΣCard registration
+```
+
+This is computed by consumers at read time, not stored in the envelope. The envelope
+carries the parameters needed to compute it, not a pre-computed value that would
+immediately go stale.
+
+### 7.3 Anomaly Score Influence on Trust
+
+```
+base_trust_adjusted = base_trust
+                    - (anomaly_score × 0.5)
+                    + (0.10 if cross_validated else 0.0)
+                    - min(age_penalty, 0.30)
+
+where age_penalty = delta_t_s / (10 × half_life_s)
+```
+
+---
+
+## 8. ΣTags Reference
+
+ΣTags are structured metadata attached to the envelope. They are named, typed, and their
+vocabulary is controlled by this specification.
+
+| Tag | Type | Description |
+|---|---|---|
+| `trust_class` | enum | From ΣCard registration |
+| `novelty_score` | float | How different this reading is from recent history (0=routine, 1=unprecedented) |
+| `anomaly_score` | float | Statistical anomaly vs calibrated distribution |
+| `policy` | string | Applicable policy identifier (e.g., `colreg_rule_16`) |
+| `retention` | enum | Storage retention class |
+| `focus_window` | string | For desktop streams: active window name |
+| `display_server` | string | For desktop streams: `windows` \| `x11` \| `wayland` |
+| `compositor` | string | For Wayland: `gnome` \| `kde` \| `wlroots` |
+| `sdr_channel` | integer | For RF streams: SDR channel index |
+| `sdr_freq_hz` | integer | For RF streams: centre frequency |
+| `sigMF_ref` | string | For RF streams: path to SigMF metadata file |
+| `scenario` | string | Operational scenario tag (e.g., `colreg_encounter`, `anchoring`) |
+
+---
+
+## 9. Data Schemas
+
+All payload schemas are versioned. The `schema_id` field in ΣFrame identifies which
+schema version applies.
+
+### 9.1 `nav.position.fix` (v3)
+```json
+{
+  "lat":       "float64 — degrees, range [-90, 90]",
+  "lon":       "float64 — degrees, range [-180, 180]",
+  "alt_m":     "float32 — metres, optional",
+  "hdop":      "float32 — optional",
+  "fix_type":  "enum: none | 2d | 3d | dgps",
+  "sats":      "uint8 — optional"
+}
+```
+
+### 9.2 `nav.motion` (v2)
+```json
+{
+  "sog_kn":   "float32 — speed over ground, knots",
+  "cog_deg":  "float32 — course over ground, degrees true",
+  "hdg_deg":  "float32 — magnetic heading, degrees",
+  "rot_dpm":  "float32 — rate of turn, degrees/min, optional"
+}
+```
+
+### 9.3 `nav.ais.target` (v4)
+```json
+{
+  "mmsi":       "uint32",
+  "name":       "string, optional",
+  "lat":        "float64 — degrees",
+  "lon":        "float64 — degrees",
+  "sog_kn":     "float32",
+  "cog_deg":    "float32",
+  "hdg_deg":    "float32, optional",
+  "ship_type":  "uint8, optional",
+  "status":     "enum: underway | anchored | moored | aground | restricted | constrained | not_under_command",
+  "cpa_nm":     "float32 — computed closest point of approach, nautical miles",
+  "tcpa_min":   "float32 — time to CPA, minutes"
+}
+```
+
+### 9.4 `engine.telemetry` (v2)
+```json
+{
+  "rpm":          "uint16 — range [0, 4000]",
+  "temp_coolant": "float32 — celsius, range [0, 150]",
+  "temp_exhaust": "float32 — celsius, range [0, 800]",
+  "oil_pressure": "float32 — bar, range [0, 10]",
+  "fuel_rate":    "float32 — litres/hour, optional",
+  "hours":        "float32 — total hours"
+}
+```
+
+### 9.5 `power.bank` (v1)
+```json
+{
+  "voltage":    "float32 — volts, range [0, 60]",
+  "current_a":  "float32 — amps (positive = charging)",
+  "soc_pct":    "float32 — state of charge, range [0, 100]",
+  "temp_c":     "float32 — celsius, optional",
+  "chemistry":  "enum: lifepo4 | agm | gel | lithium_ion, optional"
+}
+```
+
+### 9.6 `comms.link` (v1)
+```json
+{
+  "link_type":    "enum: hf | vhf | satcom | lora | wifi | ethernet | serial",
+  "status":       "enum: up | down | degraded | unknown",
+  "rssi_dbm":     "float32, optional",
+  "snr_db":       "float32, optional",
+  "last_rx_us":   "integer — unix microseconds, optional",
+  "last_tx_us":   "integer — unix microseconds, optional"
+}
+```
+
+### 9.7 `desktop.ui_state` (v1)
+```json
+{
+  "monitor_id":     "integer",
+  "active_window":  "string",
+  "elements":       "array of DesktopElement (see UI-DESKTOP-SPEC)",
+  "compositor":     "string, optional",
+  "resolution":     [1920, 1080]
+}
+```
+
+### 9.8 `rf.burst_event` (v1)
+```json
+{
+  "channel":      "integer",
+  "freq_hz":      "integer",
+  "power_dbm":    "float32",
+  "duration_ms":  "float32",
+  "modulation":   "string, optional",
+  "sigMF_ref":    "string — path to SigMF metadata, optional"
+}
+```
+
+---
+
+## 10. MatrixRegistry
+
+The MatrixRegistry is the living catalogue of all streams, their schemas, trust models,
+and operational status. It is persisted to SQLite and kept in memory during operation.
+
+### 10.1 Responsibilities
+
+- Accept ΣCard registrations
+- Reject messages on unknown paths (strict mode)
+- Track stream health (nominal / degraded / absent)
+- Serve world model snapshots to agents
+- Log schema migrations
+- Enforce producer ACL
+
+### 10.2 Interface
+
+```python
+class MatrixRegistry:
+
+    def register(self, card: SigmaCard) -> None:
+        """Register a stream. Logs schema migration if schema_id changed."""
+
+    def get(self, path: str) -> SigmaCard | None:
+        """Return the ΣCard for a path, or None if unknown."""
+
+    def query(self,
+              domain: str = None,
+              modality: str = None,
+              health: str = None,
+              trust_class: str = None,
+              trust_min: float = 0.0) -> list[SigmaCard]:
+        """Query the registry. All parameters are AND filters."""
+
+    def health_report(self) -> dict:
+        """
+        Compute health of all registered streams.
+        Returns counts: {nominal, degraded, absent, total}.
+        Updates entry.health in place.
+        """
+
+    def get_world_model(self, consumer: str = "*") -> dict:
+        """
+        Return current state of all streams accessible to consumer.
+        Format: {path: {value, effective_trust, age_ms, health}}
+        """
+
+    def update_last_seen(self, path: str, timestamp_us: int) -> None:
+        """Called by MatrixBus on every valid publish."""
+```
+
+### 10.3 Health Thresholds
+
+```
+nominal   = last_seen within max_age_ms
+degraded  = last_seen within max_age_ms × 3
+absent    = last_seen older than max_age_ms × 3
+```
+
+---
+
+## 11. MatrixBus
+
+The MatrixBus is the routing and validation layer. Every message that flows in the system
+passes through it.
+
+### 11.1 Publish Pipeline
+
+```
+receive ΣFrame
+    │
+    ├─► [1] Signature verification (Ed25519)
+    │        REJECT if invalid → log security_event
+    │
+    ├─► [2] Path lookup in MatrixRegistry
+    │        REJECT if unknown and strict_mode=True
+    │
+    ├─► [3] Producer ACL check
+    │        REJECT if sender not in card.producer_acl
+    │
+    ├─► [4] Schema validation
+    │        REJECT if payload does not conform to schema_id
+    │
+    ├─► [5] Envelope validation
+    │        REJECT if required fields missing or trust < 0.0
+    │
+    ├─► [6] Size check (max 1MB)
+    │        REJECT if frame > MAX_PAYLOAD_BYTES
+    │
+    ├─► [7] Update MatrixRegistry (last_seen, current_value)
+    │
+    ├─► [8] CEP pattern matching
+    │        Fire registered patterns against new value
+    │
+    └─► [9] Notify subscribers (filtered by consumer_acl)
+```
+
+### 11.2 CEP Pattern Registration
+
+Agents may register Complex Event Processing patterns that fire callbacks when stream
+values meet conditions. This is the primary mechanism for keeping the agent tier shielded
+from raw stream volume.
+
+```python
+class CEPPattern:
+    path:       str          # stream path to watch
+    condition:  Callable     # (value, envelope) → bool
+    callback:   Callable     # async (matched_frame) → None
+    priority:   int          # 1=critical, fires first
+    ttl_s:      float | None # auto-expire pattern after this duration
+```
+
+---
+
+## 12. Trust Decay Model
+
+### 12.1 Formula
+
+```
+effective_trust(t) = base_trust_adjusted × (0.5) ^ (delta_t_s / half_life_s)
+
+base_trust_adjusted = base_trust
+                    - (anomaly_score × 0.50)
+                    + (0.10 if cross_validated else 0.0)
+                    - min(delta_t_s / (10 × half_life_s), 0.30)
+```
+
+### 12.2 Trust Floor
+
+```
+effective_trust(t) ≥ 0.0    (never negative)
+effective_trust(t) ≤ 1.0    (capped at registration base)
+```
+
+### 12.3 Trust Propagation Rules
+
+When a derived value is computed from source values, its trust is bounded by its inputs:
+
+```
+derived_trust = min(source_trust_values) × derivation_fidelity_factor
+
+derivation_fidelity_factor:
+  Kalman filter:    0.95
+  Linear interp:    0.90
+  Statistical est:  0.75
+  LLM inference:    0.60  (always flagged data_class: "inferred")
+```
+
+---
+
+## 13. Retention Classes
+
+| Class | Duration | Description |
+|---|---|---|
+| `ephemeral` | seconds | Never persisted. Lost on restart. UI states, transient RF. |
+| `realtime` | minutes | Kept in memory only. Lost on restart. Engine telemetry during passage. |
+| `voyage` | voyage duration | Persisted to voyage log. Cleared on departure of new voyage. |
+| `permanent` | indefinite | Never deleted without explicit operator instruction. Alarms, decisions, events. |
+
+---
+
+## 14. Stream Health Model
+
+The MatrixRegistry publishes a health summary at configurable intervals (default: 10 seconds)
+to `{platform}.meta.stream.health`.
+
+```json
+{
+  "schema_id":   "meta.health_report.v1",
+  "timestamp_us": 1716123456000000,
+  "summary": {
+    "total":    42,
+    "nominal":  38,
+    "degraded":  3,
+    "absent":    1
+  },
+  "degraded_paths": ["wibo835.comms.hf.js8call.last_rx"],
+  "absent_paths":   ["wibo835.engine.port.fuel_rate"]
+}
+```
+
+Agents should subscribe to this path and escalate to the human operator when
+`absent_paths` includes safety-critical streams (nav, engine alarms, power).
+
+---
+
+## 15. Security Baseline
+
+### 15.1 Signing
+
+- All ΣFrames MUST be signed with the sender's Ed25519 private key.
+- The signature covers the canonical JSON of all fields except `signature`, with keys
+  sorted alphabetically and no whitespace.
+- Receivers MUST verify the signature against the sender's registered public key (from AID).
+- Frames with invalid or missing signatures MUST be rejected and logged.
+
+### 15.2 Key Management
+
+- Each agent generates a persistent Ed25519 keypair on first run.
+- The public key is published in the agent's AID.
+- Private keys are never transmitted. Never written to the bus. Never committed to git.
+- Key rotation: re-register AID with new public key. Old key is revoked immediately.
+
+### 15.3 Replay Protection
+
+- Every ΣFrame carries a `msg_id` (UUIDv4) and `timestamp_us`.
+- Receivers maintain a seen-ID cache with a window of 60 seconds.
+- Frames with already-seen `msg_id` are rejected silently.
+- Frames with `timestamp_us` older than 60 seconds are rejected (replay protection window).
+
+### 15.4 Rate Limiting
+
+- Per-agent publish rate limits are enforced at the bus level.
+- Default: 1000 frames/second per agent UID.
+- Burst allowance: 5000 frames in a 1-second window.
+- Agents exceeding limits receive RATE_LIMITED responses; excess frames are dropped.
+
+### 15.5 Human Override
+
+The human override gate is defined in `SIGMABUS-CM-SPEC.md`. Its enforcement is
+structural — implemented in the MatrixBus publish pipeline as a mandatory check on all
+`cmd.*` path writes, not in agent logic.
+
+---
+
+## 16. Conformance
+
+A ΣBUS implementation is conformant if it:
+
+1. Implements the path naming grammar (§4) without extension or abbreviation.
+2. Validates all incoming ΣFrames through the publish pipeline (§11.1) with no steps skipped.
+3. Enforces Ed25519 signature verification on all frames (§15.1).
+4. Implements trust decay computation (§12) at read time, not write time.
+5. Publishes stream health reports (§14) at least every 30 seconds.
+6. Enforces the 1MB frame size limit.
+7. Enforces replay protection with a minimum 60-second window.
+8. Never allows `cmd.*` writes to bypass the human override gate.
+
+Optional extensions (not required for conformance):
+- CEP pattern engine (§11.2)
+- SQLite persistence
+- OmniParser desktop perception
+- Wayland / AT-SPI backends

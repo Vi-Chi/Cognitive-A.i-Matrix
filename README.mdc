@@ -1,0 +1,181 @@
+# ΣBUS — Sigma Bus
+
+**A semantic stream and interaction substrate for AI agents and autonomous systems.**
+
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Status: Specification Draft](https://img.shields.io/badge/status-draft%20v0.2-orange)]()
+[![Domain: Maritime / Edge / Autonomous](https://img.shields.io/badge/domain-maritime%20%7C%20edge%20%7C%20autonomous-green)]()
+
+---
+
+## What is ΣBUS?
+
+ΣBUS is not an agent framework. It is the **substrate beneath agents** — a universal event,
+metadata, and interaction matrix that lets AI systems perceive, classify, reason over, and act
+on sensors, GUIs, RF streams, autonomous subsystems, and other agents through one coherent model.
+
+```
+MCP  ──→  tools and resources
+A2A  ──→  structured cross-framework task delegation
+ΣBUS ──→  registers, normalises, routes, and preserves ALL actionable perception and state
+```
+
+ΣBUS sits **under** MCP and A2A, not beside them.
+
+---
+
+## The Sigma Stack
+
+```
+┌───────────────────────────────────────────────────────┐
+│  L7  Action & Verification                            │  AHK · PyAutoGUI · AT-SPI · ydotool
+│       Post-action screenshot diff · outcome ΣFrames  │
+├───────────────────────────────────────────────────────┤
+│  L6  Agents & Policy                                  │  CrewAI · LangGraph · LLM tiers
+│       Policy engine · human override gate            │
+├───────────────────────────────────────────────────────┤
+│  L5  Context & Matrix                                 │  ΣMatrix (in-memory graph + SQLite)
+│       World model slices · semantic query            │
+├───────────────────────────────────────────────────────┤
+│  L4  Semantic Normalization                           │  OmniParser · NMEA · SigMF · AIS
+│       Domain parsers → typed entities/events         │
+├───────────────────────────────────────────────────────┤
+│  L3  Metadata & Identity                              │  AID · ΣCard · ΣTags
+│       Trust · provenance · retention · policy        │
+├───────────────────────────────────────────────────────┤
+│  L2  Transport & Envelope                             │  NATS JetStream
+│       ΣFrame + SemanticEnvelope · Ed25519 signing    │
+├───────────────────────────────────────────────────────┤
+│  L1  Capture                                          │  mss · UI Automation · NMEA serial
+│       Screenshots · raw sensors · logs               │
+├───────────────────────────────────────────────────────┤
+│  L0  Substrate                                        │  Hardware · OS · screens · RF
+└───────────────────────────────────────────────────────┘
+```
+
+---
+
+## Repository Structure
+
+```
+sigmabus/
+├── SIGMABUS-CORE-SPEC.md          # L0–L5: streams, envelopes, registry, addressing
+├── SIGMABUS-CM-SPEC.md            # Agent communication, negotiation, delegation, trust
+├── SIGMABUS-LLM-SPEC.md           # LLM tier management, entropy gating, escalation
+├── SIGMABUS-UI-DESKTOP-SPEC.md    # Desktop perception/control: OmniParser + AHK/AT-SPI
+├── SIGMABUS-OMNIBUS-PROFILE.md    # Wibo 835 / Omni-AI implementation profile
+├── schemas/
+│   ├── sigma-frame.schema.json    # ΣFrame + SemanticEnvelope JSON Schema
+│   ├── aid.schema.json            # Agent Identity Descriptor schema
+│   ├── sigma-card.schema.json     # Stream registration (ΣCard) schema
+│   └── cm-message.schema.json     # All CM message types schema
+├── examples/
+│   ├── 01-agent-discovery.md      # ANNOUNCE / HEARTBEAT lifecycle trace
+│   ├── 02-collision-avoidance.md  # Full cross-vessel COLREGs negotiation trace
+│   └── 03-control-delegation.md   # DELEGATE with handback trigger trace
+├── src/
+│   ├── sigmabus_core.py           # ΣFrame, SemanticEnvelope, SigmaBusClient
+│   ├── trust_model.py             # Four-dimension trust model
+│   └── run_simulation.py          # Integration test / demo
+├── config/
+│   └── nats-edge.conf             # NATS JetStream config for RPi5 edge node
+└── reference/
+    └── trust-model.md             # Trust decay curves, half-life table, class definitions
+```
+
+---
+
+## Core Concepts
+
+### Path Naming
+Every data item in ΣBUS is addressed by a fully-qualified hierarchical path:
+```
+{platform}.{domain}.{entity}.{attribute}
+
+wibo835.nav.position.gps_primary.lat
+wibo835.engine.port.temp_coolant
+wibo835.agent.nav_agent.last_decision
+wibo835.meta.stream.health
+```
+
+### ΣFrame
+Every message in the system is a ΣFrame — a typed payload wrapped in a SemanticEnvelope:
+```json
+{
+  "msg_id": "uuid-v4",
+  "msg_type": "OBSERVATION",
+  "sender": "agt-wibo835-nav-001",
+  "subject": "wibo835.nav.position.gps_primary",
+  "timestamp_us": 1716123456892000,
+  "payload": { "lat": 51.9225, "lon": 4.4792, "fix_type": "3d" },
+  "envelope": {
+    "identity_trust": 0.98,
+    "behavioral_trust": 0.94,
+    "evidence_trust": 0.97,
+    "authority_scope": ["wibo835.nav.*", "wibo835.meta.*"],
+    "half_life_s": 2.0,
+    "cross_validated": true,
+    "path": ["gps_primary_antenna", "nmea_mux", "signalk_plugin"],
+    "anomaly_score": 0.01,
+    "retention": "voyage"
+  },
+  "signature": "base64:ed25519-signature"
+}
+```
+
+### Four-Dimension Trust Model
+```
+identity_trust    — cryptographic PKI verification score (static at registration)
+behavioral_trust  — rolling Brier-scored outcome history (updated per action)
+evidence_trust    — per-message provenance chain quality (computed per ΣFrame)
+authority_scope   — declared and enforced write boundaries (hard gate)
+
+effective_trust(path) = 0 if path ∉ authority_scope
+                      = identity_trust×0.25 + behavioral_trust×0.50 + evidence_trust×0.25
+```
+
+---
+
+## Design Principles
+
+1. **Fail-safe over fail-smart.** Deterministic safety layers are never delegated to AI.
+2. **Human authority is inalienable.** No agent-to-agent agreement can override it.
+3. **Every decision is traceable.** The decision journal is load-bearing structure.
+4. **Trust decays with age.** Stale data is not trusted. Half-lives are per data type.
+5. **Metadata is richer than data.** The envelope carries more information than the payload.
+6. **Offline sovereign.** The system must operate without any cloud dependency.
+
+---
+
+## Hardware Target (Omnibus Profile)
+
+- **Compute:** Raspberry Pi 5 16GB + Hailo-10H NPU
+- **Transport:** NATS JetStream (local, 40MB memory cap)
+- **Inference Tier 1:** Phi-3-mini / Moondream-2 on Hailo-10H (< 200ms)
+- **Inference Tier 2:** Qwen2.5-7B via llama.cpp on CPU (< 2s)
+- **Physical vessel:** Wibo 835 steel sloop
+
+---
+
+## Status
+
+| Document | Status |
+|---|---|
+| SIGMABUS-CORE-SPEC.md | ✅ Draft v0.2 |
+| SIGMABUS-CM-SPEC.md | ✅ Draft v0.2 |
+| SIGMABUS-LLM-SPEC.md | ✅ Draft v0.2 |
+| SIGMABUS-UI-DESKTOP-SPEC.md | ✅ Draft v0.2 |
+| SIGMABUS-OMNIBUS-PROFILE.md | ✅ Draft v0.2 |
+| JSON Schemas | ✅ v0.2 |
+| Collision avoidance example | ✅ Complete |
+| Reference implementation | 🔧 In progress |
+
+---
+
+## License
+
+Apache License 2.0 — see [LICENSE](LICENSE).
+
+Apache-2.0 is intentional for protocol and hardware adoption: it stays
+permissive while preserving the explicit patent grant and warranty limitations
+needed by an edge-native, safety-critical ecosystem.
