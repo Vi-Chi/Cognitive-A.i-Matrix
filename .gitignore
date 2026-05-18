@@ -1,0 +1,53 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+env/
+venv/
+
+# Local runtime state
+context_store.json
+*.sqlite
+*.sqlite3
+*.db
+*.tmp
+*.bak
+
+# Local archives and exported bundles
+*.zip
+*.7z
+*.tar
+*.tar.gz
+
+# AI weights and model binaries
+*.gguf
+*.onnx
+*.hef
+*.bin
+*.pt
+*.safetensors
+
+# NATS JetStream and logs
+var/
+jetstream/data/
+*.log
+
+# Secrets and local credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_*
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
