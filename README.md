@@ -37,6 +37,9 @@ sigmabus/
 |   `-- cm-message.schema.json   CM Message JSON Schema
 |-- examples/
 |   `-- 02-collision-avoidance.md
+|-- sigma-bus-rust/
+|   |-- src/lib.rs              Rust v1 envelope types and signing helpers
+|   `-- examples/
 |-- src/
 |   |-- sigmabus_core.py         Minimal reference helpers
 |   `-- run_simulation.py        Local negotiation trace smoke simulation
