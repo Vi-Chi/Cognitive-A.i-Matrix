@@ -113,3 +113,13 @@ Invariant Ω₈ enforces action-layer isolation during `μ = DREAM`.
 *Part of the Vi-Chi Cognitive Architecture.
 Naming: Latin "Urbi et Orbi" — to the city and to the world.
 *
+
+
+---
+
+## License
+
+This project is licensed under the **GNU General Public License v3.0**.
+See [LICENSE](LICENSE) for full terms.
+
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
