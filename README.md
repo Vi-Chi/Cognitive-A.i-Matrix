@@ -53,7 +53,7 @@ no action-layer messages are dispatched.
 
 - Raspberry Pi 5 + Hailo-10H NPU
 - N-CSS Black Box Cyberdeck
-- Wibo 835 / Vento-Vivere (maritime)
+- (maritime)
 
 ---
 
@@ -65,6 +65,7 @@ no action-layer messages are dispatched.
 
 ---
 
-*Part of the Vi-Chi Cognitive Architecture.
+*
+Part of the Vi-Chi Cognitive Architecture.
 Naming: Latin "Urbi et Orbi" — to the city and to the world.
-Named after two cats.*
+*
