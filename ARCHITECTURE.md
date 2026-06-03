@@ -111,7 +111,7 @@ continuously produces the components that constitute it.
 | Primary compute | Raspberry Pi 5 |
 | Neural accelerator | Hailo-10H NPU |
 | Cyberdeck | N-CSS Black Box |
-| Vessel | Wibo 835 / Vento-Vivere |
+| Vessel |
 
 ---
 
