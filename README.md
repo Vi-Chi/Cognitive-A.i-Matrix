@@ -59,9 +59,9 @@ no action-layer messages are dispatched.
 
 ## Related
 
-- [Urbi](../urbi) — Inward coherence, memory, dream, self-audit
-- [MΣBUS](../msigmabus) — Membrane Sigma Bus
-- [Autopoiesis](../autopoiesis) — Self-maintaining substrate
+- [Urbi](https://github.com/Vi-Chi/Urbi) — Inward coherence, memory, dream, self-audit
+- [MΣBUS](https://github.com/Vi-Chi/MEBUS) — Membrane Sigma Bus
+- [Autopoiesis](https://github.com/Vi-Chi/autopoiesis) — Self-maintaining substrate
 
 ---
 
