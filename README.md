@@ -104,9 +104,9 @@ Invariant Ω₈ enforces action-layer isolation during `μ = DREAM`.
 
 ## Related
 
-- [Orbi](../orbi) — World-facing orchestration and execution
-- [MΣBUS](../msigmabus) — Membrane Sigma Bus
-- [Autopoiesis](../autopoiesis) — Self-maintaining substrate
+- [Orbi](https://github.com/Vi-Chi/Orbi) — World-facing orchestration and execution
+- [MΣBUS](https://github.com/Vi-Chi/MEBUS) — Membrane Sigma Bus
+- [Autopoiesis](https://github.com/Vi-Chi/autopoiesis) — Self-maintaining substrate
 
 ---
 
