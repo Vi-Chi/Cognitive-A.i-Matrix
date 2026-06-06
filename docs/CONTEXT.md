@@ -13,7 +13,7 @@ Four parts, named as a yin-yang triad + an independent substrate.
 | **Urbi** | Cognitive Matrix | inward: memory, dream (ΦΔ), self-audit, coherence | Yin | `Vi-Chi/Urbi` |
 | **Orbi** | Omni-AI | outward: orchestration, execution, world I/O | Yang | `Vi-Chi/Orbi` |
 | **MΣBUS** (slug `MEBUS`) | ΣBUS | the membrane bus between them; **M = Membrane** | the Tao | `Vi-Chi/MEBUS` |
-| **Autopoiesis** | — | self-maintaining substrate; economic/compute (ICP) layer is separate (`project-autopoiesis`, Motoko) | independent | `Vi-Chi/autopoiesis` |
+| **Autopoiesis** | — | self-maintaining **Rust substrate / floor**: watchdog, recovery, AND the high-performance runtime (bus hot-path + ICP economic canisters) | independent | `Vi-Chi/autopoiesis` |
 
 Naming: *Urbi et Orbi* — "to the city and to the world" (inward/outward) — and named after Vi's father's two cats.
 
@@ -38,12 +38,12 @@ RPi5 + Hailo-10H NPU (Urbi) · RPi4→RPi5/CM5 (Orbi) · N-CSS "Black Box" Farad
 ## Repos & build bases (private, owner Vi-Chi)
 
 - New scaffolds (GPLv3): `Urbi` `Orbi` `MEBUS` `autopoiesis`.
-- Real code/spec to migrate in: `sigmabus` (full ΣBUS spec + `sigma-bus-rust/`) → MEBUS · `cognitive_matrix` (Python tri-state v2.1) → Urbi · `omni-ai` (Python) → Orbi · `project-autopoiesis` (Motoko, economic) → stays separate.
+- Real code/spec to migrate in: `sigmabus` (full ΣBUS spec; its `sigma-bus-rust/` core → **Autopoiesis**, the spec/protocol → MEBUS) · `cognitive_matrix` (Python tri-state v2.1) → Urbi · `omni-ai` (Python) → Orbi · `project-autopoiesis` (Motoko/ICP, economic) → folds into Autopoiesis.
 
 ## Resolved decisions
 
-License = GPLv3 everywhere · Dream sub-engines = ΦΔ-REC/REP/GEO/COH/CTN · Build order = MΣBUS first · MΣBUS impl = Rust core (from sigma-bus-rust) + Python client/reference · **GitHub is the source of truth** (a local Google-Drive-synced working copy corrupts `.git`, so git working trees must stay off any Drive path).
+License = GPLv3 everywhere · Dream sub-engines = ΦΔ-REC/REP/GEO/COH/CTN · Build order = MΣBUS first · **Language split:** Urbi/Orbi/MΣBUS = **Python**; **Autopoiesis = the Rust substrate** that hosts the MΣBUS transport hot-path (`sigma-bus-rust`) AND the ICP economic canisters (Rust preferred, Motoko fallback). MΣBUS defines the protocol; Autopoiesis runs it fast · **GitHub is the source of truth** (a local Google-Drive-synced working copy corrupts `.git`, so git working trees must stay off any Drive path).
 
 ## Current status
 
-MΣBUS v0.1 foundation committed: `docs/PROTOCOL.md`, `schemas/`, stdlib Python reference (`src/mebus`) with Ω₈ enforced, 14 passing tests.
+MΣBUS v0.1 foundation committed (`Vi-Chi/MEBUS`): `docs/PROTOCOL.md`, `schemas/`, stdlib Python reference (`src/mebus`) with Ω₈ enforced, 14 passing tests.

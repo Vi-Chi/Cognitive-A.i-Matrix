@@ -73,7 +73,7 @@ messages below `0.1` MUST be discarded. (Per-σ age half-lives defined in the Σ
 
 ---
 
-## 5. Transport profiles
+## 5. Transport, runtime & the Autopoiesis substrate
 
 MΣBUS is transport-agnostic. Reference bindings (from ΣBUS-CM §13):
 
@@ -84,8 +84,13 @@ MΣBUS is transport-agnostic. Reference bindings (from ΣBUS-CM §13):
 | **MQTT** | IoT / maritime compatibility | QoS 1 for `cm.*` |
 | **Serial / HF** | bandwidth-constrained | zstd + binary; only `cm.alert`/`cm.propose` cross by default |
 
-The reference Python implementation (`src/mebus`) is an in-process bus for development and tests; the
-performance core will be ported from `Vi-Chi/sigmabus` → `sigma-bus-rust`.
+**Division of labour (architecture decision):** MΣBUS owns the *protocol* — the seven-field envelope,
+σ dispatch, Ω₈ semantics, schemas. The reference implementation (`src/mebus`) is **Python**: an
+in-process bus for development and tests and the canonical home of the protocol logic. The
+**high-performance Rust transport runtime is provided by the Autopoiesis substrate** — Autopoiesis is the
+systems-level "floor" that hosts the hot-path bus runtime (the `sigma-bus-rust` core migrates there from
+`Vi-Chi/sigmabus`) alongside the ICP economic canisters. **MΣBUS defines the protocol; Autopoiesis runs
+it fast.**
 
 ---
 
@@ -101,5 +106,6 @@ This v0.1 implements the envelope, validation, and **Ω₈** (the L2 keystone).
 
 ## 7. Status
 
-v0.1 foundation. Python reference + 14 passing adversarial tests (incl. Ω₈). Next: port the Rust core,
-flesh out `cm.*` payload schemas from the ΣBUS-CM spec, and the maritime membrane adapter.
+v0.1 foundation. Python reference + 14 passing adversarial tests (incl. Ω₈). Next: flesh out `cm.*`
+payload schemas from the ΣBUS-CM spec, the maritime membrane adapter, and wire the Python protocol to the
+Autopoiesis-hosted Rust transport runtime.
