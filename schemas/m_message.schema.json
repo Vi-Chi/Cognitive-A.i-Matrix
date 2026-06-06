@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Vi-Chi/MEBUS/schemas/m_message.schema.json",
+  "title": "M-Message",
+  "description": "MΣBUS seven-field membrane message: M := (v, σ, π, δ, κ, τ, μ)",
+  "type": "object",
+  "required": ["v", "σ", "π", "δ", "τ", "μ"],
+  "additionalProperties": false,
+  "properties": {
+    "v": { "type": "integer", "const": 1, "description": "protocol version" },
+    "σ": { "type": "string", "pattern": "^[a-z]+\\.[a-z0-9_.]+$",
+            "description": "signature: payload schema / message-type id, e.g. cm.propose, m.prediction_record" },
+    "π": { "type": "object", "description": "payload: message content" },
+    "δ": { "type": "string", "minLength": 1, "description": "destination: target module/agent/path" },
+    "κ": { "$ref": "#/$defs/context", "description": "context metadata (trust/provenance/expiry)" },
+    "τ": { "type": "integer", "description": "timestamp: monotonic nanoseconds (ordering, not wall clock)" },
+    "μ": { "type": "string", "enum": ["WAKE", "LIMINAL", "DREAM"], "description": "system mode" }
+  },
+  "$defs": {
+    "context": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "trust_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "provenance":  { "type": "array", "items": { "type": "string" } },
+        "t_expires":   { "type": "integer", "description": "ns after which value is stale" },
+        "anomaly_score": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}

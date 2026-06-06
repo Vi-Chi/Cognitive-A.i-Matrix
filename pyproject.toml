@@ -1,0 +1,18 @@
+[project]
+name = "mebus"
+version = "0.1.0"
+description = "MΣBUS — Membrane Sigma Bus: typed message substrate for the Vi-Chi Cognitive Architecture"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "GPL-3.0-or-later" }
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/Vi-Chi/MEBUS"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
