@@ -1,17 +1,18 @@
-﻿# Cognitive Matrix (Unified)
+﻿# Cognitive Matrix
 
-**Tri-state audit and trust-memory layer for agentic AI systems.**
+**Tri-state audit and trust-memory layer for A.I agentic systems.**
 
 A rule-based epistemic engine that audits claims before they enter confirmed
 context. Designed for offline, sovereign AI deployments on edge hardware
-(Raspberry Pi 4/5, CM5 + Hailo-10H). No external dependencies -- stdlib only for
-the core audit loop.
+(Raspberry Pi 4/5, CM5 + Hailo-10H). 
 
-> **Unified repository.** This consolidates three repo generations into one with no
-> data loss: `cognitive_matrix` (live core), `cognitive-matrix` (legacy archive), and
-> `cognitive-matrix-proto` (RPi5/Hailo prototype + per-module skills). The renamed
-> successor of this layer is **Urbi** (https://github.com/Vi-Chi/Urbi). The three
-> original repos remain intact (with full git history) under `_github_backup/`.
+-- No external dependencies, stdlib only for the core audit loop.
+
+> **Unified repository.**
+> (RPi4/Cmd5/Hailo 10H+ prototype + per-module skills).
+> This consolidates repo generations into one with no data loss:  
+> The renamed successor of this layer is **Urbi** (https://github.com/Vi-Chi/Urbi). 
+> The original repos remain intact (with full git history) under ViChis private domain.
 
 ---
 
@@ -21,8 +22,8 @@ the core audit loop.
 |---|---|---|
 | Cognitive Matrix | **Urbi** | Inward coherence, memory, dream layer, self-audit engine |
 | Omni-AI | **Orbi** | World-facing orchestration and active execution layer |
-| Sigma Bus / SigmaBUS | **MEBUS** (Membrane Sigma Bus) | Typed connective substrate |
-| Autopoiesis | **Autopoiesis** | Self-maintaining substrate |
+| Sigma Bus / EBUS / ΣBUS | **M-ΣBUS** (Membrane Sigma Bus 'Mebus') | Typed connective substrate |
+| Autopoiesis Project | **Project Autopoiesis** 'Autopoiesis' | Self-maintaining substrate |
 
 ---
 
@@ -80,13 +81,13 @@ indefinitely rather than silently discarding them.
 
 ## Prototype: platform & modules (from cognitive-matrix-proto)
 
-- **Platform:** Raspberry Pi 5 (8GB) + Hailo-10H NPU. **Vessel:** Vento-Vivere (Wibo 835).
+- **Platform:** Raspberry Pi 4 (8GB) / Cm5 16g + Hailo-10H+ NPU. 
 - **Grounding:** Friston Free-Energy Principle -- free-energy minimization drives decisions.
 - **Maritime-hardened:** sensor dropout, GPS denial, power fluctuation, storm mode.
 - **Module set** (`src/cm/`): `gss`, `cgm`, `bre`, `cal`, `cap`, `smc`, `inv`.
   Per-module `SKILL.md` under `skills/`; architecture specs under `specs/`;
   adversarial cases under `tests/`.
-- **Skills source:** maintained in Google Drive (`cognitive-matrix-proto/`, digivichi@gmail.com).
+- **Skills source:** maintained in Google Drive (`cognitive-matrix-proto/`).
 - **Safety:** advisory-only. No LLM has write authority to helm, collision-avoidance,
   battery protection, or any safety interlock.
 
@@ -144,21 +145,29 @@ Defined in `axioms.json`. Read-only -- nothing overwrites the floor.
 > *These are not instructions toward enlightenment. They are the floor that prevents
 > the fall. The apex is not defined here. It will emerge.*
 
+
 ---
 
 ## LLM connectors
 
+Trust scores are tracked per agent (`confirmed / total_queries`). Every response is
+audited before its source's trust score updates.
 `agents/connector.py` provides a unified `BaseAgent` interface over:
 
 - **Ollama** -- local models (`qwen2.5:1.5b`, `nomic-embed-text`). Zero cost, offline. Default.
 - **Gordon** -- Docker AI via CLI.
+- ** Any open source model **
+
+---
+
+## Build for A.i with A.i. 
+
 - **Claude** -- Anthropic API.
 - **OpenAI** -- GPT family.
-- **Groq** -- fast inference endpoint.
+- **Groq** -- fast inference endpoint, reverse engineering.
+- **Gemini** -- Deep Research Analyst
+- A.i Studio -- mass ingestion and comsolidator
 - Any OpenAI-compatible endpoint via `OpenAICompatAgent`.
-
-Trust scores are tracked per agent (`confirmed / total_queries`). Every response is
-audited before its source's trust score updates.
 
 ---
 
@@ -171,7 +180,8 @@ audited before its source's trust score updates.
 ```bash
 ollama pull qwen2.5:1.5b
 ollama pull nomic-embed-text
-cp .env.example .env     # add any API keys you want to use
+cp .env.example .env
+# add any API keys you want to use
 python agent.py
 ```
 
@@ -191,28 +201,6 @@ Restart=on-failure
 WantedBy=multi-user.target
 ```
 
----
-
-## Security notes
-
-- The HTTP server listens on `0.0.0.0:8888` with **no authentication** by default.
-  Bind to `127.0.0.1` or front it with an authenticating reverse proxy before exposing.
-- `context_store.json` is a local JSON file, **not** an authoritative database. No raw secrets.
-- `.env` is excluded from version control. Never commit API keys.
-- `/clear`, `/audit`, `/ask`, `/dream/run` are state-changing -- restrict on production hardware.
-- See `SECURITY.md` for the repository's private-source and secret-handling policy.
-
----
-
-## Repository hygiene
-
-Tracks the source tree and curated Markdown/text provenance. Intentionally excludes
-live environment files, runtime stores, logs, backup snapshots, Python caches,
-duplicate Office documents, and original archive exports. See
-`doc/REPOSITORY_MANIFEST.md` for the tracked/excluded content map.
-
----
-
 ## Design principles
 
 - **Context > Compute** -- clean context = reliable output; corrupted context = consistent failure.
@@ -225,14 +213,27 @@ duplicate Office documents, and original archive exports. See
 
 ## Project context
 
-A subsystem of the **Projectz / Wibo / SV Vento-Vivere** autonomous sailing stack --
-the trust, memory, and claim-integrity layer for the vessel's AI OS, separating raw
-sensor/LLM claims from verified facts, unresolved hypotheses, and rejected
-contradictions. See also `doc/COGNITIVE_MATRIX_MODULE_2026-05-17.md`,
+Vi-Chi's Cognitive Architecture: a local-first autonomous AI stack for mobile platforms, 
+Architecture: an agentic AI stack combining trust, memory, claim-integrity, runtime governance, and edge deployment.
+A subsystem of the **Projectz / Wibo 835 / SV Vento-Vivere** autonomous Navigation stack
+first deployed through SV Vento Vivere.
+The first reference deployment is SV Vento Vivere, but the architecture is designed to generalize across vessels, 
+drones, vehicles, aircraft, robotics, and off-grid autonomous systems.
+
+local-first autonomous AI systems for mobile and off-grid platforms.
+--
+the trust, memory, and claim-integrity layer for the vessel's AI OS, 
+separating raw sensor/LLM claims from verified facts, 
+unresolved hypotheses, and rejected contradictions. 
+--
+See also :
+`doc/COGNITIVE_MATRIX_MODULE_2026-05-17.md`,
 `doc/WIBO_COGNITIVE_MATRIX.md`.
 
 **Status:** archive / migration source until content is promoted into
 [Urbi](https://github.com/Vi-Chi/Urbi).
+[Orbi](https://github.com/Vi-Chi/Orbi).
+[Mebus](https://github.com/Vi-Chi/Mebus).
 
 ---
 
@@ -244,3 +245,31 @@ modifies and distributes this code must release their modifications under the sa
 ## Architect
 
 **ViChi** -- `axioms.json._meta.architect`
+Contact : digivichi@gmail.com
+
+---
+
+## Repository hygiene
+
+Tracks the source tree and curated Markdown/text provenance. Intentionally excludes
+live environment files, runtime stores, logs, backup snapshots, Python caches,
+duplicate Office documents, and original archive exports. See
+`doc/REPOSITORY_MANIFEST.md` for the tracked/excluded content map.
+
+---
+
+d local-first autonomous AI systems for mobile and off-grid platforms.
+
+# Research Focus #
+autonomous-ai
+agentic-ai
+cognitive-architecture
+edge-ai
+local-first
+maritime-ai
+robotics
+autonomous-systems
+trust-layer
+memory-systems
+claim-integrity
+embedded-ai
