@@ -1,0 +1,13 @@
+* text=auto
+
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+*.example text eol=lf
+
+*.doc binary
+*.docx binary
+*.7z binary
+*.zip binary
+*.skill binary

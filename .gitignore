@@ -1,0 +1,49 @@
+# Environment / secrets
+.env
+*.env
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+
+# Runtime state — not versioned
+context_store.json
+dream_layer.log
+.omni_start_time
+agent.log
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.pyc
+
+# Backup files (generated during development)
+*.bak
+*.bak_*
+*.tmp
+*.temp
+
+# Large binary documents (keep .md equivalents in doc/)
+doc/*.docx
+doc/*.doc
+*.7z
+*.zip
+*.skill
+GNU GPLv3 LICENSE file.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo

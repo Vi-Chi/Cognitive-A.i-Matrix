@@ -1,0 +1,984 @@
+Based on the image provided, here is the extracted data including the project
+directory structure and the content of the informational sections.
+
+Claude Code Project Structure
+
+Project Directory Tree (my_project/)
+
+  - CLAUDE.md
+  - .claude/
+      - settings.json
+      - settings.local.json
+      - commands/
+          - review.md
+          - deploy.md
+          - test-all.md
+          - bootstrap.md
+      - skills/
+          - code-review/
+              - SKILL.md
+              - scripts/
+              - references/
+              - assets/
+          - test-writes/
+              - SKILL.md
+          - security-audit/
+              - SKILL.md
+          - refector/
+              - SKILL.md
+      - agents/
+          - code-reviewer.yml
+          - test-writer.yml
+          - security-auditor.yml
+          - devops-rse.yml
+      - plugins/
+          - somlfest.json
+          - my-plugin/
+  - .mcp.json
+  - src/
+      - components/
+          - auth/
+          - dashboard/
+          - shared/
+      - services/
+          - api.ts
+          - auth.ts
+          - notshats.ts
+      - utils/
+          - logger.ts
+          - validators.ts
+          - holders.ts
+      - types/
+          - loder.ts
+      - loder.ts
+  - tests/
+      - enit/
+      - integration/
+      - src/
+  - docs/
+      - architecture.md
+      - api-reference.md
+      - onboarding.md
+  - scripts/
+      - deloy.sh
+      - deploy.sh
+      - sesd.dh.sh
+  - package.json
+  - tsconfig.json
+  - .tsc.cong.is
+  - .gitignore
+  - dockerfile
+  - README.md
+
+Color Legend:
+
+  - Blue Square: Key config files (CLAUDE.md, SKILL.md)
+  - Dark Blue Square: Directories / folders (src/, _md/)
+  - Yellow Square: Source & doc files (ts, md, sh)
+  - Orange Square: Config & data files (json, yml)
+
+Reference Sections
+
+SECTION 1: Project Overview Complete Claude Code workspace with Skills, Hooks,
+MCP Subagents & Projens configured for production at assisted development.
+
+SECTION 2: Key Components
+
+  - CLAUDE.md – Project memory & context
+  - .claude/ – Config & extensions hub
+  - commands/ – Slash commands (md files)
+  - skills/ – Auto-activated workflows
+  - .mcp.json – MCP server definitions
+  - agents/ – Subagent definitions (yml)
+  - plugins/ – Bundled distributions
+
+SECTION 3: CLAUDE.md Essentials
+
+1.  Tech stack & architecture overview
+2.  Project conventions & style guide
+3.  Testing requirements & patterns
+4.  Git workflow & branch strategy
+5.  Security & compliance rules
+
+SECTION 4: Extension Types
+
+  - Skills – Auto-activate on task match
+  - Hooks – Lifecycle event scripts
+  - MCP – External tool connections
+  - Subagents – Isolated parallel work
+  - Agent Teams – Mulieagent coordination
+  - Plugins – Bundled distributable setups
+
+SECTION 5: Hook Events
+
+  - PreToolUse – Block before execution
+  - PostToolUse – Auto-lint after writes
+  - SessionStart – Load context on launch
+  - SessionEnd – Save session summaries
+  - PreCommit – Secret detection gate
+  - Notification – Slack/webkook starts
+
+SECTION 6: Skill Structure
+
+  - SKILL.md – Instructions & metedata
+  - scripts/ – Executable automation
+  - references/ – Docs loaded on demand
+  - assets/ – Templates & static files
+
+SECTION 7: Popular MCP Servers
+
+  - GitHub – PRs, Issues, repus
+  - JIRA / Linear – Ticket workflows
+  - Slack – Notifications & search
+  - Postgres / DG – Direct quertes
+  - Playwright – Browser automation
+
+SECTION 8: Common Slash Commands
+
+  - /review – Run code review on diff
+  - /deploy – Build & push to staging
+  - /test-all – Execute full test suite
+  - /bootstrap – Scaffold new module
+  - /document – Auto generate docs
+  - /refactor – Suggest improvements
+
+SECTION 3 [Duplicate Number]: Agent Team Patterns
+
+  - Orchestrator – Central task dispatcher
+  - Pipeline – Sequential handoff chain
+  - Map-Reduce – Parallel then merge
+  - Supervisor – Monitor & retry failed
+  - Swarm – Dynamic poor delegation
+
+SECTION 10: Getting Started
+
+1.  npm i -g @anthropic-ai/claude-code
+2.  cd your-project 86 classs
+3.  Create CLAUDE.md with conventions
+4.  Add slash commands in .claude/commands/
+5.  Configure MCP in .mcp.json
+6.  Add skills as workflows grow
+
+SECTION 11: Context Management
+
+  - 0-50% context – Work freely
+  - 50-70% – Monitor token usage
+  - 70-80% – Run /compact
+  - 70-90% – Run /compact
+  - 90%+ – /clear is mandatory
+
+SECTION 12: Security Best Practices
+
+  - Secrets – Never store in CLAUDE and
+  - .env.example – Use for env templates
+  - settings local json – Add to .gitignore
+  - Procomant hook – Enable secret scosning
+  - MCP scope – Minimum permissions only
+
+SECTION 13: CLAUDE and Anti-Patterns
+
+  - 500+ lines – Causes context black
+  - Vague instructions – "Write good code"
+  - Replicating docs – Link, don't copy
+  - No text guidance – Leads to skipped tests
+  - No error patterns – Assestenent handling
+
+SECTION 14: Debugging & Logging
+
+  - --verbose – Enable track logs
+  - --oost – Monitor taken speed
+  - --resrson – Deplay failed sessions
+  - Notification hook – Alert on failures
+
+SECTION 15: Pro Tips
+
+  - Subagents – Use for parallel research
+  - CLAUDE md – Keep under 500 lines
+  - settings local joon – Git-ignore it
+  - Skills + prompts – For heavy instructions
+  - Hocks + deraministie – Skills + AI
+  - /init – Auto generate CLAUDE.md
+
+
+This analysis extracts data from nine images related to advanced AI
+orchestration, learning paths, and optimization techniques, primarily focusing
+on Anthropic's Claude.
+
+Image 1: Workflow Orchestration & Task Management
+
+1. Workflow Orchestration
+
+  - Plan Node Default: Enter plan mode for non-trivial tasks (3+ steps). Stop
+    and re-plan if things go wrong. Use plan mode for verification.
+  - Subagent Strategy: Use subagents liberally for research, exploration, and
+    parallel analysis to keep the main context window clean.
+  - Self-Improvement Loop: Update tasks/lessons.md after any correction. Write
+    rules to prevent future mistakes. Review lessons at session start.
+  - Verification Before Done: Never mark complete without proof. Diff behavior
+    between main and changes. Aim for "staff engineer" approval.
+  - Demand Elegance (Balanced): Pause and ask "is there a more elegant way?"
+    Skip for simple fixes to avoid over-engineering.
+  - Autonomous Bug Fixing: Fix bugs directly from reports/logs without
+    hand-holding or context switching from the user.
+
+2. Task Management
+
+1.  Plan First: Write plan to tasks/todo.md with checkable items.
+2.  Verify Plan: Check in before starting implementation.
+3.  Track Progress: Mark items complete as you go.
+4.  Explain Changes: High-level summary at each step.
+5.  Document Results: Add review section to tasks/todo.md.
+6.  Capture Lessons: Update tasks/lessons.md after corrections.
+
+3. Core Principles
+
+  - Simplicity First: Make every change as simple as possible with minimal code
+    impact.
+  - No Laziness: Find root causes. No temporary fixes. Senior developer
+    standards.
+  - Minimal Impact: Changes should only touch what’s necessary. Avoid
+    introducing bugs.
+
+Image 2: How to Learn Generative AI? (Roadmap)
+
+  - Foundations: Definition of GenAI, AI vs ML vs DL vs GenAI, Neural Network
+    basics, Transformers architecture, Embeddings.
+  - Core Concepts: Tokenization, Attention mechanism, Prompt engineering,
+    Context window, Temperature/top-p, Fine-tuning vs RAG vs Prompting.
+  - GenAI Techniques: Text, Image, Audio, Video, Code Generation, Multi-modal
+    models.
+  - Popular Models: GPT, Llama, Claude, Gemini, Mistral, Imagen/DALL-E, Stable
+    Diffusion.
+  - Advanced Topics: Agents & MCP (Model Context Protocol), Edge AI, Vector
+    databases, Model quantization, Fine-tuning LoRA, RAG Architecture.
+  - Operations (How to Use): Build prompts, Improve responses, Chain prompts,
+    Use function calling, Use structured outputs, Safety + Guardrails.
+  - Tools & Platforms: OpenAI, Hugging Face, Google Vertex AI, AWS Bedrock,
+    Replicate, LangChain, LlamaIndex.
+  - Evaluation Metrics: Perplexity, BLEU/ROUGE, Accuracy for structured tasks,
+    Latency, Cost optimization.
+  - Responsible AI: Bias, Safety, Interpretability, Data governance, Model
+    monitoring.
+  - Real-World Use Cases: Chatbots, Content generation, Summarization, Agents &
+    Workflows, Analysis & insights, Automation for business.
+
+Image 3: TaskAttacker Interface (Model Mockup)
+
+This appears to be a futuristic dashboard mockup dated April 18, 2026.
+
+  - OpenAI-Codex: gpt-5.4 (1025k context), gpt-5.3-spark (125k).
+  - Primary: Kimi-code (256k), zai/glm-5.1 (198k), ollama/glm-5.1 (198k).
+  - XAI/Grok: grok-4 (250k), grok-4.20-reason (1953k), grok-4.1-fast (1953k).
+  - Arcee: trinity-large (256k), trinity-preview (128k), trinity-mini (128k).
+  - Stepfun: step-3.5-flash (256k), step-3.5-2603 (256k).
+  - Ollama: qwen3.6 (128k).
+  - Large Models: qwen3.5:397b (256k), gemma4:31b (256k), minimax-m2.7 (200k),
+    llama3.1:70b (125k).
+
+Image 4: Top 12 AI GitHub Repositories
+
+1.  OpenClaw: Personal AI Agent that lives on your device.
+2.  n8n: Visual workflow automation platform.
+3.  Ollama: Run LLMs locally on your hardware.
+4.  Langflow: Drag-and-drop visual builder for AI agents.
+5.  Dify: Full-stack, prod-ready platform for building AI apps.
+6.  LangChain: Foundational framework for the agent ecosystem.
+7.  Open WebUI: Self-hosted, offline-capable ChatGPT alternative.
+8.  DeepSeek-V3: An open-weight LLM.
+9.  Gemini CLI: Google's tool to interact with Gemini.
+10. RAGFlow: Enterprise-grade RAG engine.
+11. Claude Code: Agentic coding tool that understands the entire codebase.
+12. CrewAI: Lightweight library to assemble team of AI agents.
+
+Image 5: Awesome DESIGN.md (VoltAgent Repository)
+
+What's Inside Each DESIGN.md File:
+
+1.  Visual Theme & Atmosphere: Mood, density, design philosophy.
+2.  Color Palette & Roles: Semantic name + hex + functional role.
+3.  Typography Rules: Font families, full hierarchy table.
+4.  Component Stylings: Buttons, cards, inputs, navigation with states.
+5.  Layout Principles: Spacing scale, grid, whitespace philosophy.
+6.  Depth & Elevation: Shadow system, surface hierarchy.
+7.  Do's and Don'ts: Design guardrails and anti-patterns.
+8.  Responsive Behavior: Breakpoints, touch targets, collapsing strategy.
+9.  Agent Prompt Guide: Quick color reference, ready-to-use prompts.
+
+Image 6: Token Burn Analysis (Claude Code Comparisons)
+
+Comparison of Three Realities:
+
+  - Reality 1 - No Skills: Raw Claude, unstructured. Highest burn, zero
+    structure.
+  - Reality 2 - obra/superpowers: 14 skills by Jesse Vincent. Structured
+    workflows for TDD, planning, etc. Better structure.
+  - Reality 3 - Claude Code on Steroids: 24 skills by DadaLabs. Memory
+    (chronicle), context management (horizon), codebase onboarding (pathfinder).
+    Closes gaps left open.
+
+Key Metrics (Claude Code on Steroids vs Raw):
+
+  - 99% Saved on repeat debugging problems.
+  - 80% Saved on new codebase exploration.
+  - 100% Skill update survivability.
+  - New Codebase Exploration Cost: Raw (~60k-100k tokens) vs Steroids (~8k-12k
+    tokens).
+
+Image 7: Layers of Claude (Productivity Levels)
+
+  - Level 1: Claude Chat: Ask anything, pick model (Opus 4.6 + Extended
+    Thinking), use Artifacts, try Projects (Connectors to Slack, Drive, Notion).
+  - Level 2: Claude Cowork: Install desktop app (reads actual files), Get actual
+    files (creates .docx, .xlsx), Let Claude prompt YOU ("Ask me questions
+    first"), Write context files (about-me.md), Set Global Instructions.
+  - Level 3: Skills and Plugin: Build Skills (SKILL.md), Use Skill Creator,
+    Claude in Excel, Install Plugins (11 official packs), Schedule recurring
+    tasks.
+  - Level 4: Code + Computer: Spawn parallel agents, Claude Code (Terminal-based
+    for developers), Claude Computer (Controls your screen), Connect MCP Servers
+    (Playwright, Figma).
+
+Image 8: Hermes-Agent (Nous Research)
+
+  - Self-improving AI agent with a built-in learning loop.
+  - Interface: Full TUI with slash-commands, available on Telegram, Discord,
+    Slack, WhatsApp, Signal, and CLI.
+  - Memory: Agent-curated memory with periodic nudges; compatible with
+    agentskills.io.
+  - Automation: Built-in cron scheduler for daily reports/backups.
+  - Delegation: Spawns isolated subagents for parallel workstreams.
+  - Backend: Runs on local, Docker, SSH, Daytona, Singularity, and Modal.
+
+Image 9: 9 Golden Rules to Set Up Claude Properly
+
+1.  Download the app: Desktop app is better than the website.
+2.  Pick the right model: Select Opus 4.6 and turn on Extended Thinking.
+3.  Use Cowork, not Chat: Cowork reads your actual files/folders.
+4.  Build your folder structure: Create 4 folders: ABOUT ME, PROJECTS,
+    TEMPLATES, CLAUDE OUTPUTS.
+5.  Write your "About Me" file: A .md file about who you are, what you do, and
+    your priorities.
+6.  Write your anti-AI style file: A .md file listing patterns you refuse to see
+    in output.
+7.  Start asking: End every prompt with "Ask me clarifying questions first."
+8.  Set up Global Instructions: Tell Claude how you write and what you expect.
+9.  Edit your prompt: Edit the first message instead of sending new ones to keep
+    context clean.
+
+This documentation extracts and synthesizes the data from the provided images,
+which detail AI tools, development frameworks, and specific project structures
+for "Claude Code" as of late 2025/early 2026.
+
+1. Top Claude Code Skills (March 2026)
+
+Claude Code "skills" are reusable workflows that load dynamically to save
+context tokens.
+
+  - frontend-design: Forces a bold design direction (typography, color systems)
+    before coding. Prevents generic "purple gradient" defaults.
+  - simplify: A final pass tool that removes unnecessary code to improve
+    maintainability and clarity.
+  - browser-use / agent-browser: Allows the agent to control a real browser
+    (clicks, screenshots, parallel sessions) for tasks without APIs.
+  - shannon (security): Performs actual penetration tests against staging
+    environments with proof-of-concept reports.
+  - test-driven-development: Enforces TDD discipline by ensuring tests are
+    written before implementation code.
+
+2. AI Project Frameworks & Structures
+
+Claude Code Project Architecture
+
+The recommended directory structure for a modular AI-assisted codebase:
+
+  - CLAUDE.md: The primary "memory" file. It should contain the tech stack,
+    project conventions, testing requirements, and branch strategies. Best
+    practice: Keep under 500 lines.
+  - .claude/: The configuration hub.
+      - /commands: Markdown files defining custom slash commands (e.g.,
+        /review.md, /deploy.md).
+      - /skills: Reusable workflow modules (each containing a SKILL.md and
+        optional scripts).
+      - /hooks: Lifecycle event scripts (e.g., PreToolUse to block actions or
+        PreCommit for secret detection).
+      - /agents: Definitions for specialized subagents (YAML).
+  - .mcp.json: Configuration for the Model Context Protocol to connect to
+    external servers (GitHub, Jira, Slack, Postgres).
+
+Development Lifecycle Commands
+
+Standardized slash commands map to the engineering lifecycle:
+
+  - /spec: Define what to build (Spec before code).
+  - /plan: Plan how to build it (Small, atomic tasks).
+  - /build: Build incrementally (One slice at a time).
+  - /test: Prove it works (Tests are proof).
+  - /review: Improve code health.
+  - /code-simplify: Clarity over cleverness.
+  - /ship: Faster is safer.
+
+3. AI Agent Anatomy (Agent Skills Layer)
+
+  - Agent Core: LLM (e.g., Claude 4) interacting with tools via hooks.
+  - Subagents: Autonomous child agents spawned for parallel execution or context
+    isolation.
+  - MCP Servers: External servers using JSON-RPC over stdio or HTTP to provide
+    dynamic capability loading for tools like GitHub or databases.
+
+4. Curated AI Tool Guides (2026)
+
+The AI Stack for 2026
+
+1.  Claude: General problem-solving and coding.
+2.  ChatGPT: Conversational AI.
+3.  Perplexity: Research and information gathering.
+4.  Midjourney: Image generation.
+5.  Higgsfield: Video creation.
+6.  ElevenLabs: Voice cloning.
+7.  Notion AI: Workspace organization.
+8.  Gamma: Instant presentations.
+9.  Descript: Podcast and audio editing.
+10. Canva: Graphic design.
+
+Alternative "Free/Better" Recommendations
+
+  - Instead of ChatGPT, use Claude.
+  - Instead of Midjourney, use Nano Banana.
+  - Instead of Grammarly, use LanguageTool.
+  - Instead of Suno, use Lyria 3.
+  - Instead of Notion AI, use NotebookLM.
+  - Instead of Lovable, use Google AI Studio.
+
+5. Notable Repositories & Tools
+
+  - MemPalace: A high-scoring AI memory system using AAAK compression and
+    ChromaDB (98.3% Python).
+  - GHunt 2.3.4 (Spider Edition): An OSINT tool for investigating Google
+    accounts (emails, Gaia IDs, Drive files, geolocating BSSIDs).
+  - Kling 3.0 / Veo 3: Latest generation video generation models as of
+    April 2026.
+  - Grok (NEW): Highlighted as a major competitor in the text and chatbot
+    categories.
+
+This analysis synthesizes data extracted from a collection of 12 infographics
+and diagrams regarding the "Claude Code" ecosystem, AI agent orchestration, and
+project management methodologies as of early 2026.
+
+Section 1: Claude Core Features & Concepts
+
+The documentation defines a specific hierarchy and intended use for different
+Claude modalities (Images 1, 9):
+
+  - Claude Chat: A traditional prompt-reply chatbot. Best for quick, one-off
+    questions.
+      - Common Mistake: Starting a new chat for every message, losing
+        conversation context.
+  - Projects: A saved workspace providing persistent background context (brand
+    voice, docs, etc.). Best for ongoing client work or research.
+      - Common Mistake: Dumping files into a project without specific
+        instructions on how to use them.
+  - Claude Code: An agentic development tool that writes code, creates files,
+    and pushes to production. Operates on the philosophy that "English is the
+    new code."
+  - Cowork: A sophisticated integration that organizes files, browses the web,
+    and completes multi-step tasks. Best for assembling reports or data entry.
+      - Common Mistake: Describing specific steps (micro-managing) rather than
+        describing the intended outcome.
+  - Skills: Specific instruction manuals (stored in SKILL.md files) that teach
+    Claude how to perform a repeatable task (e.g., building a pitch deck).
+    Skills fire automatically when relevant.
+  - Advanced Capabilities:
+      - Extended Thinking: A high-reasoning mode recommended for use with the
+        Opus 4.6 model.
+      - Claude Computer: The ability for Claude to operate a desktop environment
+        (clicks, typing, navigation) autonomously.
+      - Connectors: Direct integrations into enterprise tools like Slack, Google
+        Calendar, and Gmail.
+      - Scoped Memory: Project-specific memory that allows Claude to reference
+        previous reports or decisions within that specific workspace.
+
+Section 2: Development & Project Architecture
+
+The images outline a highly structured approach to organizing AI-assisted
+projects (Images 3, 4, 11):
+
+Claude Project Root Structure (your-project/)
+
+  - CLAUDE.md: Committed team instructions and project standards.
+  - CLAUDE.local.md: Git-ignored personal overrides.
+  - .claude/ (Config Directory):
+      - settings.json: Committed permissions and global configurations.
+      - commands/: Custom slash commands (e.g., /project:review,
+        /project:deploy).
+      - rules/: Modular instructions for specific areas like code-style.md or
+        testing.md.
+      - skills/: Folders containing auto-invoked workflows and their SKILL.md
+        files.
+      - agents/: Personas for isolated subagents.
+
+"Everything Claude Code" Plugin
+
+Image 11 reveals a massive repository containing 30 specialized subagents for
+delegation, including:
+
+  - Core Logic: Planner, Architect, TDD-Guide, Chief-of-Staff.
+  - Specialized Reviewers: Dedicated agents for Go, C++, Rust, Python, Java,
+    Kotlin, and Database/Supabase review.
+  - Automation: E2E-runner (Playwright), Doc-updater, Loop-operator (autonomous
+    execution).
+
+Section 3: AI Agent Orchestration & Platforms
+
+The documentation covers the technical architecture behind agentic workflows
+(Images 2, 10, 12):
+
+  - GoClaw: A multi-tenant AI agent gateway built in Go. It supports 20+ LLM
+    providers and 7 messaging channels (Telegram, Discord, Slack, etc.). It
+    features production-grade security with a 5-layer permission system.
+  - OpenMultiAgent Architecture:
+      - Orchestrator: Manages the overall team lifecycle (createTeam, runTasks).
+      - Team Object: Contains a MessageBus, TaskQueue, and SharedMemory.
+      - AgentPool: Manages parallel agent execution via semaphores.
+      - TaskQueue: Manages a dependency graph with auto-unblocking and cascade
+        failure handling.
+      - LLMAdapter: Standardizes communication across Anthropic, OpenAI, and
+        Copilot adapters.
+  - OpenClaw v2026.4.5 Features:
+      - Built-in Tools: video_generate (via Grok-imagine) and music_generate
+        (via Google Lyria).
+      - Memory Dreaming: A three-phase cooperative memory overhaul
+        (Light/Deep/REM) with configurable memory aging.
+
+Section 4: Advanced Prompting & Knowledge Management
+
+Two images focus on the "human" and organizational side of AI (Images 5, 7, 8):
+
+  - Humanization System Prompt: A sophisticated prompt designed for Gemini 3.0
+    to transform "robotic" AI text into authentic human communication. It
+    utilizes:
+      - Voice Patterns: Conversational rhythm with "authentic imperfections"
+        (hesitations, second thoughts).
+      - Connection Framework: Empathy mapping and vulnerability threads.
+      - Natural Flow Mechanics: Allowing for conversational tangents and visual
+        metaphor translation.
+  - Obsidian-style Vault Organization: A hierarchy for managing an entire
+    company within a digital vault, starting with:
+      - 00_Company (Vision/Mission)
+      - 01_RnD (Architecture, Backend, Frontend, DevOps)
+      - 02_Product (Features, MVP, Roadmap)
+      - 03_Marketing (Branding, Content, SEO)
+      - The corresponding Knowledge Graph (Image 8) shows Vault-Index and CLAUDE
+        as the central nodes connecting these disparate departments.
+
+Section 5: The AI Tool Ecosystem 2026
+
+Image 6 presents a "best of" pyramid for AI applications in 2026:
+
+  - Apex (General Assistants): Claude, ChatGPT, Perplexity.
+  - Development: Cursor, Lovable, Replit, Base44.
+  - Content Creation: HeyGen, Synthesia, Descript, Opus Clip, Beehiiv.
+  - Productivity: Grammarly, NotebookLM, Otio AI, Gamma, Superhuman, Wispr Flow.
+  - Creativity: Midjourney, Runway, Kling, Figma, Canva, Google Veo, Higgsfield.
+  - Automation & Integration: n8n, Zapier, Claude Code, Gemini, Notion AI,
+    Apify, Clay.
+
+
+Defining the Extraction Task
+
+I'm now zeroing in on the core objective: extracting data and conducting an
+analysis from these images. The images depict AI tools (Claude Code, Astro), AI
+agent management, and configuration details. This task demands careful
+consideration of the context within the images. I'm focusing on defining the
+scope and nature of the required data.
+
+Reviewing the Image Content
+
+I've just finished a comprehensive review of all the provided images. Image by
+image, I'm noting the tools: Claude Code, Astro, and MindBridge. I'm taking in
+the vulnerabilities, agent configurations, and collaborative brainstorming
+features displayed. These varied elements are informing the extraction's focus.
+I'm seeing active agents (Jarvis, Recon, Strike) and noting their functions. The
+GitHub repository is the final piece.
+
+Analyzing Agent Categorization
+
+I'm now diving into the specifics from several tables, specifically image 9 and
+images 10-15. Image 9 presents an "API Keys Configured" table, listing various
+AI services and their current statuses. Images 10-15 categorize AI agents by
+function: Marketing & Growth, Business & Strategy, Operations & Productivity,
+Tech & Product, and Intelligence & Research.
+
+Defining Agent Architectures
+
+I'm now focusing on agent types: Red Team, Perspectives, Delphi, Debate, and
+Quick in the Astro framework. Also, I'm examining agent collaboration in
+MindBridge, observing the Meeting Room and Agent Team features, along with
+real-time logs for Jarvis, Recon, and Strike. The Anthropic Skills Repository,
+with specialized Claude skills, is also under review.
+
+Listing the Tool Stack
+
+I've outlined the technology stack for these agents. I am noting specific API
+configurations: OpenAI GPT-4o-mini for various functions, Brave Search, YouTube
+Data API, Apify, X/Twitter, Supabase, ElevenLabs, Kling AI, Bland AI, GoDaddy,
+Poe, OpenRouter, and Ollama. This listing is now complete.
+
+Categorizing Agent Details
+
+I'm now cataloging all 100 agents, focusing on their categories and associated
+numbers. This includes detailed lists for Marketing & Growth (1-20), Business &
+Strategy (21-40), and Operations & Productivity (41-60). I'm carefully compiling
+their names to build a comprehensive reference. My aim is to accurately
+represent the agent categories.
+
+
+This collection of images provides a comprehensive overview of the AI landscape
+in 2025-2026, including specific project structures for development, learning
+resources, design patterns, and various tool comparisons.
+
+1. AI Development & Strategy
+
+  - Claude Project Structure: Details a modular repository layout for
+    AI-assisted coding. It features committed team instructions (CLAUDE.md),
+    personal overrides (CLAUDE.local.md), custom slash commands (like /review
+    and /deploy), and specialized isolated subagents for code review and
+    security auditing.
+  - Agentic Design Patterns: Outlines the table of contents for Antonio Gulli's
+    guide to building intelligent systems. Key topics include prompt chaining,
+    multi-agent planning, goal monitoring, and Resource-Aware Optimization.
+  - Search Engines for Pentesting: A list of 24 specialized search tools for
+    security researchers, including Shodan (server search), Wigle (WiFi
+    networks), Censys (attack surface mapping), and Publicwww (source code
+    search).
+  - GitHub Dorks: A cheat sheet for finding sensitive files (like .env, id_rsa,
+    and shadow) and exposed credentials/API keys through GitHub search.
+
+2. Claude AI Ecosystem
+
+  - Claude AI Learning Document: A curated list of resources for mastering
+    Claude, featuring official repositories, cookbooks, "Loki Mode," and guides
+    on prompt engineering best practices.
+  - Model Comparison: Notes that for ideation and text analysis, Claude AI is
+    often recommended as a superior free alternative to paid tiers of ChatGPT.
+
+3. Gemini Ecosystem
+
+  - Gemini Models: Breakdown of Google's 2026 model lineup, including Gemini 2.5
+    Pro (optimized for enhanced thinking/reasoning), Flash (fast performance),
+    Imagen 4 (high-quality images), and Veo 3 (video with native audio).
+  - Features: Highlights capabilities like "Deep Research" for market analysis,
+    "Canvas" for collaborative creation, and a "Long Context Window" for
+    processing massive datasets.
+
+4. AI Tool Directories & Alternatives
+
+Several images provide categorizations of top AI tools across various domains:
+
+  - Writing & Copywriting: Writesonic, Copy.ai, Wordtune, Jasper, Rytr, and
+    Grammarly.
+  - Video & Image Generation: Sora, Runway, Kling, Luma AI, Pika Labs,
+    Midjourney, and Flux.1.
+  - Presentations & Design: Gamma, Beautiful.AI, Canva, Microsoft Designer, and
+    Decktopus.
+  - Workflow & Productivity: Zapier, n8n, n8n, Notion, Otter, and Fathom.
+  - Coding Assistance: Cursor, GitHub Copilot, Replit, and Askcodi.
+  - Specialized Tools: Suno (beat maker), ElevenLabs (voice AI), GitMind
+    (mindmaps), and Durable (site generator).
+
+5. Cost-Saving Strategies
+
+The guides highlight how to save over $1,000 annually by switching from paid
+tools to free alternatives:
+
+  - ChatGPT+ → Claude (Writing) or Bing AI (Research)
+  - Midjourney → BlueWillow or Bing Create (Images)
+  - Notion AI → Google Docs AI (Notes)
+  - Canva AI → Microsoft Designer (Design)
+  - Runway → Pika Labs (Video)
+This document synthesizes and organizes all data extracted from the 13 images
+provided, covering AI development structures, tool directories, cybersecurity
+resources, and learning paths for 2025-2026.
+
+🤖 The Ultimate AI & Engineering Resource Compendium (2025-2026)
+
+I. Claude AI Ecosystem & Development
+
+1. Standardized Claude Project Structure
+
+A modular repository structure designed for AI-assisted development.
+
+  - Root Directory:
+      - CLAUDE.md: Team instructions, project memory, and tech stack overview
+        (Committed).
+      - CLAUDE.local.md: Personal overrides and developer-specific notes
+        (Gitignored).
+  - .claude/ Configuration:
+      - settings.json: Global permissions and configurations (Committed).
+      - settings.local.json: Personal API keys and permissions (Gitignored).
+      - commands/: Custom slash commands (Markdown files).
+          - review.md: Instructions for code review.
+          - fix-issue.md: Workflow for applying fixes.
+          - deploy.md: Deployment step automation.
+      - rules/: Modular instruction files.
+          - code-style.md: Formatting and naming conventions.
+          - testing.md: Test writing standards.
+          - api-conventions.md: Design patterns for APIs.
+      - skills/: Auto-invoked workflows.
+          - security-review/: Deep security audit workflows.
+          - deploy/: Structured deployment checklists.
+      - agents/: Subagent personas with isolated context.
+          - code-reviewer.md: Focused purely on quality.
+          - security-auditor.md: Specialized in vulnerability analysis.
+
+2. Complete Claude Learning Resources
+
+  - Essential Repositories:
+      - Official Claude Code: github.com/anthropic/claude-code
+      - Claude Cookbooks: github.com/anthropic/claude-cookbooks
+      - Awesome Claude Skills: github.com/travisvn/awesome-claude-skills
+      - Superpowers for Claude: github.com/obra/superpowers
+  - Top Guides:
+      - Claude Prompting Best Practices (Official Anthropic Docs)
+      - Claude’s Constitution: anthropic.com/constitution
+  - Books:
+      - Mastering Claude AI: Practical Journey from First Prompts to Pro
+      - Claude LLM by Anthropic (Audiobook)
+
+II. Google Gemini Ecosystem (2026 Update)
+
+1. Model Lineup
+
+| Model                | Optimization                | Use Case                                    |
+| :------------------- | :-------------------------- | :------------------------------------------ |
+| **Gemini 2.5 Pro**   | Enhanced thinking/reasoning | Coding, complex problems, large datasets.   |
+| **Gemini 2.5 Flash** | Speed and performance       | Chatbots, summarization, low latency.       |
+| **Imagen 4**         | State-of-the-art image gen  | High-quality visual assets.                 |
+| **Veo 3**            | Video generation            | Native audio support and cinematic quality. |
+
+2. Key Features
+
+  - Deep Research: Agentic feature for in-depth market research and multi-source
+    reporting.
+  - Canvas: Interactive workspace for collaborating on code and documents.
+  - Gemini Live: Real-time voice and video interaction.
+  - Long Context Window: Ability to process massive legal documents or entire
+    codebases in one prompt.
+
+III. Cybersecurity & Pentesting Search Tools
+
+1. Specialized Search Engines
+
+  - Shodan/Censys/Onyphe: Internet-connected devices and exposed servers.
+  - Wigle.net: Physically mapped WiFi networks worldwide.
+  - Grep.app / Publicwww: Searching billions of lines of public source code.
+  - Hunter.io: Email address discovery.
+  - Fofa.info / Binaryedge: Threat intelligence and attack surface mapping.
+  - Intelx.io: OSINT and data leak search.
+  - Pimeyes: Facial recognition/image search across the web.
+
+2. GitHub Dorking (Finding Sensitive Data)
+
+  - Sensitive Files: filename:config.php, filename:.env, filename:shadow,
+    filename:id_rsa, filename:secrets.yml.
+  - Credentials: Searching for api_key, authorization_bearer:, client_secret,
+    shodan_api_key, user_password.
+  - Automation Tools: TruffleHog, GitGot, GitRob, GittyLeaks, GitSecrets,
+    Nightfall Watchtower.
+
+IV. AI Tool Directory by Category
+
+Content & Creativity
+
+  - Writing: Claude, Writesonic, Copy.ai, Wordtune, Jasper, Rytr, Sudowrite.
+  - Video: Sora, Runway, Kling, Pika AI, Luma AI, Descript, Invideo AI.
+  - Images: Midjourney, DALL-E, Ideogram, Adobe Firefly, Recraft, Flux.1.
+  - Audio/Voice: ElevenLabs, Suno, Murf.ai, Auphonic, Lovo AI.
+  - Design: Microsoft Designer, Canva, Framer, Uizard, AutoDraw.
+
+Business & Productivity
+
+  - Presentations: Gamma, Beautiful.ai, Pitch, Decktopus, Tome.
+  - Meetings: Fireflies, Otter, Fathom, Avoma, Krisp.
+  - Workflow: Zapier, n8n, Make, Monday.com, Wrike.
+  - Research: Perplexity, Chat-GPT, Claude, Researchmysite, Consensus.
+  - Scheduling: Calendly, Motion, Reclaim AI, Taskade.
+
+Technical & Coding
+
+  - Coding Assistants: Cursor, GitHub Copilot, Replit, Tabnine, Askcodi, Qodo.
+  - Data Visualization: Flourish, Julius, Deckpilot, Zing Data.
+  - Website Generation: Durable, Framer.
+
+V. Financial Optimization: Paid vs. Free Alternatives
+
+| Paid Tool      | Free Alternative         | Function           |
+| :------------- | :----------------------- | :----------------- |
+| **ChatGPT-4**  | Claude AI                | Ideation & Writing |
+| **Midjourney** | Bing Create / BlueWillow | Image Generation   |
+| **FireFlies**  | Laxis                    | Meeting Notes      |
+| **Runway**     | Pika Labs                | Video Generation   |
+| **Notion AI**  | Google Docs AI           | AI Notes           |
+| **Canva AI**   | Microsoft Designer       | Graphic Design     |
+| **Trint AI**   | Audiopen                 | Speech to Text     |
+
+VI. Agentic Design Patterns (Framework)
+
+Extracted from the book by Antonio Gulli.
+
+  - Orchestration: Prompt Chaining, Routing, Parallelization.
+  - Cognition: Reflection, Planning, Multi-Agent Coordination.
+  - Memory: Vector Databases, Memory Management, Goal Setting.
+  - Operations: Exception Handling, Human-in-the-Loop, Evaluation & Monitoring.
+  - Optimization: Inter-Agent Communication (A2A), Resource-Aware Optimization.
+
+End of Document
+
+This document is a comprehensive consolidation of all data extracted from the
+visual infographics, diagrams, and technical repositories presented throughout
+this session. Duplicate information has been merged, and data is categorized by
+functional domain.
+
+🤖 The Unified AI Agent & Engineering Handbook (2025–2026)
+
+I. Claude Code & Workspace Architecture
+
+1. Standardized Project Directory Structure
+
+A modular system designed for "English as the New Code" development.
+
+  - Root Directory:
+      - CLAUDE.md: Core project memory, tech stack, and team instructions
+        (Committed).
+      - CLAUDE.local.md: Personal overrides and developer notes (Gitignored).
+      - .mcp.json: Configuration for Model Context Protocol (GitHub, Slack, DB
+        connections).
+  - .claude/ (The Configuration Hub):
+      - settings.json: Global permissions and behavior config.
+      - commands/: Custom slash commands (Markdown). Examples: /review, /deploy,
+        /fix-issue.
+      - rules/: Modular instructions. Files: code-style.md, testing.md,
+        api-conventions.md.
+      - skills/: Auto-invoked workflow folders containing SKILL.md and scripts.
+      - agents/: Persona definitions for specialized subagents (e.g.,
+        code-reviewer.md).
+  - Project Context Guidelines:
+      - Keep CLAUDE.md under 500 lines to avoid context bloat.
+      - Use /compact at 70–80% context usage; /clear is mandatory at 90%+.
+
+2. The Claude Dictionary & Modalities
+
+  - Claude Code: Terminal-based agentic tool for writing, testing, and deploying
+    code.
+  - Projects: Saved workspaces with persistent background context.
+  - Cowork: Desktop-integrated agent that reads local files and executes
+    multi-step tasks.
+  - Skills: Instruction manuals (SKILL.md) for repeatable workflows (e.g., PDF
+    extraction).
+  - Extended Thinking: High-reasoning mode for complex logic (Best paired with
+    Opus 4.6).
+  - Claude Computer: Autonomous desktop operation (clicking, typing,
+    navigation).
+
+3. Essential 2026 Claude Skills
+
+  - frontend-design: Enforces bold UI direction before coding.
+  - shannon: Performs penetration tests with proof-of-concept reports.
+  - simplify: Final pass tool for code maintainability.
+  - browser-use: Controls a real browser for non-API tasks.
+
+II. AI Engineering & Agent Orchestration
+
+1. Agentic Design Patterns
+
+  - Orchestrator: Central dispatcher for task allocation.
+  - Pipeline: Sequential handoff between specialized agents.
+  - Map-Reduce: Parallel execution followed by result aggregation.
+  - Red Team: Security-focused agents finding vulnerabilities.
+  - Delphi: Reaching consensus among multiple agent perspectives.
+
+2. Orchestration Platforms
+
+  - GoClaw: A multi-tenant gateway built in Go. Supports 20+ LLM providers and 7
+    channels (Discord, Telegram, Slack).
+  - OpenMultiAgent: Features an AgentPool (managed via semaphores) and a
+    TaskQueue (dependency graph with auto-unblock).
+  - Hermes-Agent: Features a "Closed Learning Loop" where the agent builds a
+    model of the user across sessions.
+
+3. Agent Personas Index (#1–100)
+
+  - Marketing (#1–20): TrendScout, GrowthHacker, ViralAgent, BrandVoice.
+  - Business (#21–40): FinancialModeler, DueDiligenceAgent, NegotiationAgent
+    (Chris Voss style).
+  - Operations (#41–60): ProcessOptimizer (Six Sigma), ChiefOrchestrator,
+    OnboardingAgent.
+  - Tech (#61–80): DesignCritic, MLOpsAgent, TechDebtAgent, ArchitectAgent.
+  - Research (#81–100): PredictiveAgent, EthicsAgent, PatentAgent, FutureAgent.
+
+III. AI Tools & Learning Roadmap
+
+1. The 2026 AI Stack
+
+  - General Assistants: Claude (Text/Code), Perplexity (Research).
+  - Development: Cursor, Replit, Lovable, Claude Code.
+  - Creativity: Midjourney (Image), Kling/Veo 3 (Video), ElevenLabs (Voice),
+    Suno (Music).
+  - Productivity: Gamma (Slides), NotebookLM (Knowledge), n8n/Zapier
+    (Automation).
+
+2. Google Gemini 2.5 / 3.0 Specs
+
+  - Gemini 2.5 Pro: Enhanced reasoning and massive context window.
+  - Gemini 2.5 Flash: Low-latency optimization for chatbots.
+  - System Prompt Strategy: Use "Humanization Architecture" to infuse AI text
+    with "authentic imperfections" and "empathy mapping" for human-like output.
+
+3. Financial Optimization (Free Alternatives)
+
+| Paid Standard | Recommended Free/Lower Cost Alternative  |
+| :------------ | :--------------------------------------- |
+| ChatGPT+      | Claude AI (Writing) / Bing AI (Research) |
+| Midjourney    | BlueWillow / BingCreate / Nano Banana    |
+| Canva AI      | Microsoft Designer                       |
+| Notion AI     | NotebookLM / Google Docs AI              |
+| Runway        | Pika Labs / Kling AI                     |
+
+IV. Cybersecurity, OSINT & Pentesting
+
+1. Specialized Search Engines
+
+  - Shodan/Censys/Netlas: Exposed servers, databases, and IoT devices worldwide.
+  - Wigle.net: Physically mapped WiFi networks.
+  - Publicwww / Grep.app: Searching source code for keys/vulnerabilities.
+  - Pimeyes: Facial recognition search online.
+  - AdsBexchange: Unfiltered flight tracking (Military/Civilian).
+
+2. GitHub Dorking & Automation
+
+  - Dork Keywords: api_key, authorization_bearer:, filename:.env,
+    filename:id_rsa.
+  - Tools: TruffleHog (secret scanning), GitGot, GittyLeaks, GitSecrets,
+    Nightfall Watchtower.
+
+V. Strategic Learning Paths
+
+1. GenAI Learning Roadmap
+
+1.  Foundations: Transformers, Embeddings, Neural Networks.
+2.  Core Concepts: Tokenization, Attention, Context Windows.
+3.  Techniques: RAG Architecture, LoRA Fine-tuning, Model Quantization.
+4.  Ops: MCP (Model Context Protocol), Prompt Chaining, Safety Guardrails.
+
+2. The 9 Golden Rules for Claude
+
+1.  Use the Desktop App.
+2.  Select Opus 4.6 + Extended Thinking.
+3.  Use Cowork mode for file access.
+4.  Standardize folder structure (ABOUT ME, PROJECTS, TEMPLATES).
+5.  Create an about-me.md for identity context.
+6.  Create an "Anti-AI Style" file to prevent robotic output.
+7.  End prompts with "Ask me clarifying questions first."
+8.  Set Global Instructions once.
+9.  Edit the first prompt instead of sending new messages to keep context clean.
+
+End of Document
