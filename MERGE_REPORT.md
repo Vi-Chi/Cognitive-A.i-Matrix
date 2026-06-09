@@ -70,3 +70,6 @@ Root README.md is a generated index; all original READMEs preserved in _conflict
 | specs\.gitkeep | cognitive-matrix-proto | unique |
 | src\cm\.gitkeep | cognitive-matrix-proto | unique |
 | tests\.gitkeep | cognitive-matrix-proto | unique |
+
+## Clean merge update (2026-06-09)
+README.md: all three READMEs merged into one (unique sections from legacy + proto folded into the live core README). .gitattributes: union of both variants. LICENSE: single GPLv3 (identical license in all repos; only one kept). _conflicts/ removed -- everything is now in single root files; originals remain in _github_backup/ with full history.
