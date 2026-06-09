@@ -2,8 +2,8 @@
 
 **Tri-state audit and trust-memory layer for A.I agentic systems.**
 
-A rule-based epistemic engine that audits claims before they enter confirmed
-context. Designed for offline, sovereign AI deployments on edge hardware
+A rule-based epistemic engine that audits claims before they enter confirmed context. 
+Designed for offline, sovereign AI deployments on edge hardware.
 (Raspberry Pi 4/5, CM5 + Hailo-10H). 
 
 -- No external dependencies, stdlib only for the core audit loop.
