@@ -15,6 +15,11 @@
     "confidence":      { "type": "number", "minimum": 0, "maximum": 1 },
     "domain":          { "type": "string", "description": "DomainTag, e.g. maritime.nav" },
     "causal_parents":  { "type": "array", "items": { "type": "string" }, "description": "CGM node refs (genealogy)" },
-    "mu_at_time":      { "type": "string", "enum": ["WAKE", "LIMINAL", "DREAM"] }
+    "mu_at_time":      { "type": "string", "enum": ["WAKE", "LIMINAL", "DREAM"] },
+    "error_type":      { "type": ["string", "null"], "description": "high_conf_wrong | uncertain_right | nominal" },
+    "tau_start":       { "type": ["integer", "null"] },
+    "tau_end":         { "type": ["integer", "null"] },
+    "reversal_candidate": { "type": "boolean", "description": "flagged for Dream reversal learning" },
+    "void_related":    { "type": "boolean", "description": "touches a knowledge-graph void" }
   }
 }

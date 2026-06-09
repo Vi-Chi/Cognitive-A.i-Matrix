@@ -1,4 +1,14 @@
-GNU GENERAL PUBLIC LICENSE
+﻿To use the GNU General Public License v3 (GPLv3) for your repository, create a file named LICENSE (with no file extension) in the root directory of your project and paste the following exact text into it.
+Choosing GPLv3 provides strong copyleft protection for ΣBUS, ensuring that anyone who modifies your protocol or core code and distributes it must also open-source their modifications under the same license.
+________________
+
+
+Plaintext
+
+
+
+
+                    GNU GENERAL PUBLIC LICENSE
                       Version 3, 29 June 2007
 
 Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>

@@ -10,6 +10,12 @@ M := (v, σ, π, δ, κ, τ, μ)        (Vi-Chi/MEBUS ARCHITECTURE.md)
   μ  mode        Mode  system mode {WAKE, LIMINAL, DREAM}
 
 Invariant Ω₈ — action-layer messages are suppressed when μ = DREAM.
+
+Beyond canonical v0.1 (recovered from ΣBUS_CM.txt origin spec, additive — see
+docs/SIGMABUS_CM_GAP_REVIEW.md):
+  * effective-trust gate    — discard below TRUST_FLOOR (κ.trust_score / anomaly / cross_validated)
+  * message freshness       — discard when κ.t_expires has passed
+  * LIMINAL advisory        — action delivered but flagged advisory (not suppressed)
 Stdlib-only. No third-party dependencies.
 """
 from __future__ import annotations
@@ -22,6 +28,7 @@ from enum import Enum
 from typing import Any, Callable
 
 PROTOCOL_VERSION = 1
+TRUST_FLOOR = 0.1          # ΣBUS-CM: effective trust below this is discarded
 
 
 class Mode(str, Enum):
@@ -65,9 +72,28 @@ class DreamActionSuppressed(MebusError):
     """Raised/returned when Ω₈ blocks an action-layer message in DREAM mode."""
 
 
+class MessageExpired(MebusError):
+    """Raised in strict mode when κ.t_expires has passed."""
+
+
+class TrustFloorDiscarded(MebusError):
+    """Raised in strict mode when effective trust is below TRUST_FLOOR."""
+
+
 def monotonic_tau() -> int:
     """Monotonic timestamp in nanoseconds (τ). Not wall-clock — ordering only."""
     return time.monotonic_ns()
+
+
+def clamp(value: float, lo: float = 0.0, hi: float = 1.0) -> float:
+    return max(lo, min(hi, value))
+
+
+def effective_trust(base: float, *, age_decay: float = 0.0,
+                    anomaly: float = 0.0, cross_validated: bool = False) -> float:
+    """ΣBUS-CM effective trust: clamp(base − age_decay − anomaly·0.5 + cross_val_bonus)."""
+    bonus = 0.1 if cross_validated else 0.0
+    return clamp(base - age_decay - anomaly * 0.5 + bonus)
 
 
 def is_action_layer(sigma: str) -> bool:
@@ -112,6 +138,24 @@ class MMessage:
         """The payload class: cm / m / ext / sys."""
         return self.sigma.split(".", 1)[0]
 
+    def effective_trust(self) -> float:
+        """Effective trust from the κ envelope (defaults: full trust, no anomaly)."""
+        k = self.context or {}
+        return effective_trust(
+            float(k.get("trust_score", 1.0)),
+            age_decay=float(k.get("age_decay", 0.0)),
+            anomaly=float(k.get("anomaly_score", 0.0)),
+            cross_validated=bool(k.get("cross_validated", False)),
+        )
+
+    def is_fresh(self, now_ns: int | None = None) -> bool:
+        """False once κ.t_expires (ns) has passed; always fresh if unset."""
+        exp = (self.context or {}).get("t_expires")
+        if exp is None:
+            return True
+        now = monotonic_tau() if now_ns is None else now_ns
+        return now <= int(exp)
+
     def to_dict(self) -> dict:
         return {
             "v": self.version,
@@ -142,28 +186,52 @@ class MMessage:
 
 
 class MembraneBus:
-    """In-process MΣBUS reference router. Enforces Ω₈ (action suppressed in DREAM)."""
+    """In-process MΣBUS reference router.
 
-    def __init__(self) -> None:
+    Enforces, in order: Ω₈ (action suppressed in DREAM) · freshness (κ.t_expires) ·
+    effective-trust floor (κ trust). LIMINAL action messages are delivered but flagged advisory.
+    """
+
+    def __init__(self, *, enforce_trust: bool = True, trust_floor: float = TRUST_FLOOR) -> None:
         self._handlers: dict[str, list[Callable[[MMessage], Any]]] = {}
         self.audit_log: list[dict] = []
+        self.enforce_trust = enforce_trust
+        self.trust_floor = trust_floor
 
     def subscribe(self, sigma: str, handler: Callable[[MMessage], Any]) -> None:
         self._handlers.setdefault(sigma, []).append(handler)
 
     def publish(self, msg: MMessage, *, strict: bool = False) -> bool:
-        """Validate, apply Ω₈, and route. Returns True if delivered."""
+        """Validate, apply Ω₈ + freshness + trust gates, and route. True if delivered."""
         msg.validate()
-        suppressed = msg.mode == Mode.DREAM and msg.is_action
+        now = monotonic_tau()
+
+        suppressed = msg.mode == Mode.DREAM and msg.is_action      # Ω₈
+        expired = not msg.is_fresh(now)
+        trust = msg.effective_trust()
+        trust_blocked = self.enforce_trust and trust < self.trust_floor
+        advisory = msg.mode == Mode.LIMINAL and msg.is_action
+
+        delivered = not (suppressed or expired or trust_blocked)
         self.audit_log.append({
             "fingerprint": msg.fingerprint(),
-            "σ": msg.sigma, "δ": msg.destination,
-            "μ": msg.mode.value, "suppressed": suppressed, "τ": msg.tau,
+            "σ": msg.sigma, "δ": msg.destination, "μ": msg.mode.value,
+            "suppressed": suppressed, "expired": expired,
+            "trust": round(trust, 3), "trust_blocked": trust_blocked,
+            "advisory": advisory, "delivered": delivered, "τ": msg.tau,
         })
-        if suppressed:
+
+        if not delivered:
             if strict:
-                raise DreamActionSuppressed(f"Ω₈: action σ={msg.sigma!r} suppressed in DREAM")
+                if suppressed:
+                    raise DreamActionSuppressed(f"Ω₈: action σ={msg.sigma!r} suppressed in DREAM")
+                if expired:
+                    raise MessageExpired(f"σ={msg.sigma!r} expired (κ.t_expires passed)")
+                if trust_blocked:
+                    raise TrustFloorDiscarded(
+                        f"σ={msg.sigma!r} effective trust {trust:.3f} < floor {self.trust_floor}")
             return False
+
         for handler in self._handlers.get(msg.sigma, []):
             handler(msg)
         return True

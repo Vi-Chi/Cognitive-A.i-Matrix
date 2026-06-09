@@ -38,9 +38,6 @@ secrets.yaml
 secrets.json
 .secrets/
 
-# Node (tooling)
-node_modules/
-
 # Build artifacts
 *.egg
 *.whl

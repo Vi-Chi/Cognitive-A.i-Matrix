@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sigmabus.io/schemas/cm-message/1.0",
+  "title": "SIGMABUS CM Message",
+  "description": "Semantic-envelope wrapped CM message shape for SIGMABUS CM v0.1.",
+  "type": "object",
+  "required": ["env_version", "identity", "temporal", "provenance", "trust", "operational", "payload"],
+  "properties": {
+    "env_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "identity": {
+      "type": "object",
+      "required": ["msg_id", "path", "schema_id", "schema_version"],
+      "properties": {
+        "msg_id": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)*$"},
+        "schema_id": {"type": "string", "const": "sigmabus.cm.message"},
+        "schema_version": {"type": "integer", "const": 1}
+      }
+    },
+    "temporal": {
+      "type": "object",
+      "required": ["t_origin_us", "t_received_us"],
+      "properties": {
+        "t_origin_us": {"type": "integer", "minimum": 0},
+        "t_received_us": {"type": "integer", "minimum": 0},
+        "t_expires_us": {"type": ["integer", "null"], "minimum": 0},
+        "latency_us": {"type": ["integer", "null"], "minimum": 0}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["source_id", "source_type", "path_history", "derived_from"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "source_type": {"type": "string", "enum": ["agent", "sensor", "gateway", "operator", "system"]},
+        "interface": {"type": ["string", "null"]},
+        "path_history": {"type": "array", "items": {"type": "string"}},
+        "derived_from": {"type": "array", "items": {"type": "string"}},
+        "derivation_fn": {"type": ["string", "null"]}
+      }
+    },
+    "trust": {
+      "type": "object",
+      "required": ["trust_score", "trust_class", "cross_validated", "validators", "anomaly_score"],
+      "properties": {
+        "trust_score": {"type": "number", "minimum": 0, "maximum": 1},
+        "trust_class": {"type": "string"},
+        "cross_validated": {"type": "boolean"},
+        "validators": {"type": "array", "items": {"type": "string"}},
+        "anomaly_score": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "access": {
+      "type": "object",
+      "properties": {
+        "consumers": {"type": "array", "items": {"type": "string"}},
+        "producer_uid": {"type": "string"},
+        "write_authorised": {"type": "boolean"}
+      }
+    },
+    "retention": {
+      "type": "object",
+      "properties": {
+        "class": {"type": "string"},
+        "archive_priority": {"type": "integer", "minimum": 0},
+        "compress": {"type": "boolean"}
+      }
+    },
+    "operational": {
+      "type": "object",
+      "required": ["priority", "data_class", "classification"],
+      "properties": {
+        "priority": {"type": "integer", "minimum": 1, "maximum": 10},
+        "data_class": {"type": "string", "const": "cm"},
+        "classification": {"type": "string"}
+      }
+    },
+    "signature": {
+      "type": ["string", "null"],
+      "pattern": "^base64:"
+    },
+    "payload": {
+      "type": "object",
+      "required": ["msg_type", "msg_id", "sender_uid", "timestamp_us"],
+      "properties": {
+        "msg_type": {
+          "type": "string",
+          "enum": [
+            "ANNOUNCE", "WITHDRAW", "HEARTBEAT",
+            "QUERY", "INFORM",
+            "REQUEST", "CONFIRM", "FAIL",
+            "PROPOSE", "AGREE", "REFUSE", "RETRACT",
+            "DELEGATE", "RESUME",
+            "ALERT"
+          ]
+        },
+        "msg_id": {"type": "string", "minLength": 1},
+        "sender_uid": {"type": "string", "pattern": "^agt-[a-z0-9_]+-[a-z0-9_]+-[0-9]{3}$"},
+        "receiver_uid": {"type": ["string", "null"]},
+        "timestamp_us": {"type": "integer", "minimum": 0},
+        "conversation_id": {"type": "string"},
+        "reply_to": {"type": "string"},
+        "priority": {"type": "integer", "minimum": 1, "maximum": 10},
+        "subject": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "annotations": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}
