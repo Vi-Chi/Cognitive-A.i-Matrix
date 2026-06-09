@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Vi-Chi/project-autopoiesis/specs/job-lifecycle.schema.json",
+  "title": "JobLifecycle",
+  "type": "object",
+  "required": ["job_id", "created_at", "purpose", "data_class", "state", "human_approval_required"],
+  "additionalProperties": false,
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]{8,128}$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "data_class": {
+      "type": "string",
+      "enum": ["private_memory", "private_project", "sanitized", "public", "synthetic", "unknown"]
+    },
+    "state": {
+      "type": "string",
+      "enum": ["proposed", "estimated", "approved", "queued", "running", "verified", "simulated_payment", "archived", "disputed", "rejected"]
+    },
+    "selected_provider_id": {
+      "type": "string"
+    },
+    "selected_compute_tier": {
+      "type": "string",
+      "enum": ["local_cpu", "local_accelerator", "local_gpu", "decentralized_compute", "commercial_api", "canister", "offline", "refuse", "defer"]
+    },
+    "human_approval_required": {
+      "type": "boolean",
+      "default": true
+    },
+    "approval_record": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "verification_plan": {
+      "type": "string"
+    },
+    "result_evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "audit_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  }
+}

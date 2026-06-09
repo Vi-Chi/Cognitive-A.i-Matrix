@@ -1,0 +1,65 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Local secrets and state
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+credentials.json
+secrets.json
+context_store.json
+*.sqlite
+*.sqlite3
+*.db
+
+# Generated artifacts
+dist/
+build/
+coverage/
+*.log
+tmp/
+temp/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*.so
+.venv
+ENV/
+*.egg-info/
+htmlcov/
+.coverage
+.coverage.*
+
+# Editors
+*~
+
+# OS
+
+# Logs and temp
+*.tmp
+*.bak
+
+# Secrets â€” never commit
+secrets.yaml
+.secrets/
+
+# Node (tooling)
+node_modules/
+
+# Build artifacts
+*.egg
+*.whl

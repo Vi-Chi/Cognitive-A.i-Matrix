@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Vi-Chi/project-autopoiesis/specs/compute-decision.schema.json",
+  "title": "ComputeDecision",
+  "type": "object",
+  "required": ["decision_id", "job_id", "created_at", "task_class", "data_class", "integrity_gate", "decision"],
+  "additionalProperties": false,
+  "properties": {
+    "decision_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]{8,128}$"
+    },
+    "job_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "task_class": {
+      "type": "string",
+      "enum": ["housekeeping", "research", "prototype", "benchmark", "service_output", "audit", "unknown"]
+    },
+    "data_class": {
+      "type": "string",
+      "enum": ["private_memory", "private_project", "sanitized", "public", "synthetic", "unknown"]
+    },
+    "local_cost_estimate": {
+      "type": "number",
+      "minimum": 0
+    },
+    "remote_cost_estimate": {
+      "type": "number",
+      "minimum": 0
+    },
+    "expected_value": {
+      "type": "number"
+    },
+    "risk_buffer": {
+      "type": "number",
+      "minimum": 0,
+      "default": 0
+    },
+    "integrity_gate": {
+      "type": "object",
+      "required": ["status", "checks"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pass", "needs_owner_review", "refuse", "defer"]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["truthfulness", "user_autonomy", "memory_integrity", "privacy", "local_sovereignty", "legality", "safety", "auditability", "verification"]
+          }
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["run_local", "run_local_accelerator", "run_local_gpu", "simulate_remote", "request_owner_approval", "refuse", "defer"]
+    },
+    "selected_provider_id": {
+      "type": "string"
+    },
+    "audit_log_ref": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+type EscrowEntry = record {
+  job_id : text;
+  payer : principal;
+  payee : principal;
+  amount : nat;
+  locked_at : nat64;
+  released : bool;
+};
+
+type LedgerEntry = record {
+  account : principal;
+  balance : nat;
+  staked : nat;
+  last_updated : nat64;
+};
+
+type LedgerSigmaEvent = record {
+  event_id : text;
+  event_type : text;
+  payload_type : text;
+  payload : text;
+  emitted_at : nat64;
+};
+
+type ResultNat = variant { Ok : nat; Err : text };
+type ResultNull = variant { Ok : null; Err : text };
+
+service : {
+  configureSigmaBus : (opt principal) -> (ResultNull);
+  donateToSciencePool : (nat) -> (ResultNull);
+  getBalance : (principal) -> (nat) query;
+  getEscrow : (text) -> (opt EscrowEntry) query;
+  getLedgerEntry : (principal) -> (LedgerEntry) query;
+  getSciencePoolBalance : () -> (nat) query;
+  getSigmaBusCanister : () -> (opt principal) query;
+  getSigmaEvents : (nat64) -> (vec LedgerSigmaEvent) query;
+  getStake : (principal) -> (nat) query;
+  getTotalSupply : () -> (nat) query;
+  lockEscrow : (text, principal, nat) -> (ResultNull);
+  mint : (principal, nat) -> (ResultNat);
+  refundEscrow : (text) -> (ResultNull);
+  releaseEscrow : (text) -> (ResultNull);
+  slashStake : (principal, nat) -> (ResultNull);
+  stake : (nat) -> (ResultNull);
+  transfer : (principal, nat) -> (ResultNat);
+  unstake : (nat) -> (ResultNull);
+}

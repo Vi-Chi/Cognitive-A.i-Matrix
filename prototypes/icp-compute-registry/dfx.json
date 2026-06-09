@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "canisters": {
+    "identity_registry": {
+      "type": "motoko",
+      "main": "src/identity_registry/main.mo"
+    },
+    "job_market": {
+      "type": "motoko",
+      "main": "src/job_market/main.mo"
+    },
+    "reputation_engine": {
+      "type": "motoko",
+      "main": "src/reputation_engine/main.mo"
+    },
+    "compute_registry": {
+      "type": "motoko",
+      "main": "src/compute_registry/main.mo"
+    },
+    "agent_runtime": {
+      "type": "motoko",
+      "main": "src/agent_runtime/main.mo"
+    },
+    "compute_ledger": {
+      "type": "rust",
+      "package": "compute_ledger",
+      "candid": "src/compute_ledger/compute_ledger.did"
+    },
+    "capital_pool": {
+      "type": "motoko",
+      "main": "src/capital_pool/main.mo"
+    },
+    "procurement_router": {
+      "type": "motoko",
+      "main": "src/procurement_router/main.mo"
+    },
+    "data_orchestrator": {
+      "type": "motoko",
+      "main": "src/data_orchestrator/main.mo"
+    },
+    "sigma_bus_adapter": {
+      "type": "motoko",
+      "main": "src/sigma_bus_adapter/main.mo"
+    },
+    "audit_log": {
+      "type": "motoko",
+      "main": "src/audit_log/main.mo"
+    },
+    "governance": {
+      "type": "motoko",
+      "main": "src/governance/main.mo"
+    }
+  },
+  "defaults": {
+    "replica": {
+      "subnet_type": "application"
+    }
+  }
+}

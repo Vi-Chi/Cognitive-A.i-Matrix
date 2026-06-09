@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Vi-Chi/project-autopoiesis/specs/treasury-policy.schema.json",
+  "title": "TreasuryPolicy",
+  "type": "object",
+  "required": ["policy_id", "simulation_only", "human_approval_required", "survival_floor", "budgets"],
+  "additionalProperties": false,
+  "properties": {
+    "policy_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{2,63}$"
+    },
+    "simulation_only": {
+      "type": "boolean",
+      "const": true
+    },
+    "human_approval_required": {
+      "type": "boolean",
+      "const": true
+    },
+    "currency": {
+      "type": "string",
+      "default": "SIM"
+    },
+    "survival_floor": {
+      "type": "number",
+      "minimum": 0
+    },
+    "risk_reserve_ratio": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.25
+    },
+    "budgets": {
+      "type": "object",
+      "required": ["compute", "storage", "experiments", "reinvestment"],
+      "additionalProperties": false,
+      "properties": {
+        "compute": {
+          "type": "number",
+          "minimum": 0
+        },
+        "storage": {
+          "type": "number",
+          "minimum": 0
+        },
+        "experiments": {
+          "type": "number",
+          "minimum": 0
+        },
+        "reinvestment": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "blocked_actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["real_spending", "public_services", "remote_compute", "chain_write", "private_memory_export", "treasury_policy_change"]
+      },
+      "default": ["real_spending", "public_services", "remote_compute", "chain_write", "private_memory_export", "treasury_policy_change"]
+    }
+  }
+}
