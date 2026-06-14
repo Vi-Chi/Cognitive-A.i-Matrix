@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DREAM Consolidation Proposal",
+  "type": "object",
+  "required": [
+    "proposal_id",
+    "source_archive",
+    "decision",
+    "targets"
+  ],
+  "properties": {
+    "proposal_id": {
+      "type": "string"
+    },
+    "source_archive": {
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "promote_to_reviewed",
+        "keep_quarantined",
+        "reject",
+        "needs_human_review"
+      ]
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rationale": {
+      "type": "string"
+    },
+    "uncertainties": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

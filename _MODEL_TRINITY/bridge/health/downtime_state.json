@@ -1,0 +1,20 @@
+{
+  "antigravity": {
+    "down_active": true,
+    "down_started_at": "2026-06-14T10:52:27Z",
+    "last_status": "DOWN",
+    "updated_at": "2026-06-14T11:11:29Z"
+  },
+  "claude": {
+    "down_active": true,
+    "down_started_at": "2026-06-14T06:58:51Z",
+    "last_status": "DOWN",
+    "updated_at": "2026-06-14T11:11:29Z"
+  },
+  "codex": {
+    "down_active": false,
+    "down_started_at": null,
+    "last_status": "STALE",
+    "updated_at": "2026-06-14T11:11:29Z"
+  }
+}

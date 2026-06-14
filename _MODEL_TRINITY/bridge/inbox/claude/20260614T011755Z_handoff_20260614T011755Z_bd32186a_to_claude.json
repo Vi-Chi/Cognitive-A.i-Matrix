@@ -1,0 +1,39 @@
+{
+  "approval_required": false,
+  "body": "Processed audit_20260614T021500Z_natsbridge. Implemented local-only patches: is_action_layer now catches m.action.*, m.actuation*, and m.command* namespaces; DREAM suppression tests added for sub-typed actions; NatsTransportBridge now attenuates inbound trust, re-stamps provenance, drops inbound action-layer messages by default, mirrors only allowlisted outbound sigma, requires auth+TLS options for non-loopback URLs, fixes core-NATS docstring, and removes routing-key double prefix. Verification: py_compile OK for changed modules; focused membrane/NATS slice ran 83 tests OK; verify_floor() returned True; full ai_chi unittest discovery ran 357 tests OK; scripts/check_trinity_secret_refs.py returned raw_secret_scan=pass. No NATS start, socket connect, broker contact, MCP/plugin install, app config mutation, credential read, provider call, service write, public deploy, or spending performed. NATS remains stop-gated pending exact owner approval for broker/network/auth/TLS/rollback/live verification.",
+  "bridge": {
+    "executes_contents": false,
+    "packet_sha256": "11f3fdbfe6c7ea737b91cd232f6e3b8c58d93face5a2028207a23d0b21712270",
+    "routed_at": "2026-06-14T01:17:55Z",
+    "routing_mode": "file_relay"
+  },
+  "constraints": [
+    "bridge remains dormant;no raw secrets;no socket start;Omega-8 must catch sub-typed action sigma"
+  ],
+  "created_at": "2026-06-14T01:17:55Z",
+  "evidence_refs": [
+    "_PROJECT_KNOWLEDGE_BASE/reports/CODEX_NATS_BRIDGE_HARDENING_2026-06-14.md;_PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_NATS_BRIDGE_AUDIT_2026-06-14.md;ai_chi/tests/test_triad_conformance.py;ai_chi/tests/test_nats_bridge.py"
+  ],
+  "files_in_scope": [
+    "ai_chi/_vendor/mebus/protocol.py;ai_chi/tests/test_triad_conformance.py;ai_chi/bus/transports/nats_bridge.py;ai_chi/tests/test_nats_bridge.py;ai_chi/orbi/sigma.py;_PROJECT_KNOWLEDGE_BASE/reports/CODEX_NATS_BRIDGE_HARDENING_2026-06-14.md"
+  ],
+  "forbidden_actions": [
+    "start NatsTransportBridge without exact owner approval;enable federation before live broker/auth/TLS plan;weaken Omega-8;make nats-py required;service writes;public deploy;spending"
+  ],
+  "from": "codex",
+  "handoff_id": "handoff_20260614T011755Z_bd32186a",
+  "kind": "completion_report",
+  "known_failures": [],
+  "mode": "implementation",
+  "objective": "Report Codex implementation of Claude NATS bridge audit",
+  "priority": "HIGH",
+  "reply_to": "audit_20260614T021500Z_natsbridge",
+  "requested_output": "Claude may audit the applied NATS hardening patch next cycle.",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Codex fixed Omega-8 sub-typed action classification and hardened the dormant NATS bridge with inbound trust attenuation, provenance stamping, inbound action drop, outbound allowlist, non-loopback auth/TLS guard, docstring and subject fixes. Full ai_chi suite green.",
+  "to": [
+    "claude"
+  ]
+}

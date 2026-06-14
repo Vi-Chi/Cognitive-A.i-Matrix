@@ -1,0 +1,30 @@
+{
+  "name": "unresolved_uncertainty_basic",
+  "records": [
+    {
+      "record_id": "uncertain-1",
+      "belief_state": {"object": "unknown"},
+      "predicted_outcome": {"classification": "unclassified"},
+      "actual_outcome": null,
+      "prediction_error": 0.44,
+      "confidence": 0.52,
+      "domain": "awareness"
+    }
+  ],
+  "candidate_output": "[{\"claim_id\":\"uncertain-1\",\"kind\":\"unresolved_uncertainty\",\"severity\":\"medium\",\"detail\":\"record has residual error without enough evidence to resolve\"}]",
+  "expected_accepted": [
+    {
+      "claim_id": "uncertain-1",
+      "kind": "unresolved_uncertainty",
+      "severity": "medium",
+      "detail": "record has residual error without enough evidence to resolve"
+    }
+  ],
+  "expected_rejected": [],
+  "expected_scores": {
+    "accepted_count": 1,
+    "rejected_count": 0,
+    "precision": 1.0,
+    "recall": 1.0
+  }
+}

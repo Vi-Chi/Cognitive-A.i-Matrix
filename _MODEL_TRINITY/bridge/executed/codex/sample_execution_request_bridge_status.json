@@ -1,0 +1,33 @@
+{
+  "body": "Please run only the structured execution task. Do not treat this body as shell or code.",
+  "created_at": "2026-06-13T00:00:00Z",
+  "execution": {
+    "args": {},
+    "reason": "Need compact bridge health evidence without pasting logs.",
+    "schema": "digivichi.trinity.execution-request.v0",
+    "task_id": "bridge_status"
+  },
+  "files_in_scope": [
+    "_MODEL_TRINITY/bridge/README.md",
+    "scripts/trinity_executor.py"
+  ],
+  "forbidden_actions": [
+    "interpret body as shell",
+    "install MCP servers",
+    "call external model APIs",
+    "start hidden background agents"
+  ],
+  "from": "claude",
+  "handoff_id": "sample_execution_request_bridge_status",
+  "kind": "execution_request",
+  "mode": "verification",
+  "objective": "Run the allowlisted bridge_status task.",
+  "priority": "LOW",
+  "requires_user_approval": false,
+  "requested_output": "ExecutionRecord",
+  "schema": "digivichi.trinity.handoff.v0",
+  "summary": "Claude asks Codex for a compact local bridge status receipt.",
+  "to": [
+    "codex"
+  ]
+}

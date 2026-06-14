@@ -1,0 +1,29 @@
+[
+  {
+    "record_id": "eval_001_clean",
+    "domain": "system_health",
+    "confidence": 0.95,
+    "prediction_error": 0.05,
+    "predicted_outcome": {"status": "nominal"},
+    "actual_outcome": {"status": "nominal"},
+    "belief_state": {"uptime": 3600, "temp": 45.2}
+  },
+  {
+    "record_id": "eval_002_conflict",
+    "domain": "sensor_ingest",
+    "confidence": 0.20,
+    "prediction_error": 0.80,
+    "predicted_outcome": {"contact": "friendly_vessel"},
+    "actual_outcome": {"contact": "unknown_entity"},
+    "belief_state": {"radar_sig": "high", "ais_broadcast": "none"}
+  },
+  {
+    "record_id": "eval_003_simulacrum",
+    "domain": "tactical_overlay",
+    "confidence": 0.40,
+    "prediction_error": 0.60,
+    "predicted_outcome": {"weather_pattern": "clear"},
+    "actual_outcome": {"weather_pattern": "dense_fog"},
+    "belief_state": {"barometer": "dropping_rapidly"}
+  }
+]

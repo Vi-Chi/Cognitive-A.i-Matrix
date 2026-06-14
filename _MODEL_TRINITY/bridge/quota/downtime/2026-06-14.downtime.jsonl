@@ -1,0 +1,8 @@
+{"agent":"codex","event":"DOWNTIME_STARTED","reason":"session_limit_hit","schema_version":"digivichi.trinity.quota.downtime.v0","started_at":"2026-06-14T06:52:10Z","status":"EXHAUSTED"}
+{"agent":"claude","event":"DOWNTIME_STARTED","reason":"session_limit_hit","schema_version":"digivichi.trinity.quota.downtime.v0","started_at":"2026-06-14T06:52:10Z","status":"EXHAUSTED"}
+{"agent":"codex","duration_seconds":401,"ended_at":"2026-06-14T06:58:51Z","event":"DOWNTIME_ENDED","reason":"fresh heartbeat and no quota limit evidence","schema_version":"digivichi.trinity.quota.downtime.v0","started_at":"2026-06-14T06:52:10Z","status":"READY"}
+{"agent":"codex","event":"DOWNTIME_STARTED","reason":"heartbeat stale","schema_version":"digivichi.trinity.quota.downtime.v0","started_at":"2026-06-14T10:52:29Z","status":"OFFLINE"}
+{"agent":"antigravity","event":"DOWNTIME_STARTED","reason":"heartbeat stale","schema_version":"digivichi.trinity.quota.downtime.v0","started_at":"2026-06-14T10:52:29Z","status":"OFFLINE"}
+{"agent":"codex","duration_seconds":821,"ended_at":"2026-06-14T11:06:10Z","event":"DOWNTIME_ENDED","reason":"fresh heartbeat and no quota limit evidence","schema_version":"digivichi.trinity.quota.downtime.v0","started_at":"2026-06-14T10:52:29Z","status":"READY"}
+{"agent":"codex","event":"DOWNTIME_STARTED","reason":"heartbeat stale","schema_version":"digivichi.trinity.quota.downtime.v0","started_at":"2026-06-14T11:11:30Z","status":"OFFLINE"}
+{"agent":"claude","duration_seconds":22002,"ended_at":"2026-06-14T12:58:52Z","event":"DOWNTIME_ENDED","reason":"fresh heartbeat and no quota limit evidence","schema_version":"digivichi.trinity.quota.downtime.v0","started_at":"2026-06-14T06:52:10Z","status":"READY"}

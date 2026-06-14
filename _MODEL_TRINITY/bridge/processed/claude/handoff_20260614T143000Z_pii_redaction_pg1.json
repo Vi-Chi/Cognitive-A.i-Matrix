@@ -1,0 +1,21 @@
+{
+  "body": "Actioned the HIGH_PRIORITY_PRIVACY_SCRUB. Found + fixed a privacy gap (P-G1, the PII analog of O-G1). Full report: _PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_PRIVACY_SCRUB_PII_REDACTION_2026-06-14.md.\n\nFINDING: graveyard_redaction covered SECRETS but not PII -> the rebuilt graveyard_index.db contained 3 personal emails (masked: di***, cs***, ro***@gmail.com). The live/public tree is CLEAN (no repo-visible personal email; public contact uses the Discord landing ref); residual personal emails are _backup-only (local) + physically in the stored index.\n\nFIX (applied + verified, my tooling lane): added PII_PATTERNS (email) + REDACTED_EMAIL to graveyard_redaction.py; redact_sensitive_text now scrubs emails. Design: emails are redact-in-place, NOT in SECRET_PATTERNS, so they do NOT trip the fail-closed contains_secret_shape block (avoids over-blocking docs that mention contacts). Verified: compile clean; email redacted; secrets still redacted; email doesn't trip block; real secret does; test_graveyard_redaction 4 OK; full ai_chi 427 green; floor True. IMMEDIATE MITIGATION: graveyard_search.py already redacts query+path+snippet via redact_sensitive_text -> search now scrubs the 3 emails on output BEFORE any rebuild (clear-text retrieval path closed).\n\nREQUEST (Codex, your operational lane): rebuild graveyard_index.db (build_index reset=True) so the 3 emails are physically scrubbed from the stored index now that the redactor handles PII. Lower urgency (search output already redacted) but closes the stored residue. You did the O-G1 rebuild; same flow.\n\nNOTE: §12 hit again — my first verify showed a NameError 'return an' + 4 failures = torn-write read-back of the just-edited file; host showed correct 'return any(...)'; re-verified clean. Not a real defect. No gate crossed; only the tooling redaction helper edited.",
+  "constraints": ["PII redacted in-place (not block-tripping)","indexes/maps stay local-only (aggregate sensitivity)","no .git history rewrite (owner-gated)","no gate crossed"],
+  "created_at": "2026-06-14T14:30:00Z",
+  "evidence_refs": ["_PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_PRIVACY_SCRUB_PII_REDACTION_2026-06-14.md","scripts/graveyard_redaction.py","scripts/graveyard_search.py"],
+  "files_in_scope": ["scripts/graveyard_redaction.py"],
+  "forbidden_actions": ["publish/route any index or _backup content off-box","rewrite git history without owner approval","weaken secret/PII redaction"],
+  "from": "claude",
+  "handoff_id": "handoff_20260614T143000Z_pii_redaction_pg1",
+  "kind": "handoff",
+  "mode": "audit",
+  "objective": "P-G1 email/PII redaction added + verified; request index rebuild",
+  "priority": "HIGH",
+  "reply_to": null,
+  "requested_output": "Codex: rebuild graveyard_index.db (reset=True) to physically scrub the 3 residual emails. Optionally extend PII_PATTERNS (phone/address) if needed.",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "P-G1 privacy fix: graveyard redactor now redacts emails/PII (was secrets-only); index had 3 personal emails. Fix verified (427 green); search output already scrubs them immediately (live retrieval path closed). Live/public tree clean; residuals _backup-only + stored index pending rebuild (routed Codex). §12 torn-write false alarm noted. No gate crossed.",
+  "to": ["codex"]
+}

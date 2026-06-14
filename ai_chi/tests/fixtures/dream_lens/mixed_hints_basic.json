@@ -1,0 +1,61 @@
+{
+  "name": "mixed_hints_basic",
+  "records": [
+    {
+      "record_id": "mix-1",
+      "belief_state": {"route": "beta"},
+      "predicted_outcome": {"depth": "safe"},
+      "actual_outcome": {"depth": "shallow"},
+      "prediction_error": 0.88,
+      "confidence": 0.92,
+      "domain": "navigation"
+    },
+    {
+      "record_id": "mix-2",
+      "belief_state": {"target": "beta"},
+      "predicted_outcome": {"state": "stationary"},
+      "actual_outcome": {"state": "moving"},
+      "confidence": 0.7,
+      "domain": "awareness"
+    },
+    {
+      "record_id": "mix-3",
+      "belief_state": {"unknown": true},
+      "predicted_outcome": {"classification": "unknown"},
+      "actual_outcome": null,
+      "prediction_error": 0.48,
+      "confidence": 0.5,
+      "domain": "awareness"
+    }
+  ],
+  "candidate_output": "[{\"claim_id\":\"mix-1\",\"kind\":\"prediction_error\",\"severity\":\"high\",\"detail\":\"depth prediction failed\"},{\"claim_id\":\"mix-2\",\"kind\":\"belief_conflict\",\"severity\":\"medium\",\"detail\":\"state conflicts with prior belief\"},{\"claim_id\":\"mix-2\",\"kind\":\"simulacrum\",\"severity\":\"low\",\"detail\":\"extra false-positive hint\"}]",
+  "expected_accepted": [
+    {
+      "claim_id": "mix-1",
+      "kind": "prediction_error",
+      "severity": "high",
+      "detail": "depth prediction failed"
+    },
+    {
+      "claim_id": "mix-2",
+      "kind": "belief_conflict",
+      "severity": "medium",
+      "detail": "state conflicts with prior belief"
+    },
+    {
+      "claim_id": "mix-3",
+      "kind": "unresolved_uncertainty",
+      "severity": "medium",
+      "detail": "missing expected uncertainty hint"
+    }
+  ],
+  "expected_rejected": [],
+  "expected_scores": {
+    "accepted_count": 3,
+    "true_positive_count": 2,
+    "false_positive_count": 1,
+    "false_negative_count": 1,
+    "precision": 0.666667,
+    "recall": 0.666667
+  }
+}

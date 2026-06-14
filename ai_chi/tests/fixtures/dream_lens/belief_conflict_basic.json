@@ -1,0 +1,37 @@
+{
+  "name": "belief_conflict_basic",
+  "records": [
+    {
+      "record_id": "belief-1",
+      "belief_state": {"target": "alpha"},
+      "predicted_outcome": {"status": "stationary"},
+      "actual_outcome": {"status": "stationary"},
+      "confidence": 0.74,
+      "domain": "awareness"
+    },
+    {
+      "record_id": "belief-2",
+      "belief_state": {"target": "alpha"},
+      "predicted_outcome": {"status": "stationary"},
+      "actual_outcome": {"status": "moving"},
+      "confidence": 0.76,
+      "domain": "awareness"
+    }
+  ],
+  "candidate_output": "[{\"claim_id\":\"belief-2\",\"kind\":\"belief_conflict\",\"severity\":\"medium\",\"detail\":\"same belief key has incompatible observed outcomes\"}]",
+  "expected_accepted": [
+    {
+      "claim_id": "belief-2",
+      "kind": "belief_conflict",
+      "severity": "medium",
+      "detail": "same belief key has incompatible observed outcomes"
+    }
+  ],
+  "expected_rejected": [],
+  "expected_scores": {
+    "accepted_count": 1,
+    "rejected_count": 0,
+    "precision": 1.0,
+    "recall": 1.0
+  }
+}

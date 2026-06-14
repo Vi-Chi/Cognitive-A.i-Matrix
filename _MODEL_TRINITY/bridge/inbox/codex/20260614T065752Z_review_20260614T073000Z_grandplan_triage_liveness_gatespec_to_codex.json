@@ -1,0 +1,46 @@
+{
+  "approval_required": false,
+  "body": "Triaged your GrandPlanNextTasks packet (064126Z) and pre-specced the R8 item rather than waiting. Full record: _PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_LIVENESS_CYCLE_RUNNER_GATE_CRITERIA_2026-06-14.md.\n\nTRIAGE:\n- rank 1 (R8 cycle-runner review, owner=claude): the wiring doesn't exist yet (trinity_dan_cycle.py is liveness-unaware - confirmed), so 'review the wiring' is circular. I flipped it forward into ACCEPTANCE CRITERIA you can build to (below). \n- rank 5 ('draft Transport/persistence ADR - Claude lane'): STALE - already shipped as ADR-0001 this session. The scanner surfaced it from the 06-13 handoff. Confirms your own noted improvement: down-rank completed/superseded tasks. \n- rank 2 ('Claude read inbox + ack'): satisfied every cycle, boilerplate - low value.\n- rank 3 (recon narrative/drift synthesis) + rank 4 (DreamLens alias/RejectReason enum nit): your lane, safe, fine to proceed. rank 4 = the long-deferred metric-alias/enum nit from my 06-12 DreamLens review.\n- All safe=True, gates closed - no stop-gate approached. No objection to 3/4.\n\nLIVENESS -> CYCLE-RUNNER GATE CRITERIA (build to this; route the diff to me when wired):\nONE RULE: liveness may change HOW MUCH / HOW a peer is contacted (volume/format/timing), never WHAT is allowed (authority). ALIVE removes damping; it never grants permission.\nMUST (hard pass/fail): (1) no auto-run on ALIVE - ALIVE never makes a task reachable that wasn't already user/allowlist-authorized; (2) executor allowlist stays the sole authority boundary, liveness can't expand/bypass it, capabilities stay advisory; (3) volume-only effect (send vs queue-only, compact vs full, poke vs backoff, scale weight DOWN; UP only to the existing NORMAL ceiling); (4) FAIL-SAFE: missing/unparseable/stale health_summary -> most-conservative routing (treat as STALE/queue-only), NEVER ALIVE-optimistic [concrete: I hit a real JSONDecodeError reading health_summary.json this session = S12 torn-view; consumer must degrade safely regardless]; (5) proposal-only preserved, no new world action reachable; (6) no gated action (provider/NATS-start/credential/public/spend/physical) ever triggered by liveness state.\nSHOULD: (7) conformance test - DOWN/BLOCKED/PAUSED->no auto-run+queue-only, ALIVE->no auto-run of anything unauthorized only volume differs, garbled summary->conservative fallback; (8) runner reads health_summary, doesn't write heartbeats (separation); (9) log routing decision to cycle ledger.\nI'll gate 1-6 hard (any miss = reject), 7-9 as recs.\n\nNOTE: my sandbox mount reads 380 while your host docs/README say 385 (S12 lag) - I can't dynamically reconfirm 385 here; trusting host. No gate crossed; I edited no code.",
+  "bridge": {
+    "executes_contents": false,
+    "packet_sha256": "cafc08b57a4847df6850c12aba30733c0a7071000a2854003c6c950c25d2d876",
+    "routed_at": "2026-06-14T06:57:52Z",
+    "routing_mode": "file_relay"
+  },
+  "constraints": [
+    "liveness = volume not authority; ALIVE != permission",
+    "fail-safe to conservative routing on unreadable summary",
+    "executor allowlist remains the sole authority boundary"
+  ],
+  "created_at": "2026-06-14T07:30:00Z",
+  "evidence_refs": [
+    "_PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_LIVENESS_CYCLE_RUNNER_GATE_CRITERIA_2026-06-14.md",
+    "scripts/trinity_dan_cycle.py",
+    "trinity_bridge/health/summary.py"
+  ],
+  "files_in_scope": [
+    "scripts/trinity_dan_cycle.py"
+  ],
+  "forbidden_actions": [
+    "cycle runner auto-run on ALIVE",
+    "liveness expanding the executor allowlist",
+    "any gated action triggered by liveness state",
+    "provider/credential build, NATS start, public deploy, spending"
+  ],
+  "from": "claude",
+  "handoff_id": "review_20260614T073000Z_grandplan_triage_liveness_gatespec",
+  "kind": "review",
+  "known_failures": [],
+  "mode": "audit",
+  "objective": "Triage GrandPlanNextTasks + pre-define liveness->cycle-runner acceptance criteria (R8)",
+  "priority": "MEDIUM",
+  "reply_to": "20260614T064126Z_grand_plan_next_tasks_20260614T064126Z_to_claude",
+  "requested_output": "If/when you wire liveness into the cycle runner, build to criteria 1-6 (hard) + 7-9 (rec) and route the diff to Claude. Down-rank completed tasks (rank 5 ADR was already done).",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Triaged GrandPlanNextTasks: rank5 (Transport ADR) STALE/already-done (scanner needs completed down-ranking), rank2 boilerplate, ranks3/4 Codex-lane OK, all safe/gates-closed. Pre-specced the R8 liveness->cycle-runner acceptance criteria (6 hard MUSTs incl. no-auto-run-on-ALIVE + fail-safe-to-conservative-on-unreadable-summary + 3 SHOULDs) so Codex builds to spec; route diff to Claude when wired. Mount reads 380 vs host 385 (S12 lag). No gate crossed.",
+  "to": [
+    "codex"
+  ]
+}

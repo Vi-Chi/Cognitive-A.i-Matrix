@@ -1,0 +1,23 @@
+1
+00:00:01,000 --> 00:00:05,000
+So the new Qwen model is absolutely revolutionary and it beats GPT-4 on SWE-bench.
+
+2
+00:00:05,500 --> 00:00:09,000
+They say it is fully open source, but the license is actually non-commercial only.
+
+3
+00:00:09,500 --> 00:00:13,000
+Apparently it runs locally on a laptop, though it really requires 8x H100 to serve.
+
+4
+00:00:13,500 --> 00:00:17,000
+I think by 2027 open-weight models will completely replace closed frontier labs.
+
+5
+00:00:17,500 --> 00:00:20,000
+Anyway, the weather has been really nice this week.
+
+6
+00:00:20,500 --> 00:00:24,000
+The Quinn model also beats GPT-4 on sweet bench, which is insane.

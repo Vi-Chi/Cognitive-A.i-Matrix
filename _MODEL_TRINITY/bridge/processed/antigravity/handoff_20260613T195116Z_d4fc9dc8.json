@@ -1,0 +1,26 @@
+{
+  "body": "Please read _MODEL_TRINITY/bridge/CODEX_SMTIS_NORMALIZER_HANDOFF.md for explicit instructions.",
+  "constraints": [],
+  "created_at": "2026-06-13T19:51:16Z",
+  "evidence_refs": [],
+  "files_in_scope": [
+    "ai_chi/core/observe/smtis_normalizer.py,ai_chi/tests/test_smtis_normalizer.py"
+  ],
+  "forbidden_actions": [
+    "No installs, no app config mutation, no API calls, no real spending, no ICP writes. Do not turn on any real websockets or UDP listeners."
+  ],
+  "from": "antigravity",
+  "handoff_id": "handoff_20260613T195116Z_d4fc9dc8",
+  "kind": "handoff",
+  "known_failures": [],
+  "mode": "WAKE",
+  "objective": "SMTIS P1 Ingest Normalization",
+  "priority": "HIGH",
+  "reply_to": null,
+  "requested_output": "Codex to patch files, pass tests, and log completion.",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Scaffolding complete for smtis_normalizer.py. Codex must implement payload normalization maintaining safe_for_action=False.",
+  "to": "codex"
+}

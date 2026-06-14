@@ -1,0 +1,14 @@
+{
+  "correlation_id": "poke_20260614T061103Z_5bbc18e9",
+  "from_agent": "codex",
+  "may_execute_commands": false,
+  "may_mutate_peer_config": false,
+  "may_read_secrets": false,
+  "notes": "Mirror-safe liveness poke only. No execution authority.",
+  "requires_user_approval_for_escalation": true,
+  "schema_version": "trinity.health.poke.v1",
+  "timestamp_utc": "2026-06-14T06:11:03Z",
+  "to_agent": "claude",
+  "ttl_seconds": 300,
+  "type": "liveness_poke"
+}

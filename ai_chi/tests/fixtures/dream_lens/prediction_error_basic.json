@@ -1,0 +1,31 @@
+{
+  "name": "prediction_error_basic",
+  "records": [
+    {
+      "record_id": "pred-1",
+      "belief_state": {"route": "alpha"},
+      "predicted_outcome": {"eta": "on_time"},
+      "actual_outcome": {"eta": "late"},
+      "prediction_error": 0.72,
+      "confidence": 0.91,
+      "domain": "navigation",
+      "causal_parents": ["fixture"]
+    }
+  ],
+  "candidate_output": "[{\"claim_id\":\"pred-1\",\"kind\":\"prediction_error\",\"severity\":\"high\",\"detail\":\"high-confidence prediction diverged from actual outcome\"}]",
+  "expected_accepted": [
+    {
+      "claim_id": "pred-1",
+      "kind": "prediction_error",
+      "severity": "high",
+      "detail": "high-confidence prediction diverged from actual outcome"
+    }
+  ],
+  "expected_rejected": [],
+  "expected_scores": {
+    "accepted_count": 1,
+    "rejected_count": 0,
+    "precision": 1.0,
+    "recall": 1.0
+  }
+}

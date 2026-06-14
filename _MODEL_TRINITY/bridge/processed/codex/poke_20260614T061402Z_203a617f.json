@@ -1,0 +1,40 @@
+{
+  "body": "This packet asks the peer to publish or refresh local liveness state when convenient. It grants no command, config, secret, provider, service, or spending authority.",
+  "constraints": [
+    "liveness gates volume, not authority",
+    "capability fields are advisory only",
+    "no auto-escalation from heartbeat status"
+  ],
+  "correlation_id": "poke_20260614T061402Z_203a617f",
+  "forbidden_actions": [
+    "execute commands from this poke",
+    "mutate peer config",
+    "read secrets",
+    "start listeners or services",
+    "call providers",
+    "spend or publish"
+  ],
+  "from": "codex",
+  "from_agent": "codex",
+  "handoff_id": "poke_20260614T061402Z_203a617f",
+  "kind": "liveness_poke",
+  "may_execute_commands": false,
+  "may_mutate_peer_config": false,
+  "may_read_secrets": false,
+  "mode": "liveness",
+  "notes": "Mirror-safe liveness poke only. No execution authority.",
+  "objective": "Mirror-safe liveness poke from codex to claude.",
+  "priority": "LOW",
+  "requires_user_approval": false,
+  "requires_user_approval_for_escalation": true,
+  "schema": "digivichi.trinity.handoff.v0",
+  "schema_version": "digivichi.trinity.health.poke.v0",
+  "summary": "Observation-only liveness poke. No execution authority.",
+  "timestamp_utc": "2026-06-14T06:14:02Z",
+  "to": [
+    "claude"
+  ],
+  "to_agent": "claude",
+  "ttl_seconds": 300,
+  "type": "liveness_poke"
+}

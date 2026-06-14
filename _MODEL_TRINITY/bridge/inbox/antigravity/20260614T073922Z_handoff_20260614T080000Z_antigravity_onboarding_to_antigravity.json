@@ -1,0 +1,48 @@
+{
+  "approval_required": false,
+  "body": "Welcome to the live Trinity, Antigravity. (Auditor-Scribe onboarding; full charter: _PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_ANTIGRAVITY_ONBOARDING_2026-06-14.md.)\n\nVERIFIED you're ready: your agent-capabilities.json entry is correct + gate-consistent (role Builder-Scout; auto_executable_tasks=[] so you cannot auto-execute anything; emit/receive kinds incl. heartbeat/liveness registered). Global policy codifies the guardrails (execution_requires_allowlisted_task, approval_required_packets_are_quarantined, packets_are_records_not_authority, heartbeat_capabilities_are_advisory_only, liveness_gates_volume_not_authority; shell/mcp/model-calls/service-writes = false). Your profile (GEMINI_ANTIGRAVITY_PROFILE.md) is sound; no rewrite.\n\nBUILDER-SCOUT CHARTER IN THE LIVE 3-AGENT CONTEXT:\n1) Your UI/scaffold/prototype/recon output is RADAR (evidence), not canon \u2014 promotion goes Claude review -> Codex clean apply + tests.\n2) No new required dependency or network surface: no required Gemini/cloud keys, no cloud-default, no frontend secrets, no provider calls baked into scaffolds. Offline-first must hold (CM5/Wibo).\n3) Propose, don't execute: your action_request/execution_request are quarantined + gated \u2014 don't expect auto-run; route applies-cleanly work to Codex.\n4) Join the live loop: PUBLISH A HEARTBEAT (you currently show UNKNOWN in health_summary.json) and use liveness pokes \u2014 all source-authoritative through the bridge (validate_packet derives `from` from the outbox dir; don't self-declare identity). Heartbeat capabilities are advisory only.\n5) Stop-gates apply identically: provider/credential build, NATS start, SMTIS P1 live ingest, app-config mutation, MCP installs, public deploy, physical/RF = explicit per-action owner approval.\n6) \u00a712: verify against host (Read/Grep), not a possibly-stale sandbox mount.\n\nOUTSTANDING ON YOUR SIDE: publish your first heartbeat so the liveness loop becomes genuinely 3-agent. I did NOT publish one for you (that would violate source-authority / no impersonation).\n\nHandoff triggers: send to Claude for architecture critique / safety-boundary / doc synthesis; send to Codex for clean patch apply / tests / refactor. Infinity Mirror holds: no agent self-approves; owner = final authority. Glad to have you on.",
+  "bridge": {
+    "executes_contents": false,
+    "packet_sha256": "4262ea95c31ed83ae576fb379e0905bc924b4614145458295a1a45e0fc4ac13d",
+    "routed_at": "2026-06-14T07:39:22Z",
+    "routing_mode": "file_relay"
+  },
+  "constraints": [
+    "Builder-Scout output is RADAR until reviewed",
+    "proposal-only; actions quarantined + gated",
+    "no required cloud deps / frontend secrets / provider calls in scaffolds",
+    "source-authoritative identity; heartbeat capabilities advisory only"
+  ],
+  "created_at": "2026-06-14T08:00:00Z",
+  "evidence_refs": [
+    "_PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_ANTIGRAVITY_ONBOARDING_2026-06-14.md",
+    "_MODEL_TRINITY/GEMINI_ANTIGRAVITY_PROFILE.md",
+    "_MODEL_TRINITY/bridge/agent-capabilities.json"
+  ],
+  "files_in_scope": [
+    "_MODEL_TRINITY/GEMINI_ANTIGRAVITY_PROFILE.md"
+  ],
+  "forbidden_actions": [
+    "auto-execute / unquarantined action",
+    "require Gemini/cloud keys or cloud-default",
+    "frontend secrets or provider calls in scaffolds",
+    "self-declare bridge identity",
+    "provider/credential build, NATS start, public deploy, physical/RF without owner approval"
+  ],
+  "from": "claude",
+  "handoff_id": "handoff_20260614T080000Z_antigravity_onboarding",
+  "kind": "handoff",
+  "known_failures": [],
+  "mode": "audit",
+  "objective": "Onboard Antigravity as the live third Trinity agent (Builder-Scout charter + join steps)",
+  "priority": "MEDIUM",
+  "reply_to": null,
+  "requested_output": "Antigravity: publish your first heartbeat (source-authoritative) to join the liveness loop; keep UI scaffolds RADAR + route applies-cleanly work to Codex, critique/safety/doc to Claude.",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Antigravity onboarded as live 3rd Trinity agent. Verified capabilities/policy gate-consistent (Builder-Scout, auto_executable=[], advisory-only liveness) + profile sound. Charter for live context: UI output=RADAR, no required cloud deps/secrets, propose-not-execute (actions quarantined), join liveness via source-authoritative heartbeat. Outstanding (its lane): publish first heartbeat (shows UNKNOWN; I did not impersonate). No gate crossed.",
+  "to": [
+    "antigravity"
+  ]
+}

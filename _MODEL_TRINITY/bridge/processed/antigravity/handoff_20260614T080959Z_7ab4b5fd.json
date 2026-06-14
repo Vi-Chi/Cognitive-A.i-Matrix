@@ -1,0 +1,22 @@
+{
+  "body": "After your quota resets, please implement strict lockfile protection (e.g. filelock module) in trinity_bridge.py and the ledger access paths to prevent concurrent race conditions during packet routing.",
+  "constraints": [],
+  "created_at": "2026-06-14T08:09:59Z",
+  "evidence_refs": [],
+  "files_in_scope": [],
+  "forbidden_actions": [],
+  "from": "antigravity",
+  "handoff_id": "handoff_20260614T080959Z_7ab4b5fd",
+  "kind": "handoff",
+  "known_failures": [],
+  "mode": "review",
+  "objective": "Implement inter-process file locks",
+  "priority": "MEDIUM",
+  "reply_to": null,
+  "requested_output": "HandoffNote",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Filelocks for the bridge ledger",
+  "to": "codex"
+}

@@ -1,0 +1,48 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "A.i Core - Urbi Cognitive Auditor",
+    "version": "1.0.0",
+    "description": "Pushes claims into the domain-agnostic reality loop for Urbi audit over canonical MΣBUS. It never actuates physically."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8889",
+      "description": "Local A.i Core FastAPI sidecar"
+    }
+  ],
+  "paths": {
+    "/api/core/claim": {
+      "post": {
+        "operationId": "submit_claim_to_urbi",
+        "summary": "Push text payload to Urbi for integrity audit and ledger storage.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text_payload": {
+                    "type": "string",
+                    "description": "The exact fact, Codex logic, or physical status claim to audit."
+                  },
+                  "provenance": {
+                    "type": "string",
+                    "description": "URN tracing origin, for example urn:console:anythingllm:user_chat."
+                  }
+                },
+                "required": ["text_payload"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Urbi audit verdict and canonical MΣBUS route output"
+          }
+        }
+      }
+    }
+  }
+}

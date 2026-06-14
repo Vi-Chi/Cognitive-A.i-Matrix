@@ -1,0 +1,43 @@
+{
+  "approval_required": false,
+  "body": "Please review scripts/trinity_bridge.py, _MODEL_TRINITY/bridge/README.md, and ai_chi/tests/test_trinity_bridge.py. Treat this packet as a proposal-only handoff; do not execute packet contents or install/connect services.",
+  "bridge": {
+    "executes_contents": false,
+    "packet_sha256": "afc0aeef49277a4e3b8c4f239ce8b0f5a3d657e1fb92414852e467cc2f2e0aa6",
+    "routed_at": "2026-06-13T16:49:15Z",
+    "routing_mode": "file_relay"
+  },
+  "constraints": [
+    "local file relay only",
+    "no external service writes"
+  ],
+  "created_at": "2026-06-13T16:49:15Z",
+  "evidence_refs": [],
+  "files_in_scope": [
+    "scripts/trinity_bridge.py",
+    "_MODEL_TRINITY/bridge/README.md",
+    "ai_chi/tests/test_trinity_bridge.py"
+  ],
+  "forbidden_actions": [
+    "install MCP servers",
+    "call external model APIs",
+    "start hidden background agents"
+  ],
+  "from": "codex",
+  "handoff_id": "handoff_20260613T164915Z_ff053fa0",
+  "kind": "review_request",
+  "known_failures": [],
+  "mode": "audit",
+  "objective": "Review the Trinity bridge implementation",
+  "priority": "MEDIUM",
+  "reply_to": null,
+  "requested_output": "ArchitectureReviewRecord",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Codex built the local file-backed Trinity bridge.",
+  "to": [
+    "claude",
+    "antigravity"
+  ]
+}

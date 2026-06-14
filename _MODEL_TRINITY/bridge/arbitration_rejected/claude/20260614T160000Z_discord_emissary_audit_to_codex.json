@@ -1,0 +1,91 @@
+{
+  "schema": "digivichi.trinity.handoff.v0",
+  "handoff_id": "discord_emissary_audit_20260614T160000Z",
+  "from": "claude",
+  "to": ["codex"],
+  "kind": "review",
+  "mode": "audit",
+  "priority": "HIGH",
+  "objective": "Discord Emissary audit findings + three safe implementation tasks",
+  "created_at": "2026-06-14T16:00:00Z",
+  "reply_to": "review_20260614T150000Z_discord_github_readiness",
+
+  "summary": "DAN Discord audit cycle complete. CRITICAL: real bot token found in discord_project/.env — not committed (gitignored, no git repo), but Vi must evaluate whether it was shared externally and rotate if any doubt. 434 tests green. Webhook triple-gate verified correct. Three new safe local docs created: Nomos disclosure label spec, approval ledger format, and MΣBUS emissary adapter design skeleton. Two Codex implementation tasks identified (labels.py + approval_ledger.py). Combined go-public gate: items 1-3 DONE, items 4-6 still pending.",
+
+  "security_alert": {
+    "severity": "CRITICAL",
+    "finding": "discord_project/.env contains a real-looking Discord bot token and Application ID",
+    "mitigation_current": "File is gitignored (.env and .env.*); no git working tree exists yet; token was not printed in any report",
+    "action_required": "Vi to evaluate exposure history; rotate via Discord Developer Portal if any doubt; set DISCORD_TOKEN_ROTATION_REQUIRED accordingly",
+    "codex_action": "Do not read, print, move, or reference the raw token value. Verify .env remains in .gitignore before any git init."
+  },
+
+  "codex_tasks": [
+    {
+      "id": "discord-labels",
+      "priority": "HIGH",
+      "description": "Implement Nomos AI-disclosure labels per spec in _PROJECT_KNOWLEDGE_BASE/discord_project_2026-06-13/NOMOS_DISCLOSURE_LABELS.md",
+      "files": [
+        "discord_project/src/discord_project/labels.py (create)",
+        "discord_project/src/discord_project/redaction.py (wire label_is_present check into build_payload)",
+        "discord_project/src/discord_project/drafts.py (wire apply_label into draft generation)",
+        "discord_project/tests/test_labels.py (create)"
+      ],
+      "gated": false,
+      "note": "Stdlib-only. All offline. No network, no token, no live Discord."
+    },
+    {
+      "id": "discord-ledger",
+      "priority": "HIGH",
+      "description": "Implement approval ledger per spec in _PROJECT_KNOWLEDGE_BASE/discord_project_2026-06-13/APPROVAL_LEDGER_FORMAT.md",
+      "files": [
+        "discord_project/src/discord_project/approval_ledger.py (create)",
+        "discord_project/src/discord_project/webhook_client.py (wire hash-match check before dry_run=False send)",
+        "discord_project/tests/test_approval_ledger.py (create)",
+        ".gitignore (add approval_ledger.jsonl)"
+      ],
+      "gated": false,
+      "note": "Append-only JSONL. Stdlib-only. Tests use temp files. No live Discord."
+    },
+    {
+      "id": "discord-env-gitignore-verify",
+      "priority": "HIGH",
+      "description": "Before any git init: verify .gitignore still excludes .env, .env.*, and approval_ledger.jsonl. Run: grep -n 'env\\|ledger' .gitignore",
+      "files": [".gitignore"],
+      "gated": false,
+      "note": "Verification only. Do not remove any existing .gitignore entries."
+    }
+  ],
+
+  "gate_status": {
+    "combined_go_public_gate": {
+      "1_gitignore": "DONE",
+      "2_gate_precision": "DONE",
+      "3_p_g1_graveyard": "DONE",
+      "4_benchmark_data": "PENDING - owner + CM5 node",
+      "5_nomos_labels": "SPEC DONE this cycle - impl = Codex task discord-labels",
+      "6_owner_approval": "PERMANENT GATE"
+    }
+  },
+
+  "files_created_this_cycle": [
+    "_PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_DISCORD_EMISSARY_AUDIT_2026-06-14.md",
+    "_PROJECT_KNOWLEDGE_BASE/discord_project_2026-06-13/NOMOS_DISCLOSURE_LABELS.md",
+    "_PROJECT_KNOWLEDGE_BASE/discord_project_2026-06-13/APPROVAL_LEDGER_FORMAT.md",
+    "docs/DISCORD_EMISSARY_MEBUS_ADAPTER.md"
+  ],
+
+  "forbidden_actions": [
+    "live Discord API call, bot token use, webhook creation/rotation, slash-command registration",
+    "reading, printing, or moving discord_project/.env token value",
+    "git init / git add / git push without owner approval + gate pass",
+    "any public post or community message"
+  ],
+
+  "requires_user_approval": false,
+  "constraints": [
+    ".env must remain gitignored; token rotation decision is Vi's",
+    "All three Codex tasks are local/offline/stdlib-only",
+    "MΣBUS emissary adapter (docs/DISCORD_EMISSARY_MEBUS_ADAPTER.md) is design only — no code until live bot exists"
+  ]
+}

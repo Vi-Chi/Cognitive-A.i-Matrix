@@ -1,0 +1,121 @@
+{
+  "agents": {
+    "antigravity": {
+      "agent": "antigravity",
+      "auto_top_up_allowed": false,
+      "confidence": 0.7,
+      "detected_keywords": [],
+      "evidence": {
+        "credential_files_read": false,
+        "event_records": 0,
+        "heartbeat_present": true,
+        "packet_body_text_read": false,
+        "packet_metadata_records": 35,
+        "provider_dashboard_read": false,
+        "snapshot_present": false
+      },
+      "heartbeat_stale": true,
+      "heartbeat_status": "DOWN",
+      "last_seen_utc": "2026-06-14T07:36:25Z",
+      "limit_hit_at": null,
+      "next_check_at": "2026-06-14T12:59:52Z",
+      "paid_overflow_allowed": false,
+      "provider": "google",
+      "quota_source": "manual_status",
+      "reason": "heartbeat stale",
+      "requires": null,
+      "reset_at": null,
+      "reset_inferred": false,
+      "schema_version": "digivichi.trinity.quota.status.v0",
+      "seconds_since_heartbeat": 19347,
+      "status": "OFFLINE",
+      "weekly_reset_at": null
+    },
+    "claude": {
+      "agent": "claude",
+      "auto_top_up_allowed": false,
+      "confidence": 0.7,
+      "detected_keywords": [],
+      "evidence": {
+        "credential_files_read": false,
+        "event_records": 1,
+        "heartbeat_present": true,
+        "packet_body_text_read": false,
+        "packet_metadata_records": 55,
+        "provider_dashboard_read": false,
+        "snapshot_present": false
+      },
+      "heartbeat_stale": false,
+      "heartbeat_status": "ALIVE",
+      "last_seen_utc": "2026-06-14T12:50:00Z",
+      "limit_hit_at": null,
+      "next_check_at": "2026-06-14T12:59:52Z",
+      "paid_overflow_allowed": false,
+      "provider": "anthropic",
+      "quota_source": "manual_status",
+      "reason": "fresh heartbeat and no quota limit evidence",
+      "requires": null,
+      "reset_at": null,
+      "reset_inferred": false,
+      "schema_version": "digivichi.trinity.quota.status.v0",
+      "seconds_since_heartbeat": 532,
+      "status": "READY",
+      "weekly_reset_at": null
+    },
+    "codex": {
+      "agent": "codex",
+      "auto_top_up_allowed": false,
+      "confidence": 0.7,
+      "detected_keywords": [],
+      "evidence": {
+        "credential_files_read": false,
+        "event_records": 0,
+        "heartbeat_present": true,
+        "packet_body_text_read": false,
+        "packet_metadata_records": 50,
+        "provider_dashboard_read": false,
+        "snapshot_present": false
+      },
+      "heartbeat_stale": true,
+      "heartbeat_status": "DOWN",
+      "last_seen_utc": "2026-06-14T11:02:34Z",
+      "limit_hit_at": null,
+      "next_check_at": "2026-06-14T12:59:52Z",
+      "paid_overflow_allowed": false,
+      "provider": "openai",
+      "quota_source": "manual_usage_dashboard",
+      "reason": "heartbeat stale",
+      "requires": null,
+      "reset_at": null,
+      "reset_inferred": false,
+      "schema_version": "digivichi.trinity.quota.status.v0",
+      "seconds_since_heartbeat": 6978,
+      "status": "OFFLINE",
+      "weekly_reset_at": null
+    }
+  },
+  "authority_boundary": {
+    "app_config_mutation": false,
+    "auto_top_up": false,
+    "browser_cookie_reads": false,
+    "network_listener_start": false,
+    "paid_credit_enablement": false,
+    "provider_calls": false,
+    "secret_reads": false
+  },
+  "created_at": "2026-06-14T12:58:52Z",
+  "downtime_events": [
+    {
+      "agent": "claude",
+      "duration_seconds": 22002,
+      "ended_at": "2026-06-14T12:58:52Z",
+      "event": "DOWNTIME_ENDED",
+      "reason": "fresh heartbeat and no quota limit evidence",
+      "schema_version": "digivichi.trinity.quota.downtime.v0",
+      "started_at": "2026-06-14T06:52:10Z",
+      "status": "READY"
+    }
+  ],
+  "poke_events": [],
+  "schema_version": "digivichi.trinity.quota.report.v0"
+}

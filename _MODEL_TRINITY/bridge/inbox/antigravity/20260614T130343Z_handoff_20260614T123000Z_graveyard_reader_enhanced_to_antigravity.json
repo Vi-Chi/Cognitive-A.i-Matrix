@@ -1,0 +1,46 @@
+{
+  "approval_required": false,
+  "body": "Owner asked me to reverse-engineer + enhance scripts/graveyard_reader.py. Done (patch-heavy/tooling lane). It's the redacted FTS5 indexer over _backup (cold storage holding sealed creds) - the same component O-G1 leaked through, so every enhancement preserves/strengthens the secret boundary and keeps existing function signatures (build_index/init_db/read_redacted_text/reset_db/get_text_hash/main) so test_graveyard_redaction stays valid.\n\nENHANCEMENTS:\n- E1 portability: removed hardcoded C:\\Users\\Vi Chi paths -> repo-root-derived (parents[1]) + env overrides GRAVEYARD_DB/GRAVEYARD_BACKUP_DIR. Now runs on Windows AND Linux/CM5/sandbox.\n- E2 fail-closed (the big one): after redact_sensitive_text, call contains_secret_shape() on BOTH content and path; if STILL secret-shaped, SKIP+count blocked_unredacted, never index. Defense-in-depth so a leak can't recur even if a new pattern slips redaction (directly hardens the O-G1 class).\n- E3 atomic rebuild: --reset builds into <db>.tmp then os.replace() swaps it in after a clean close -> an interrupted/power-loss rebuild never corrupts or destroys the live index (maritime power-loss resilience, matches ledger pattern).\n- E4 robustness: max-size guard (GRAVEYARD_MAX_FILE_BYTES, default 2MB) + binary sniff (skip NUL-byte files) + configurable extensions.\n- E5 safe import of graveyard_redaction regardless of cwd.\n- E6 auditable counts: blocked_unredacted / skipped_binary / skipped_large.\nPreserved: redaction-first, FTS5, content-hash dedup, per-file isolation, redacted error output, ignore_dirs.\n\nVERIFICATION: host file complete + py_compile clean (x3). DYNAMIC FUNCTIONAL TEST BLOCKED HERE by active \u00a712 mount WRITE-lag - after I wrote the file, the sandbox served truncated reads of it across 12 attempts (cut at line 76), so I could not run it in-sandbox. REQUEST (Codex, stable/fresh sandbox): run `python -m unittest ai_chi.tests.test_graveyard_redaction` + a functional `build_index(reset=True)` rebuild and confirm 0 secret-shape rows + the new counts. I expect green (signatures unchanged, redaction strengthened not weakened). No gate crossed; only the tooling script edited (not ai_chi core / not executor / not a secret file).",
+  "bridge": {
+    "executes_contents": false,
+    "packet_sha256": "3a035f4f217acb512a0996bcc875ad87d9254abe5be4acda356c1f61b59c2ad5",
+    "routed_at": "2026-06-14T13:03:43Z",
+    "routing_mode": "file_relay"
+  },
+  "constraints": [
+    "redaction boundary preserved/strengthened (E2 fail-closed)",
+    "tooling-script edit only; no ai_chi core / executor / gate touched",
+    "no gate crossed"
+  ],
+  "created_at": "2026-06-14T12:30:00Z",
+  "evidence_refs": [
+    "scripts/graveyard_reader.py",
+    "scripts/graveyard_redaction.py",
+    "ai_chi/tests/test_graveyard_redaction.py"
+  ],
+  "files_in_scope": [
+    "scripts/graveyard_reader.py"
+  ],
+  "forbidden_actions": [
+    "weaken redaction / index a secret-shaped value",
+    "point indexer at non-_backup roots without review"
+  ],
+  "from": "claude",
+  "handoff_id": "handoff_20260614T123000Z_graveyard_reader_enhanced",
+  "kind": "handoff",
+  "known_failures": [],
+  "mode": "audit",
+  "objective": "Enhanced graveyard_reader.py (portability + fail-closed redaction + atomic rebuild + robustness); request stable-sandbox functional confirm",
+  "priority": "MEDIUM",
+  "reply_to": null,
+  "requested_output": "Codex: in a stable sandbox run test_graveyard_redaction + a reset rebuild; confirm green, 0 secret-shape rows, new counts populate. Flag if any signature assumption in the tests changed.",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Reverse-engineered + enhanced scripts/graveyard_reader.py: E1 portable paths, E2 fail-closed contains_secret_shape verify before insert (never index residual secrets), E3 atomic temp-db->os.replace rebuild (power-loss safe), E4 binary/size guards, E5 safe import, E6 audit counts. Signatures preserved (tests stay valid); redaction strengthened. py_compile clean x3; dynamic run blocked by \u00a712 mount write-lag -> Codex to confirm in stable sandbox. No gate crossed.",
+  "to": [
+    "codex",
+    "antigravity"
+  ],
+  "ttl_seconds": 86400
+}

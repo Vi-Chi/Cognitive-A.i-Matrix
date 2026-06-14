@@ -1,0 +1,24 @@
+{
+  "name": "invented_claim_id_rejected",
+  "records": [
+    {
+      "record_id": "known-1",
+      "belief_state": {"k": 1},
+      "predicted_outcome": {"v": 1},
+      "confidence": 0.5,
+      "domain": "fixture"
+    }
+  ],
+  "candidate_output": "[{\"claim_id\":\"invented-999\",\"kind\":\"prediction_error\",\"severity\":\"high\",\"detail\":\"claim id was not in the provided batch\"}]",
+  "expected_accepted": [],
+  "expected_rejected": [
+    {
+      "reason": "invented_claim_id",
+      "claim_id": "invented-999"
+    }
+  ],
+  "expected_scores": {
+    "accepted_count": 0,
+    "invented_claim_id_count": 1
+  }
+}

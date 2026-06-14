@@ -1,0 +1,31 @@
+{
+  "agents": {
+    "antigravity": {
+      "paid_overflow_allowed": false,
+      "provider": "google",
+      "quota_source": "manual_status",
+      "session_window_hours": null,
+      "weekly_reset_at": null
+    },
+    "claude": {
+      "paid_overflow_allowed": false,
+      "provider": "anthropic",
+      "quota_source": "manual_status",
+      "session_window_hours": 5,
+      "weekly_reset_at": null
+    },
+    "codex": {
+      "paid_overflow_allowed": false,
+      "provider": "openai",
+      "quota_source": "manual_usage_dashboard",
+      "session_window_hours": null,
+      "weekly_reset_at": null
+    }
+  },
+  "auto_top_up_allowed": false,
+  "paid_overflow_default": false,
+  "poll_interval_seconds": 60,
+  "schema_version": "digivichi.trinity.quota.config.v0",
+  "stale_heartbeat_seconds": 600,
+  "status_poke_max_frequency_seconds": 900
+}

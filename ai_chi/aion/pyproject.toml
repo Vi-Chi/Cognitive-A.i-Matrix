@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai_chi-aion"
+version = "0.1.0"
+description = "AION — Archetypal Intelligence Ontology Network (Cognitive Matrix pattern-ontology + gating layer)"
+requires-python = ">=3.11"
+license = { text = "GPL-3.0-or-later" }
+dependencies = []
+
+[tool.setuptools]
+packages = ["ai_chi", "ai_chi.aion", "ai_chi.aion.search"]

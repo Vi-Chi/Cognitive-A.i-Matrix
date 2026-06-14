@@ -1,0 +1,45 @@
+{
+  "approval_required": false,
+  "body": "Backup salvage assessment complete (owner asked me to RE _backup + leave a pickup report). Full report: _PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_BACKUP_SALVAGE_ASSESSMENT_2026-06-14.md. Explored 12,023 files/492 py, redaction-aware, NO credential file opened.\n\nLAYER MAP: dated trinity-* snapshots = backups of current ai_chi (not salvage); !Modules/ = the prior Omni-AI/Wibo-835 system (~May 2026, the real salvage zone); _import/ = per-model prototypes (already dispositioned).\n\nTIER 0 (already present): adapter_nmea.py already vendored in ai_chi/_vendor/mebus; core mebus/aion/urbi/orbi reconstructed; aicore* flattened superseded.\nTIER 1 (doc-only design refs): 11 agent SPECS (hailo/rpi-hardware/protocol-gateway/security/service-monitor/llm-core/...) - the embodiment layer for live CM5/Hailo; memory/ tier layout. Reference, not code.\nTIER 2 (REAL salvageable code, recommended):\n  1) services/anythingllm-crewai-bridge/ - HIGH. CrewAI RAG + sysadmin + safe_shell_tool.py + test_safety_gates.py. TWO uses: (a) safe_shell_tool = the missing shell.run safety for the Orbi executor (my O2: blocked tokens/metachars, blocked cmds sudo/rm/dd, docker/apt/service mutation gating, readonly allowlist, dry-run, with passing tests); (b) RAG bridge = AIDICT/RAG-for-claims front-end.\n  2) cognitive_matrix/formula.py - 'Grand Formula of Omni' (omega=f(A,K,T,Phi,Delta,Xi,Lambda)), formal reasoning declaration mapping to the 12 Axioms / 3-6-9 kernel. Canon/design ref.\n  3) gordon_* MCP stack + ollama_docker_bridge + mcp_http_stdio_proxy - MCP/edge-LLM plumbing, reference only (lane-B / install stop-gated).\n\nPICKUP: Codex -> evaluate safe_shell_tool.py + test_safety_gates.py as basis for executor shell.run hardening (keep handlers simulated until owner+live-gate). Antigravity -> evaluate anythingllm-crewai-bridge as AIDICT/RAG front-end (RADAR until reviewed). Claude -> cross-link formula.py to AXIOMS_OF_OMNI + agent specs as embodiment blueprint when live deploy gated.\n\nSECURITY: _backup holds sealed creds; only sweep via the enhanced redacting graveyard_reader, never raw. Everything here is reference/proposal; shell exec / MCP install / hardware / CM5-Hailo stay stop-gated. No gate crossed.",
+  "bridge": {
+    "executes_contents": false,
+    "packet_sha256": "3c342791b820f349ecac4bb93c2d446e47bc3f75bc621aff1ec03dd9f1c475e8",
+    "routed_at": "2026-06-14T13:03:43Z",
+    "routing_mode": "file_relay"
+  },
+  "constraints": [
+    "salvage = reference/proposal only",
+    "shell/MCP/hardware/CM5-Hailo stay stop-gated",
+    "_backup sweeps only via redacting graveyard_reader"
+  ],
+  "created_at": "2026-06-14T13:00:00Z",
+  "evidence_refs": [
+    "_PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_BACKUP_SALVAGE_ASSESSMENT_2026-06-14.md",
+    "_backup/!Modules/services/anythingllm-crewai-bridge/app/tools/safe_shell_tool.py",
+    "_backup/!Modules/backups/system-20260502-1623/cognitive_matrix/formula.py"
+  ],
+  "files_in_scope": [],
+  "forbidden_actions": [
+    "enable real executor shell.run from salvage without owner+Codex live-gate",
+    "MCP install from salvaged plumbing",
+    "raw-read/index _backup without redaction"
+  ],
+  "from": "claude",
+  "handoff_id": "handoff_20260614T130000Z_backup_salvage",
+  "kind": "handoff",
+  "known_failures": [],
+  "mode": "audit",
+  "objective": "Backup salvage assessment + pickup assignments",
+  "priority": "MEDIUM",
+  "reply_to": null,
+  "requested_output": "Codex: safe_shell_tool -> executor shell.run hardening (simulated until gated). Antigravity: anythingllm RAG bridge -> AIDICT front-end (RADAR). ",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Salvage assessment of _backup: !Modules = prior Omni-AI/Wibo system. Tier0 already-present (adapter_nmea vendored). Tier1 doc-only agent specs (embodiment layer). Tier2 REAL: anythingllm-crewai-bridge (safe_shell_tool -> Orbi shell.run safety O2; RAG -> AIDICT) + formula.py (Grand Formula -> Axioms) + MCP/edge plumbing (gated). Pickup routed. No gate crossed.",
+  "to": [
+    "codex",
+    "antigravity"
+  ],
+  "ttl_seconds": 86400
+}

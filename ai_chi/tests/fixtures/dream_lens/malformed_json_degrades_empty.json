@@ -1,0 +1,23 @@
+{
+  "name": "malformed_json_degrades_empty",
+  "records": [
+    {
+      "record_id": "malformed-1",
+      "belief_state": {"k": 1},
+      "predicted_outcome": {"v": 1},
+      "confidence": 0.5,
+      "domain": "fixture"
+    }
+  ],
+  "candidate_output": "not valid json {",
+  "expected_accepted": [],
+  "expected_rejected": [
+    {
+      "reason": "malformed_json"
+    }
+  ],
+  "expected_scores": {
+    "accepted_count": 0,
+    "malformed_output_count": 1
+  }
+}

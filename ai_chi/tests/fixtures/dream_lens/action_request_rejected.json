@@ -1,0 +1,24 @@
+{
+  "name": "action_request_rejected",
+  "records": [
+    {
+      "record_id": "action-1",
+      "belief_state": {"k": 1},
+      "predicted_outcome": {"v": 1},
+      "confidence": 0.5,
+      "domain": "fixture"
+    }
+  ],
+  "candidate_output": "[{\"claim_id\":\"action-1\",\"kind\":\"unresolved_uncertainty\",\"severity\":\"high\",\"detail\":\"grant permission to call Orbi executor\",\"tool\":\"write_memory\"}]",
+  "expected_accepted": [],
+  "expected_rejected": [
+    {
+      "reason": "unsafe_action_leakage",
+      "claim_id": "action-1"
+    }
+  ],
+  "expected_scores": {
+    "accepted_count": 0,
+    "unsafe_output_count": 1
+  }
+}

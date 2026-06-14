@@ -1,0 +1,196 @@
+{
+  "arbitration_events": [],
+  "arbitration_summary": {},
+  "bridge_status": {
+    "created_at": "2026-06-14T19:36:55Z",
+    "inbox": {
+      "antigravity": 39,
+      "claude": 49,
+      "codex": 45
+    },
+    "ledger_exists": true,
+    "ledger_path": "C:\\Users\\Vi Chi\\Desktop\\Projectz\\A.i\\_MODEL_TRINITY\\bridge\\ledger\\route-ledger.jsonl",
+    "outbox": {
+      "antigravity": 0,
+      "claude": 0,
+      "codex": 0
+    },
+    "processed": {
+      "antigravity": 18,
+      "claude": 36,
+      "codex": 41
+    },
+    "rejected": {
+      "antigravity": 2,
+      "claude": 0,
+      "codex": 0
+    },
+    "root": "C:\\Users\\Vi Chi\\Desktop\\Projectz\\A.i\\_MODEL_TRINITY\\bridge",
+    "schema": "digivichi.trinity.bridge-status.v0"
+  },
+  "check_mode": "none",
+  "checks": [],
+  "completed_at": "2026-06-14T19:36:55Z",
+  "cycle_id": "cycle_20260614T193655Z_3028c314",
+  "cycle_ledger_path": "C:\\Users\\Vi Chi\\Desktop\\Projectz\\A.i\\_MODEL_TRINITY\\bridge\\ledger\\cycle-ledger.jsonl",
+  "dry_run": false,
+  "duration_seconds": 0.029,
+  "executor_events": [],
+  "executor_status": {
+    "created_at": "2026-06-14T19:36:55Z",
+    "executed": 1,
+    "execution_rejected": 0,
+    "executor_role": "codex",
+    "ledger_exists": true,
+    "ledger_path": "C:\\Users\\Vi Chi\\Desktop\\Projectz\\A.i\\_MODEL_TRINITY\\bridge\\ledger\\execution-ledger.jsonl",
+    "pending_execution_requests": 0,
+    "result_outbox": 0,
+    "root": "C:\\Users\\Vi Chi\\Desktop\\Projectz\\A.i\\_MODEL_TRINITY\\bridge",
+    "safe_tasks": [
+      {
+        "description": "Report Trinity bridge queue counts.",
+        "mutates_repo_files": false,
+        "requires_user_approval": false,
+        "task_id": "bridge_status",
+        "timeout_seconds": 30
+      },
+      {
+        "description": "Validate pending bridge outbox routes without moving packets.",
+        "mutates_repo_files": false,
+        "requires_user_approval": false,
+        "task_id": "bridge_route_once_dry_run",
+        "timeout_seconds": 30
+      },
+      {
+        "description": "Return a compact inventory of root, Trinity, bridge, and KB front-door docs.",
+        "mutates_repo_files": false,
+        "requires_user_approval": false,
+        "task_id": "doc_inventory",
+        "timeout_seconds": 30
+      },
+      {
+        "description": "Run the Axioms floor verification.",
+        "mutates_repo_files": false,
+        "requires_user_approval": false,
+        "task_id": "axioms_floor",
+        "timeout_seconds": 20
+      },
+      {
+        "description": "Run Trinity bridge unit tests only.",
+        "mutates_repo_files": false,
+        "requires_user_approval": false,
+        "task_id": "trinity_bridge_tests",
+        "timeout_seconds": 60
+      },
+      {
+        "description": "Run Trinity executor unit tests only.",
+        "mutates_repo_files": false,
+        "requires_user_approval": false,
+        "task_id": "trinity_executor_tests",
+        "timeout_seconds": 60
+      },
+      {
+        "description": "Run Trinity arbitrator unit tests only.",
+        "mutates_repo_files": false,
+        "requires_user_approval": false,
+        "task_id": "trinity_arbitrator_tests",
+        "timeout_seconds": 60
+      },
+      {
+        "description": "Run Trinity+DAN cycle unit tests only.",
+        "mutates_repo_files": false,
+        "requires_user_approval": false,
+        "task_id": "trinity_cycle_tests",
+        "timeout_seconds": 60
+      },
+      {
+        "description": "Run Trinity bridge, executor, arbitrator, and cycle unit tests.",
+        "mutates_repo_files": false,
+        "requires_user_approval": false,
+        "task_id": "trinity_tests",
+        "timeout_seconds": 90
+      },
+      {
+        "description": "Run the full ai_chi unittest discovery suite.",
+        "mutates_repo_files": false,
+        "requires_user_approval": false,
+        "task_id": "full_ai_chi_tests",
+        "timeout_seconds": 180
+      }
+    ],
+    "schema": "digivichi.trinity.executor-status.v0"
+  },
+  "executor_summary": {},
+  "failed_checks": 0,
+  "latest_state_path": "C:\\Users\\Vi Chi\\Desktop\\Projectz\\A.i\\_MODEL_TRINITY\\bridge\\state\\latest-cycle.json",
+  "liveness_routing": {
+    "agents": {
+      "antigravity": {
+        "can_expand_authority": false,
+        "context_mode": "compact",
+        "may_auto_execute": false,
+        "queue_only": true,
+        "reason": "health_summary_stale",
+        "send_new_work": false,
+        "status": "STALE",
+        "token_automation_weight": 0.25
+      },
+      "claude": {
+        "can_expand_authority": false,
+        "context_mode": "compact",
+        "may_auto_execute": false,
+        "queue_only": true,
+        "reason": "health_summary_stale",
+        "send_new_work": false,
+        "status": "STALE",
+        "token_automation_weight": 0.25
+      },
+      "codex": {
+        "can_expand_authority": false,
+        "context_mode": "compact",
+        "may_auto_execute": false,
+        "queue_only": true,
+        "reason": "health_summary_stale",
+        "send_new_work": false,
+        "status": "STALE",
+        "token_automation_weight": 0.25
+      }
+    },
+    "authority_boundary": {
+      "alive_grants_authority": false,
+      "capabilities_are_advisory_only": true,
+      "executor_allowlist_only": true,
+      "gated_action_triggered_by_liveness": false,
+      "proposal_only_preserved": true
+    },
+    "effect_scope": [
+      "volume",
+      "format",
+      "timing"
+    ],
+    "health_summary_path": "C:\\Users\\Vi Chi\\Desktop\\Projectz\\A.i\\_MODEL_TRINITY\\bridge\\health\\health_summary.json",
+    "reason": "health_summary_stale",
+    "schema": "digivichi.trinity.dan-cycle.liveness-routing.v0",
+    "source_status": "CONSERVATIVE_FALLBACK",
+    "summary_age_seconds": 30326,
+    "summary_max_age_seconds": 300
+  },
+  "post_executor_route_events": [],
+  "post_executor_route_summary": {},
+  "route_events": [],
+  "route_summary": {},
+  "safety": {
+    "freeform_shell_execution": false,
+    "global_app_config_mutation": false,
+    "hidden_background_service": false,
+    "liveness_can_auto_execute": false,
+    "liveness_can_expand_authority": false,
+    "liveness_gates_volume_not_authority": true,
+    "mcp_installs": false,
+    "model_calls": false,
+    "service_connector_writes": false
+  },
+  "schema": "digivichi.trinity.dan-cycle.v0",
+  "started_at": "2026-06-14T19:36:55Z",
+  "status": "SUCCEEDED"
+}

@@ -1,0 +1,51 @@
+{
+  "approval_required": false,
+  "body": "Auditor-Scribe review of the heartbeat/liveness spec (_Import/CODEX_TASK_TRINITY_HEARTBEAT_LIVENESS.md + TRINITY_HEARTBEAT_LIVENESS_SPEC.md). This is your (code) lane to implement; I reviewed/hardened/grounded it and route the brief. I did NOT implement. Full record: _PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_HEARTBEAT_LIVENESS_REVIEW_2026-06-14.md.\n\nVERDICT: APPROVE for implementation as mirror-safe/local-only, CONDITIONAL on six guardrails:\n\nHB1 (MED): self-attested capabilities + routing must stay ADVISORY, never an authority path (same class as NATS N2 self-asserted trust / R4). (a) heartbeat capabilities = liveness hints, never grants; consumer must never convert a capability flag into permission for a gated action. (b) RECONCILE with the canonical _MODEL_TRINITY/bridge/agent-capabilities.json (already defines per-agent can_emit_kinds/can_receive_kinds/role) - derive/cross-check, don't let agents self-declare divergent capabilities. (c) routing weight may only down-rank/queue/compact, NEVER auto-escalate; the cycle runner (R8) must not read ALIVE as license to auto-run more world-affecting work. Liveness gates VOLUME not AUTHORITY.\n\nHB2 (MED): spoofing/containment. Poke/pong must pass the existing source-authoritative rule (bridge F1 in trinity_bridge.py): from_agent derived from outbox dir, not trusted from body - reuse validate_packet(source_hint=...). Heartbeat writer for agent X may only write health/X/ - enforce path containment like FileBackedSigmaTransport._stream_path (safe-char allowlist, ./.. reject, resolved-containment).\n\nHB3 (LOW): lease honesty. Summarizer must honor lease_expires_utc - if expired, downgrade to STALE/DOWN regardless of the record's status field, so a frozen agent that wrote ALIVE doesn't stay ALIVE. DOWN is inferred, never self-claimed (threshold model already does this - keep it).\n\nHB4 (LOW): align to real repo, don't fork a 2nd bridge. Canonical root = _MODEL_TRINITY/bridge/ (add health/ under it; none exists yet). Schema family = digivichi.trinity.* -> rename trinity.health.heartbeat.v1 to digivichi.trinity.health.heartbeat.v0 etc. REGISTER new kinds: liveness_poke/liveness_pong/heartbeat are NOT in any agent's can_emit_kinds in agent-capabilities.json (bridge will reject them) - add as OBSERVATION-class (NOT action-like, so they don't trip requires_user_approval_for_action_like_kinds), and NOT in auto_executable_tasks/allowlist.\n\nHB5 (LOW): wall-clock thresholds are fine for liveness (distinct from monotonic tau ordering) but watch CM5<->RPi4 clock skew; add tolerance.\nHB6 (LOW): DOWN_STARTED/RECOVERED-once must read prior status from disk (summary/last event) to stay idempotent across separate CLI runs (tests 7/8 cover it).\n\nClassification: _Import intake -> TRINITY_TOOLING, cleared for build under HB1-HB6. My follow-up offered: review your implementation (esp. HB1 advisory-only + HB2 source-authoritative pokes) before it's wired into the cycle runner. No gate crossed.",
+  "bridge": {
+    "executes_contents": false,
+    "packet_sha256": "36eb46573130c0e88c319599951d010d0afc9c7b02ccbddfafbb7b4d95597758",
+    "routed_at": "2026-06-14T06:11:42Z",
+    "routing_mode": "file_relay"
+  },
+  "constraints": [
+    "mirror-safe / local-only; observation+routing aid only",
+    "capabilities/heartbeat are advisory, never an authority grant",
+    "liveness gates volume, not authority; no auto-escalation",
+    "reuse source-authoritative validate_packet for pokes"
+  ],
+  "created_at": "2026-06-14T06:30:00Z",
+  "evidence_refs": [
+    "_PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_HEARTBEAT_LIVENESS_REVIEW_2026-06-14.md",
+    "_Import/CODEX_TASK_TRINITY_HEARTBEAT_LIVENESS.md",
+    "_Import/TRINITY_HEARTBEAT_LIVENESS_SPEC.md",
+    "_MODEL_TRINITY/bridge/agent-capabilities.json",
+    "scripts/trinity_bridge.py"
+  ],
+  "files_in_scope": [
+    "_MODEL_TRINITY/bridge/agent-capabilities.json",
+    "_MODEL_TRINITY/bridge/trinity-bridge.config.json",
+    "scripts/trinity_bridge.py"
+  ],
+  "forbidden_actions": [
+    "convert heartbeat capability flags into action authority",
+    "auto-escalate gated actions from routing weight",
+    "trust self-declared from_agent on poke packets",
+    "provider calls / secret reads / app-config mutation / MCP installs / network listeners / public writes"
+  ],
+  "from": "claude",
+  "handoff_id": "audit_20260614T063000Z_heartbeat_review",
+  "kind": "review",
+  "known_failures": [],
+  "mode": "audit",
+  "objective": "Review + harden + route the heartbeat/liveness spec for Codex implementation",
+  "priority": "MEDIUM",
+  "reply_to": null,
+  "requested_output": "Implement liveness layer under _MODEL_TRINITY/bridge/health/ honoring HB1-HB6; register new observation-class kinds in agent-capabilities.json; reuse validate_packet source-authority; route back for Claude review before cycle-runner wiring",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Heartbeat/liveness spec APPROVED for Codex build as mirror-safe/local-only, conditional on 6 guardrails: HB1 capabilities/routing advisory-only never authority (reconcile with agent-capabilities.json; no auto-escalation), HB2 source-authoritative pokes + path containment, HB3 honor lease expiry, HB4 align to _MODEL_TRINITY/bridge + digivichi.trinity.* schema + register new observation-class kinds, HB5 clock-skew tolerance, HB6 idempotent transitions. I reviewed only; Codex implements.",
+  "to": [
+    "codex"
+  ]
+}

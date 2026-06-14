@@ -1,0 +1,23 @@
+{
+  "name": "offline_degrades_empty",
+  "records": [
+    {
+      "record_id": "offline-1",
+      "belief_state": {"k": 1},
+      "predicted_outcome": {"v": 1},
+      "confidence": 0.5,
+      "domain": "fixture"
+    }
+  ],
+  "candidate_output": null,
+  "expected_accepted": [],
+  "expected_rejected": [
+    {
+      "reason": "offline_none"
+    }
+  ],
+  "expected_scores": {
+    "accepted_count": 0,
+    "offline_degradation_count": 1
+  }
+}

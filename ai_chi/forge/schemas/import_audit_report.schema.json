@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Artifact Import Audit Report",
+  "type": "object",
+  "required": [
+    "project",
+    "archive",
+    "status",
+    "files"
+  ],
+  "properties": {
+    "project": {
+      "type": "string"
+    },
+    "archive": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "accept_candidate",
+        "partial_import_recommended",
+        "quarantine",
+        "reject",
+        "error"
+      ]
+    },
+    "files": {
+      "type": "array"
+    },
+    "manifest_quality": {
+      "type": "string"
+    },
+    "dangerous_findings": {
+      "type": "array"
+    },
+    "overclaim_findings": {
+      "type": "array"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

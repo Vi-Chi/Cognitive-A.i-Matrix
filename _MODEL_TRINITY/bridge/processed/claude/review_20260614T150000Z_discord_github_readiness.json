@@ -1,0 +1,21 @@
+{
+  "body": "DAN Discord & GitHub: public-surface readiness audit + one protective fix. Full report: _PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_DISCORD_GITHUB_PUBLIC_READINESS_2026-06-14.md.\n\nCRITICAL GAP FIXED: the repo had NO root .gitignore. Compounding: dan_pre_publish_gate.sh --exclude-dir=_backup (assumes _backup never published). With no .gitignore, a git add -A && push would ship ALL of _backup (sealed creds, keys.txt, the 3 PII emails, Antigravity.tar.gz key-shape, graveyard_index.db) while the gate reported PASS. I created a hardened root .gitignore (excludes _backup/, Antigravity.tar.gz, .env*/keys/*.pem/*secret*/*token*/*credential*, *.db/graveyard_index.db, bridge runtime health/ledger/state/inbox/outbox/processed + .bridge.lock, node_modules/dist/__pycache__/venv, scratch_outbox). Purely protective; publishes nothing. DO NOT remove entries without owner decision + fresh full-tree scan.\n\nFINDING (Codex lane) — gate precision: dan_pre_publish_gate.sh matches BARE words token/secret/password -> it BLOCKED entirely on false positives (expose secrets in AGENTS.md; token-overlap/token-bag in AION/AIDICT; my .gitignore's *secret*). Alarm-fatigue risk. RECOMMEND: reuse graveyard_redaction.contains_secret_shape (value-shaped + key=value assignment) instead of bare words; keep the marina/berth/address PII terms. Real-secret status of the publishable tree = CLEAN (anchored sweep last cycle); the gate hits are all word-level FPs.\n\nDISCORD: scaffold fully gated (app/bot/channel creation manual Vi; registration/live-post/webhook stop-gated; webhook client triple-gated). Nomos AI-disclosure labels required on public content. P-G1 privacy done at redaction layer.\n\nCOMBINED GO-PUBLIC GATE: (1) .gitignore DONE; (2) gate passes on publishable set w/ precise patterns [Codex]; (3) rebuild graveyard_index.db to scrub 3 emails [Codex]; (4) real+redacted benchmark data [CM5 node]; (5) Nomos disclosure labels; (6) OWNER per-action approval of repo visibility / release text / Discord channel+text; (7) permanent: no secrets in repo, never publish _backup, no self-bots/user-tokens, no PII in git history.\n\nNo gate crossed; only a protective .gitignore added. Nothing published.",
+  "constraints": [".gitignore must exclude _backup/secrets/PII before any git init/push","gate must pass on the PUBLISHABLE set with precise patterns","never publish _backup; owner per-action approval for any public action"],
+  "created_at": "2026-06-14T15:00:00Z",
+  "evidence_refs": ["_PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_DISCORD_GITHUB_PUBLIC_READINESS_2026-06-14.md",".gitignore","scripts/dan_pre_publish_gate.sh","docs/PUBLIC_RELEASE_BLOCKERS.md"],
+  "files_in_scope": [".gitignore","scripts/dan_pre_publish_gate.sh"],
+  "forbidden_actions": ["git init/add/push or make repo public without owner approval + gate pass on publishable set","publish _backup or any secret/PII","remove .gitignore protective entries without owner decision","live Discord post/registration/webhook without owner approval"],
+  "from": "claude",
+  "handoff_id": "review_20260614T150000Z_discord_github_readiness",
+  "kind": "review",
+  "mode": "audit",
+  "objective": "Discord + GitHub public-surface readiness; fix missing .gitignore; flag gate precision",
+  "priority": "HIGH",
+  "reply_to": null,
+  "requested_output": "Codex: (a) improve dan_pre_publish_gate.sh precision (reuse contains_secret_shape, drop bare-word matches, keep PII terms); (b) rebuild graveyard_index.db for P-G1. Owner: per-action approval gates repo-visibility / release / Discord posts.",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Discord+GitHub readiness: CRITICAL no-root-.gitignore gap FIXED (would have leaked all of _backup on first push while gate PASSed since it excludes _backup). Gate-precision finding: matches bare token/secret words -> false-positive BLOCK (-> reuse contains_secret_shape). Publishable tree real-secret-clean. Discord scaffold fully gated; Nomos labels required. Combined go-public checklist set; owner per-action approval required. No gate crossed; only protective .gitignore added.",
+  "to": ["codex","antigravity"]
+}

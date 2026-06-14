@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A.i Core — Proof of Concept</title>
+<style>
+  :root{--bg:#0a0d12;--card:#10151e;--card2:#161d2a;--line:#243049;--txt:#e8eef7;--txt2:#9fb2c9;--txt3:#5f7falt;
+    --yin:#5db0ff;--yang:#e8b341;--ok:#46d39a;--no:#ff6b7a;--susp:#c79bff;--mono:ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box;margin:0} body{background:#06080c;color:var(--txt);font:15px/1.55 system-ui,Segoe UI,Roboto,sans-serif;
+    display:flex;justify-content:center;padding:24px}
+  .card{width:900px;background:radial-gradient(900px 500px at 85% -10%,#15294a55,transparent),var(--bg);
+    border:1px solid var(--line);border-radius:20px;overflow:hidden}
+  .hd{padding:26px 30px 18px;border-bottom:1px solid var(--line)}
+  .kicker{font:600 11px var(--mono);letter-spacing:.18em;color:var(--yin);text-transform:uppercase}
+  h1{font-size:30px;line-height:1.15;margin:8px 0 6px;letter-spacing:-.3px}
+  h1 b{color:var(--yin)} h1 i{color:var(--yang);font-style:normal}
+  .sub{color:var(--txt2);font-size:15px;max-width:680px}
+  .body{padding:22px 30px 26px}
+  .row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px}
+  .stat .n{font:700 21px var(--mono)} .stat .n.g{color:var(--ok)} .stat .n.b{color:var(--yin)} .stat .n.a{color:var(--yang)}
+  .stat .l{font:11px var(--mono);color:var(--txt2);margin-top:3px;line-height:1.35}
+  .sec{font:600 11px var(--mono);letter-spacing:.14em;color:var(--txt2);text-transform:uppercase;margin:18px 0 9px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .panel h3{font-size:14px;margin-bottom:8px}
+  .li{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;color:var(--txt2);margin:6px 0}
+  .li b{color:var(--txt)} .tick{color:var(--ok);font-weight:700}
+  .verdict{font:12.5px var(--mono);background:#0c1320;border:1px solid var(--line);border-radius:10px;padding:11px 13px;color:var(--txt2);line-height:1.7}
+  .pill{font:700 12px var(--mono);padding:1px 7px;border-radius:5px}
+  .pill.no{color:var(--no);background:#2a1316} .pill.su{color:var(--susp);background:#221833} .pill.ok{color:var(--ok);background:#0f2a20}
+  .quote{margin-top:14px;padding:14px 16px;border-left:3px solid var(--yin);background:#0d1626;border-radius:0 10px 10px 0;font-size:15px;color:var(--txt)}
+  .ft{display:flex;justify-content:space-between;align-items:center;padding:16px 30px;border-top:1px solid var(--line);
+    font:12px var(--mono);color:var(--txt3);flex-wrap:wrap;gap:8px}
+  .ft b{color:var(--txt2)} .tag{border:1px solid var(--line);border-radius:20px;padding:3px 10px;color:var(--txt2)}
+  .small{font-size:11px;color:#54657d;margin-top:14px;font-family:var(--mono);line-height:1.6}
+</style></head>
+<body>
+<div class="card">
+  <div class="hd">
+    <div class="kicker">Proof of Concept · 2026-06-08 · runs offline</div>
+    <h1>A self-auditing AI that <b>reasons on a micro edge NPU</b> — <i>and admits when it doesn't know.</i></h1>
+    <div class="sub">A sovereign, offline-first cognitive core running on a Raspberry&nbsp;Pi CM5 + Hailo-10H. It doesn't just answer — it audits every claim through a tri-state integrity check and records the evidence. Built by Vi-Chi & A.i for autonomous a.i vessels & drones.</div>
+  </div>
+
+  <div class="body">
+    <div class="row">
+      <div class="stat"><div class="n b">8.15 tok/s</div><div class="l">LLM reasoning on the Hailo-10H NPU (qwen2 1.5B, HEF)</div></div>
+      <div class="stat"><div class="n g">~40 °C</div><div class="l">NPU stayed cool under load — CPU hit 53 °C on the same job</div></div>
+      <div class="stat"><div class="n a">0.34 s</div><div class="l">time-to-first-token — 2.6× faster than CPU</div></div>
+      <div class="stat"><div class="n g">14 / 14</div><div class="l">tests green <b>on the device</b>, not in a sim</div></div>
+    </div>
+
+    <div class="two">
+      <div class="panel">
+        <h3>What makes it different</h3>
+        <div class="li"><span class="tick">▸</span><span><b>Three-state truth.</b> Every claim is <span class="pill ok">+ confirmed</span> <span class="pill no">− rejected</span> or <span class="pill su">= suspended</span>. Genuine uncertainty is <i>preserved</i>, never guessed.</span></div>
+        <div class="li"><span class="tick">▸</span><span><b>Audits, never acts.</b> The reasoning core produces audited belief and emits provenance-stamped messages — it can't take actions.</span></div>
+        <div class="li"><span class="tick">▸</span><span><b>Hybrid by design.</b> Heavy reasoning on the low-power NPU; embeddings on CPU. Fully offline — no cloud.</span></div>
+        <div class="li"><span class="tick">▸</span><span><b>Out-of-loop self-check.</b> It caught and rejected a <i>faked test</i> in its own pipeline.</span></div>
+      </div>
+      <div class="panel">
+        <h3>Live verdict (from the device ledger)</h3>
+        <div class="verdict">
+          claim: <span style="color:#cdd"> "…will absolutely never capsize<br>&nbsp;under any conditions whatsoever."</span><br><br>
+          verdict: <span class="pill no">− REJECTED</span> &nbsp;κ=0.88<br>
+          reason: overconfidence lens fired<br>
+          σ: <span style="color:var(--yin)">m.belief</span> · μ: WAKE · τ: causal<br>
+          <span style="color:#54657d">→ written as a signed envelope on the membrane</span>
+        </div>
+        <div class="li" style="margin-top:10px"><span class="tick">▸</span><span>An overconfident claim is <b>caught and down-weighted</b> — the system distrusts certainty.</span></div>
+      </div>
+    </div>
+
+    <div class="quote">"Most AI is built to sound confident. This one is built to doubt itself — to separate what it knows, what it rejects, and what it genuinely can't resolve yet."</div>
+
+    <div class="small">Measured on-device: Hailo-10H (40 TOPS) vs Cortex-A76 CPU, qwen2.5-class 1.5B, 120-token streamed generation. Numbers are real, not projected. Reasoning→NPU, embeddings→CPU. Architecture: Orbi (act) · Urbi (audit) · MΣBUS (membrane) · Autopoiesis (compute floor). GPLv3 · offline-first.</div>
+  </div>
+
+  <div class="ft">
+    <span><b>A.i Core</b> · Cognitive Matrix — Urbi 3-6-9 integrity axis</span>
+    <span class="tag">Raspberry Pi CM5 + Hailo-10H</span>
+    <span class="tag">100% offline</span>
+    <span class="tag">GPLv3</span>
+  </div>
+</div>
+</body></html>

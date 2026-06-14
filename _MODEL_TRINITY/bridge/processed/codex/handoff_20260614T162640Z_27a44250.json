@@ -1,0 +1,28 @@
+{
+  "body": "Files: scripts/dan_pre_publish_gate.py; scripts/graveyard_redaction.py; ai_chi/tests/test_dan_pre_publish_gate.py; ai_chi/tests/test_graveyard_redaction.py; ai_chi/tests/test_register_core.py; ai_chi/tests/test_smtis_normalizer.py; ai_chi/tests/test_trinity_heartbeat_liveness.py; _PROJECT_KNOWLEDGE_BASE/reports/CODEX_DAN_PRE_PUBLISH_GATE_PRECISION_2026-06-14.md; _PROJECT_KNOWLEDGE_BASE/STATE_OF_SYSTEM_2026-06-14.md; docs/DRAFT_GITHUB_RELEASE_V2_5.md; docs/DRAFT_DISCORD_UPDATE_V2_5.md; docs/PUBLIC_RELEASE_LEDGER.md. No push, publish, Discord post, provider call, or credential read performed.",
+  "constraints": [
+    "No raw secret values printed; no publication or service write; live posting/deploy/push remains owner-gated."
+  ],
+  "created_at": "2026-06-14T16:26:40Z",
+  "evidence_refs": [
+    "python scripts/dan_pre_publish_gate.py . => PASS; unittest discover -s ai_chi/tests => 434 OK; verify_floor => True; check_trinity_secret_refs => raw_secret_scan=pass"
+  ],
+  "files_in_scope": [
+    "scripts/dan_pre_publish_gate.py,scripts/graveyard_redaction.py,_PROJECT_KNOWLEDGE_BASE/reports/CODEX_DAN_PRE_PUBLISH_GATE_PRECISION_2026-06-14.md,_PROJECT_KNOWLEDGE_BASE/STATE_OF_SYSTEM_2026-06-14.md"
+  ],
+  "forbidden_actions": [],
+  "from": "codex",
+  "handoff_id": "handoff_20260614T162640Z_27a44250",
+  "kind": "handoff",
+  "known_failures": [],
+  "mode": "DAN",
+  "objective": "DAN pre-publish gate precision closeout",
+  "priority": "HIGH",
+  "reply_to": null,
+  "requested_output": "Claude/Antigravity may treat gate-precision and P-G1 rebuild blockers as closed; next work should preserve 434/434 baseline and keep benchmark/public actions stop-gated.",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Codex closed the pre-publish gate precision finding: category-only output, precise shared secret-shape detector, bounded public-PII assignment checks, bridge runtime ignored, local tree gate PASS, ai_chi 434 OK, verify_floor True.",
+  "to": "all"
+}

@@ -1,0 +1,120 @@
+{
+  "agents": {
+    "antigravity": {
+      "auto_executable_tasks": [],
+      "can_emit_kinds": [
+        "handoff",
+        "review",
+        "patch_plan",
+        "heartbeat",
+        "liveness_poke",
+        "liveness_pong",
+        "execution_request",
+        "tool_request",
+        "permission_request",
+        "action_request"
+      ],
+      "can_receive_kinds": [
+        "handoff",
+        "review",
+        "audit",
+        "patch_plan",
+        "build_report",
+        "cycle_summary",
+        "arbitration_summary",
+        "heartbeat",
+        "liveness_poke",
+        "liveness_pong",
+        "quota_poke",
+        "execution_result"
+      ],
+      "role": "Builder-Scout"
+    },
+    "claude": {
+      "auto_executable_tasks": [],
+      "can_emit_kinds": [
+        "handoff",
+        "review",
+        "audit",
+        "heartbeat",
+        "liveness_poke",
+        "liveness_pong",
+        "execution_request",
+        "tool_request",
+        "permission_request",
+        "action_request"
+      ],
+      "can_receive_kinds": [
+        "handoff",
+        "review",
+        "audit",
+        "patch_plan",
+        "build_report",
+        "cycle_summary",
+        "arbitration_summary",
+        "heartbeat",
+        "liveness_poke",
+        "liveness_pong",
+        "quota_poke",
+        "execution_result"
+      ],
+      "role": "Auditor-Scribe"
+    },
+    "codex": {
+      "auto_executable_tasks": [
+        "axioms_floor",
+        "bridge_route_once_dry_run",
+        "bridge_status",
+        "doc_inventory",
+        "full_ai_chi_tests",
+        "trinity_arbitrator_tests",
+        "trinity_bridge_tests",
+        "trinity_cycle_tests",
+        "trinity_executor_tests",
+        "trinity_tests"
+      ],
+      "can_emit_kinds": [
+        "handoff",
+        "review",
+        "patch_plan",
+        "build_report",
+        "cycle_summary",
+        "arbitration_summary",
+        "heartbeat",
+        "liveness_poke",
+        "liveness_pong",
+        "execution_result"
+      ],
+      "can_receive_kinds": [
+        "handoff",
+        "review",
+        "audit",
+        "patch_plan",
+        "build_report",
+        "cycle_summary",
+        "arbitration_summary",
+        "heartbeat",
+        "liveness_poke",
+        "liveness_pong",
+        "quota_poke",
+        "execution_result",
+        "execution_request"
+      ],
+      "role": "Engineer-Operator"
+    }
+  },
+  "policy": {
+    "approval_required_packets_are_quarantined": true,
+    "execution_requires_allowlisted_task": true,
+    "freeform_shell_execution": false,
+    "mcp_installs": false,
+    "model_calls": false,
+    "packets_are_records_not_authority": true,
+    "heartbeat_capabilities_are_advisory_only": true,
+    "quota_pokes_are_advisory_only": true,
+    "liveness_gates_volume_not_authority": true,
+    "service_connector_writes": false
+  },
+  "schema": "digivichi.trinity.capabilities.v0",
+  "updated_at": "2026-06-14T06:56:00Z"
+}

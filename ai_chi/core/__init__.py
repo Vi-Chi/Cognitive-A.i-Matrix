@@ -1,0 +1,1 @@
+"""Core reality-loop primitives."""

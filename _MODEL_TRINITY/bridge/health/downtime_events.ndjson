@@ -1,0 +1,4 @@
+{"agent":"claude","event":"DOWN_STARTED","previous_status":"STALE","schema_version":"digivichi.trinity.health.downtime-event.v0","status":"DOWN","timestamp_utc":"2026-06-14T06:58:51Z"}
+{"agent":"antigravity","event":"DOWN_STARTED","previous_status":"ALIVE","schema_version":"digivichi.trinity.health.downtime-event.v0","status":"DOWN","timestamp_utc":"2026-06-14T10:52:27Z"}
+{"agent":"codex","event":"DOWN_STARTED","previous_status":"STALE","schema_version":"digivichi.trinity.health.downtime-event.v0","status":"DOWN","timestamp_utc":"2026-06-14T10:52:27Z"}
+{"agent":"codex","down_started_at":"2026-06-14T10:52:27Z","event":"RECOVERED","schema_version":"digivichi.trinity.health.downtime-event.v0","status":"ALIVE","timestamp_utc":"2026-06-14T11:03:00Z"}

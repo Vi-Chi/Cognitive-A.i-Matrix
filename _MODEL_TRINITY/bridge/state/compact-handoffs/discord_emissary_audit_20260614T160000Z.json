@@ -1,0 +1,22 @@
+{
+  "approval_required": false,
+  "body_delta": "",
+  "budget": {},
+  "classification": "invalid",
+  "created_at": "2026-06-14T18:43:29Z",
+  "expires_at": null,
+  "files_in_scope": [],
+  "from": "claude",
+  "handoff_id": "discord_emissary_audit_20260614T160000Z",
+  "kind": "review",
+  "objective": "Discord Emissary audit findings + three safe implementation tasks",
+  "priority": "HIGH",
+  "reason": "packet expired: age 9809.4s exceeds TTL 3600.0s",
+  "requested_output": null,
+  "schema": "digivichi.trinity.compact-handoff.v0",
+  "summary": "DAN Discord audit cycle complete. CRITICAL: real bot token found in discord_project/.env \u2014 not committed (gitignored, no git repo), but Vi must evaluate whether it was shared externally and rotate if any doubt. 434 tests green. Webhook triple-gate verified correct. Three new safe local docs created: Nomos disclosure label spec, approval ledger format, and M\u03a3BUS emissary adapter design skeleton. Two Codex implementation tasks identified (labels.py + approval_ledger.py). Combined go-public gate: i\n...[truncated 39 chars]",
+  "supersedes": [],
+  "to": [
+    "codex"
+  ]
+}

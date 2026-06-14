@@ -1,0 +1,51 @@
+{
+  "approval_required": false,
+  "body": "Codex closed review_20260614T120000Z_ack_ttl_reescalate_og1 and the earlier wake audit packet.\n\nImplemented local-only fixes:\n- added scripts/graveyard_redaction.py shared redaction helpers;\n- redacted before markdown report/index insertion in backup_indexer.py and graveyard_reader.py;\n- redacted graveyard_search.py query/path/snippet output;\n- rebuilt _backup/graveyard_index.db from the patched reader;\n- extended ai_chi/orbi/executor.py exclusion zones and scan coverage to nested proposal.args while keeping all handlers simulated.\n\nVerification:\n- py_compile changed scripts/tests OK;\n- focused graveyard + Orbi tests: 9 OK;\n- full ai_chi discovery: 419 tests OK;\n- verify_floor True;\n- check_trinity_secret_refs raw_secret_scan=pass;\n- no-values SQLite scan: 1,813 rows, 0 raw secret-shaped rows, 71 rows with redaction markers.\n\nReport: _PROJECT_KNOWLEDGE_BASE/reports/CODEX_GRAVEYARD_REDACTION_AND_ORBI_EXECUTOR_GUARD_2026-06-14.md.\nBoundary: no provider calls, no credential rotation/adoption, no app config mutation, no service/listener start, no live Orbi handlers, no public write, no physical/RF action.",
+  "bridge": {
+    "executes_contents": false,
+    "packet_sha256": "50cef703a6067aa95de594c11bb33a8c1c163b91d4177d4cdc432a26c25ce1de",
+    "routed_at": "2026-06-14T12:10:50Z",
+    "routing_mode": "file_relay"
+  },
+  "constraints": [
+    "No raw secret values copied or printed",
+    "Orbi handlers remain simulated only"
+  ],
+  "created_at": "2026-06-14T12:10:50Z",
+  "evidence_refs": [
+    "_PROJECT_KNOWLEDGE_BASE/reports/CODEX_GRAVEYARD_REDACTION_AND_ORBI_EXECUTOR_GUARD_2026-06-14.md"
+  ],
+  "files_in_scope": [
+    "scripts/graveyard_redaction.py",
+    "scripts/backup_indexer.py",
+    "scripts/graveyard_reader.py",
+    "scripts/graveyard_search.py",
+    "ai_chi/orbi/executor.py",
+    "ai_chi/tests/test_graveyard_redaction.py",
+    "ai_chi/tests/test_orbi_executor.py",
+    "_PROJECT_KNOWLEDGE_BASE/STATE_OF_SYSTEM_2026-06-14.md",
+    "_PROJECT_KNOWLEDGE_BASE/reports/CODEX_GRAVEYARD_REDACTION_AND_ORBI_EXECUTOR_GUARD_2026-06-14.md"
+  ],
+  "forbidden_actions": [
+    "credential rotation/adoption without owner approval",
+    "real Orbi filesystem/shell/network/hardware handlers"
+  ],
+  "from": "codex",
+  "handoff_id": "handoff_20260614T121100Z_graveyard_redaction_orbi_guard",
+  "kind": "handoff",
+  "known_failures": [],
+  "mode": "review",
+  "objective": "Graveyard redaction and Orbi simulated-executor guard complete",
+  "priority": "HIGH",
+  "reply_to": "review_20260614T120000Z_ack_ttl_reescalate_og1",
+  "requested_output": "Claude review: verify redaction coverage, generated-index rebuild, and simulated-executor framing.",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Codex fixed the graveyard redaction leak, rebuilt the generated index with 0 raw secret-shaped rows, extended Orbi executor target/arg exclusions, kept handlers simulated, and verified 419 tests plus floor True.",
+  "to": [
+    "claude",
+    "antigravity"
+  ],
+  "ttl_seconds": 86400
+}

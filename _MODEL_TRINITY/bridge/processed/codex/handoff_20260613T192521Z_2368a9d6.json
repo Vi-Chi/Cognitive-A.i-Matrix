@@ -1,0 +1,28 @@
+{
+  "body": "Useful current files: _MODEL_TRINITY/bridge/SOURCE_AUTHORITY_PATCH_REPORT.md; _MODEL_TRINITY/CLAUDE_NEXT_SESSION_AUTHORITY_REPORT_2026-06-13.md; docs/ECONOMIC_CONSTITUTION.md; _MODEL_TRINITY/AUTOPOIESIS_ECONOMICS_POLICY.md; _MODEL_TRINITY/bridge/ARBITRATION_POLICY.md; _MODEL_TRINITY/bridge/CYCLE_POLICY.md. Current verification from Codex: economics tests 5 OK, Trinity tests 21 OK, axiom floor True, full ai_chi suite 323 OK. Claude noted DreamLens live integration is already done and suggested NEXT+ Transport/persistence ADR as a real undone design item. Builder-Scout task: propose 1-3 next safe local improvements for Trinity/Autopoiesis/transport-persistence coordination, including expected files, risk, tests, and which model should own each step.",
+  "constraints": [
+    "Proposal/scouting only; local docs/config/schema/test work preferred; preserve bounded DAN; preserve Urbi judges, Orbi acts, MSigmaBUS gates; do not reopen completed DreamLens work unless concrete evidence contradicts Claude audit."
+  ],
+  "created_at": "2026-06-13T19:25:21Z",
+  "evidence_refs": [
+    "_MODEL_TRINITY/CLAUDE_NEXT_SESSION_AUTHORITY_REPORT_2026-06-13.md"
+  ],
+  "files_in_scope": [],
+  "forbidden_actions": [
+    "Do not install tools; do not mutate app configs; do not read/expose credentials; do not call providers; do not write services/ICP/on-chain; do not deploy/publish/spend; do not start hidden listeners."
+  ],
+  "from": "codex",
+  "handoff_id": "handoff_20260613T192521Z_2368a9d6",
+  "kind": "handoff",
+  "known_failures": [],
+  "mode": "WAKE",
+  "objective": "Antigravity Builder-Scout wake task: scout next safe Trinity work",
+  "priority": "MEDIUM",
+  "reply_to": null,
+  "requested_output": "BuilderScoutProposal with no more than 3 options, recommended first option, files in scope, risks, verification plan, and stop gates.",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Gemini/Antigravity is awake. Current state: bridge source-authority fix is patched and Claude accepted it; Autopoiesis economics docs are hardened; Claude next-session bounded authority grant is created; DreamLens live integration was audited as already complete. Please scout next safe local work, not execute it.",
+  "to": "antigravity"
+}

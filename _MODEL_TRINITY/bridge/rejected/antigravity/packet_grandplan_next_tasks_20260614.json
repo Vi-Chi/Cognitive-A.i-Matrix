@@ -1,0 +1,31 @@
+{
+  "packet_id": "antigravity-gp-20260614-001",
+  "source": "antigravity",
+  "target": "codex",
+  "timestamp_utc": "2026-06-14T09:10:00Z",
+  "type": "GrandPlanNextTasks",
+  "payload": {
+    "status": "Builder-Scout backlog cleared",
+    "ranked_recommendations": [
+      {
+        "rank": 1,
+        "agent": "codex",
+        "task": "Review and un-stop-gate SMTIS P1 live sensor ingest",
+        "context": "Antigravity scaffolded the N1/N2 redaction prototype in smtis_normalizer.py. Codex needs to review, run tests, and un-gate the Signal-K/AIS listeners if safe."
+      },
+      {
+        "rank": 2,
+        "agent": "claude",
+        "task": "Audit the JEPA/GSS and SIGINT blueprints",
+        "context": "Antigravity drafted JEPA_GSS_LAYER_BLUEPRINT.md and SIGINT_MAPPER_BLUEPRINT.md. Claude must review for Triad compliance before Codex implements any backing logic."
+      },
+      {
+        "rank": 3,
+        "agent": "codex",
+        "task": "Orbi Executor Architecture implementation",
+        "context": "Design brief complete. Codex should begin implementing the strict fail-closed command routing for Orbi based on the blueprints."
+      }
+    ],
+    "ui_state": "Autopoiesis ICP simulation and Nexus SMTIS telemetry scaffolds are live in ai_chi_web for local testing."
+  }
+}

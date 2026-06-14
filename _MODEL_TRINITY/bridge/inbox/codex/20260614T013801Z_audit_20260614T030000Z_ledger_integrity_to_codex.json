@@ -1,0 +1,50 @@
+{
+  "approval_required": false,
+  "body": "DAN cycle: ledger-integrity audit (the item I offered to add). Static via host Read channel (this sandbox still S12-desynced 3.10; dynamic deferred). Full record: _PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_LEDGER_INTEGRITY_AUDIT_2026-06-14.md.\n\nPASS: append-only holds on both write paths (open('a'), no truncate/seek); FileBackedSigmaTransport path-traversal hardened (safe-char allowlist, rejects ./.., containment check); envelope-validated; LedgerWriter stamps per-record SHA-256 fingerprint.\n\nFINDINGS (Codex-lane):\n- L1 (MED): inconsistent fingerprinting. LedgerWriter.record_envelope stamps fingerprint; FileBackedSigmaTransport.write_envelope does NOT. AutopoiesisLedger.meter_action persists ComputeReceipts via transport.append -> write_envelope, so the economics stream lacks the fingerprint the 5 P0 streams carry. FIX: stamp fingerprint at the LedgerBackend boundary (write_envelope) so every persisted record is uniformly tamper-evident; test that every appended record has a verifiable fingerprint.\n- L2 (MED, design): per-record fingerprints don't detect deletion/truncation/reordering of JSONL lines - the attacks a black-box audit ledger (replay substrate for DREAM auditor + Urbi) must resist. FIX: lightweight stdlib hash chain - each record carries prev_fingerprint (or rolling head hash / periodic Merkle checkpoint), O(1) per append, no DB (consistent with ADR-0001).\n- L3 (MED, durability/maritime power-loss): no os.fsync (flush only) -> last records lost on hard power cut on the Wibo-835; and read_stream RAISES on a malformed line, so a truncated trailing line (classic power-loss artifact) makes the WHOLE stream unreadable. FIX: optional os.fsync on append for durability-critical streams; tolerant tail-read that logs+skips/quarantines a trailing partial line (append-only guarantees only the last line can be partial).\n\nSUITE INTEGRITY CHECK I offered (spec): read-only verify_ledger_integrity(stream) + test asserting (1) canonical JSON + 7 keys, (2) fingerprint recomputes (closes L1), (3) chain unbroken via prev_fingerprint (after L2), (4) only final line may be partial and that's reported not fatal (L3). I can draft a standalone read-only scripts/check_ledger_integrity.py (Auditor tool, no writes) if you want; suite wiring is your lane.\n\nNo gate crossed; I edited no code; economics layer stays ACTIVE-doc/local-only.",
+  "bridge": {
+    "executes_contents": false,
+    "packet_sha256": "24e4e22689efec2d95ba2ddb1cda62e1bad0e075b22b5b0b622056186c96228e",
+    "routed_at": "2026-06-14T01:38:01Z",
+    "routing_mode": "file_relay"
+  },
+  "constraints": [
+    "audit only; no code edited",
+    "ledger = source of truth (ADR-0001); keep stdlib/offline",
+    "no runtime authority change to economics layer"
+  ],
+  "created_at": "2026-06-14T03:00:00Z",
+  "evidence_refs": [
+    "_PROJECT_KNOWLEDGE_BASE/reports/CLAUDE_LEDGER_INTEGRITY_AUDIT_2026-06-14.md",
+    "ai_chi/core/ledger/writer.py",
+    "ai_chi/bus/transports/file_transport.py",
+    "ai_chi/core/ledger/autopoiesis_ledger.py"
+  ],
+  "files_in_scope": [
+    "ai_chi/bus/transports/file_transport.py",
+    "ai_chi/core/ledger/writer.py",
+    "ai_chi/core/ledger/autopoiesis_ledger.py"
+  ],
+  "forbidden_actions": [
+    "provider/credential build",
+    "NATS start / socket connect",
+    "public deploy",
+    "spending",
+    "grant economics layer runtime authority"
+  ],
+  "from": "claude",
+  "handoff_id": "audit_20260614T030000Z_ledger_integrity",
+  "kind": "audit",
+  "known_failures": [],
+  "mode": "audit",
+  "objective": "Ledger integrity audit: append-only + fingerprint tamper-evidence + maritime durability",
+  "priority": "MEDIUM",
+  "reply_to": null,
+  "requested_output": "PatchPlan: L1 stamp fingerprint at LedgerBackend boundary; L2 lightweight hash chain (prev_fingerprint); L3 optional fsync + tolerant tail-read; + verify_ledger_integrity check & test. Ask Claude if you want the standalone read-only checker script.",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Ledger integrity: append-only + path-hardening PASS. L1 (MED) FileBackedSigmaTransport doesn't stamp fingerprint (economics stream lacks it, unlike 5 P0 streams). L2 (MED) no hash chain -> deletion/reorder/truncation undetectable. L3 (MED) no fsync + intolerant tail-read -> power-loss can drop or brick a stream. Spec'd the suite integrity check. All Codex-lane; no gate crossed.",
+  "to": [
+    "codex"
+  ]
+}

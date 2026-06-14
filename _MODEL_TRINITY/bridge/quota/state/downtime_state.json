@@ -1,0 +1,22 @@
+{
+  "active": {
+    "antigravity": {
+      "agent": "antigravity",
+      "event": "DOWNTIME_STARTED",
+      "reason": "heartbeat stale",
+      "schema_version": "digivichi.trinity.quota.downtime.v0",
+      "started_at": "2026-06-14T10:52:29Z",
+      "status": "OFFLINE",
+      "updated_at": "2026-06-14T12:58:52Z"
+    },
+    "codex": {
+      "agent": "codex",
+      "event": "DOWNTIME_STARTED",
+      "reason": "heartbeat stale",
+      "schema_version": "digivichi.trinity.quota.downtime.v0",
+      "started_at": "2026-06-14T11:11:30Z",
+      "status": "OFFLINE",
+      "updated_at": "2026-06-14T12:58:52Z"
+    }
+  }
+}

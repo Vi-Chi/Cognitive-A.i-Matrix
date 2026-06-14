@@ -1,0 +1,75 @@
+{
+  "agents": [
+    "codex",
+    "claude",
+    "antigravity"
+  ],
+  "arbitrator": {
+    "capabilities_path": "agent-capabilities.json",
+    "claim_ttl_seconds": 3600,
+    "claims_dir": "claims",
+    "compact_dir": "state/compact-handoffs",
+    "enabled": true,
+    "latest_state_path": "state/latest-arbitration.json",
+    "ledger_path": "ledger/arbitration-ledger.jsonl",
+    "max_compact_chars": 1200,
+    "poll_interval_seconds": 2.0
+  },
+  "bridge_root": "_MODEL_TRINITY/bridge",
+  "cycle": {
+    "allow_global_app_config_mutation": false,
+    "allow_hidden_background_service": false,
+    "allow_mcp_installs": false,
+    "allow_model_calls": false,
+    "allow_service_connector_writes": false,
+    "allowed_check_modes": [
+      "none",
+      "quick",
+      "trinity",
+      "full"
+    ],
+    "latest_state_path": "state/latest-cycle.json",
+    "ledger_path": "ledger/cycle-ledger.jsonl",
+    "poll_interval_seconds": 2.0
+  },
+  "executor": {
+    "allow_freeform_execution": false,
+    "allow_hidden_background_agents": false,
+    "allow_mcp_installs": false,
+    "allow_model_calls": false,
+    "allow_shell_from_packet_body": false,
+    "allow_service_connector_writes": false,
+    "allowlist_task_ids": [
+      "bridge_status",
+      "bridge_route_once_dry_run",
+      "doc_inventory",
+      "axioms_floor",
+      "trinity_bridge_tests",
+      "trinity_executor_tests",
+      "trinity_arbitrator_tests",
+      "trinity_cycle_tests",
+      "trinity_tests",
+      "full_ai_chi_tests"
+    ],
+    "executor_role": "codex",
+    "ledger_path": "ledger/execution-ledger.jsonl",
+    "max_stderr_chars": 4000,
+    "max_stdout_chars": 6000,
+    "poll_interval_seconds": 2.0
+  },
+  "ledger_path": "ledger/route-ledger.jsonl",
+  "max_body_chars": 12000,
+  "poll_interval_seconds": 2.0,
+  "route_defaults": {
+    "requires_user_approval_for_action_like_kinds": true,
+    "to": "all_except_source"
+  },
+  "safety": {
+    "allow_external_network": false,
+    "allow_hidden_background_agents": false,
+    "allow_mcp_writes": false,
+    "allow_service_connector_writes": false,
+    "execute_packet_contents": false
+  },
+  "schema": "digivichi.trinity.bridge-config.v0"
+}

@@ -1,0 +1,42 @@
+{
+  "name": "simulacrum_loop_basic",
+  "records": [
+    {
+      "record_id": "sim-1",
+      "belief_state": {"loop": "same"},
+      "predicted_outcome": {"answer": "repeat"},
+      "confidence": 0.65,
+      "domain": "self_check"
+    },
+    {
+      "record_id": "sim-2",
+      "belief_state": {"loop": "same"},
+      "predicted_outcome": {"answer": "repeat"},
+      "confidence": 0.66,
+      "domain": "self_check"
+    },
+    {
+      "record_id": "sim-3",
+      "belief_state": {"loop": "same"},
+      "predicted_outcome": {"answer": "repeat"},
+      "confidence": 0.67,
+      "domain": "self_check"
+    }
+  ],
+  "candidate_output": "[{\"claim_id\":\"sim-3\",\"kind\":\"simulacrum\",\"severity\":\"high\",\"detail\":\"same prediction repeated in a self-confirming loop\"}]",
+  "expected_accepted": [
+    {
+      "claim_id": "sim-3",
+      "kind": "simulacrum",
+      "severity": "high",
+      "detail": "same prediction repeated in a self-confirming loop"
+    }
+  ],
+  "expected_rejected": [],
+  "expected_scores": {
+    "accepted_count": 1,
+    "rejected_count": 0,
+    "precision": 1.0,
+    "recall": 1.0
+  }
+}

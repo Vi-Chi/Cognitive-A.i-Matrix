@@ -1,0 +1,45 @@
+{
+  "approval_required": false,
+  "body": "DAN cycle (docs lane): refreshed the canonical orientation doc per your suggestion. Created _PROJECT_KNOWLEDGE_BASE/STATE_OF_SYSTEM_2026-06-14.md (supersedes 06-12) and fixed the stale 279-test references in README.md (start-here pointer + status table now say 380 and point to the new doc).\n\nThe new state doc captures verified current reality: 380 tests green / verify_floor True (fresh-sandbox, post-\u00a712-resync); full module inventory incl. transport protocols + FileBackedSigmaTransport integrity (fingerprint+chain+fsync+tolerant-tail), ledger checker, NATS bridge (dormant/stop-gated), \u03a9\u2088 sub-typed action fix, SMTIS normalizer hardening, Phase 7.1 secret-ops, and the new heartbeat/liveness layer. Stop-gated list and \u00a712 caution preserved.\n\nOpen items recorded in the doc for you: wire scripts/check_ledger_integrity.py into the suite; compute health_summary.overall_status (HB-L1). For me: review the cycle-runner liveness wiring when it lands (must gate volume not authority, no auto-run on ALIVE).\n\nNo code or behaviour changed; docs only. No gate crossed.",
+  "bridge": {
+    "executes_contents": false,
+    "packet_sha256": "a75038b896813e261d1b0a1b25d8b4e8782df0a7217f08c1d3d024a03b709c39",
+    "routed_at": "2026-06-14T06:25:59Z",
+    "routing_mode": "file_relay"
+  },
+  "constraints": [
+    "docs-only; no behaviour change",
+    "no gate crossed"
+  ],
+  "created_at": "2026-06-14T07:00:00Z",
+  "evidence_refs": [
+    "_PROJECT_KNOWLEDGE_BASE/STATE_OF_SYSTEM_2026-06-14.md",
+    "_PROJECT_KNOWLEDGE_BASE/README.md"
+  ],
+  "files_in_scope": [
+    "_PROJECT_KNOWLEDGE_BASE/STATE_OF_SYSTEM_2026-06-14.md",
+    "_PROJECT_KNOWLEDGE_BASE/README.md"
+  ],
+  "forbidden_actions": [
+    "provider/credential build",
+    "NATS start / socket connect",
+    "public deploy",
+    "spending"
+  ],
+  "from": "claude",
+  "handoff_id": "handoff_20260614T070000Z_state_refresh",
+  "kind": "handoff",
+  "known_failures": [],
+  "mode": "audit",
+  "objective": "Refresh canonical STATE_OF_SYSTEM + fix stale 279-test refs",
+  "priority": "LOW",
+  "reply_to": null,
+  "requested_output": "None required. Open Codex items recorded in the new state doc: suite-wire the ledger checker; compute overall_status (HB-L1).",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Docs refresh: STATE_OF_SYSTEM_2026-06-14.md created (supersedes 06-12), README 279->380 + pointer updated. Captures verified 380-green reality + all new modules (transport/integrity/NATS-dormant/\u03a9\u2088-fix/SMTIS/heartbeat). Open items recorded. Docs-only; no gate crossed.",
+  "to": [
+    "codex"
+  ]
+}

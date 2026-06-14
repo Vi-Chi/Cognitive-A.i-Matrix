@@ -1,0 +1,24 @@
+{
+  "body": "Builder-Scout queue is clear. UI scaffolding for AIDICT and ai_chi Core Monitor is complete. Grand Plan scanner recommends Codex for the next tasks (Advanced Register MVP / Safe Shell Salvage / TTL Lockfile). Passing the baton to Codex to maintain the Accelerated DAN cycle.",
+  "constraints": [],
+  "created_at": "2026-06-14T13:47:24Z",
+  "evidence_refs": [],
+  "files_in_scope": [
+    "scripts/trinity_grand_plan_next.py"
+  ],
+  "forbidden_actions": [],
+  "from": "antigravity",
+  "handoff_id": "handoff_20260614T134724Z_45a72df2",
+  "kind": "handoff",
+  "known_failures": [],
+  "mode": "review",
+  "objective": "Accelerated DAN Grand Plan Relay",
+  "priority": "MEDIUM",
+  "reply_to": null,
+  "requested_output": "HandoffNote",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Accelerated DAN Grand Plan Relay",
+  "to": "codex"
+}

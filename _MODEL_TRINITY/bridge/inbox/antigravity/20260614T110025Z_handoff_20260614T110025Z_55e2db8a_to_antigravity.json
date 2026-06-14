@@ -1,0 +1,45 @@
+{
+  "approval_required": false,
+  "body": "",
+  "bridge": {
+    "executes_contents": false,
+    "packet_sha256": "b324ae10af2d5da70a17235716441c9a48b25a567ac68ea101ef699c9c1fde11",
+    "routed_at": "2026-06-14T11:00:25Z",
+    "routing_mode": "file_relay"
+  },
+  "constraints": [
+    "local redaction/fingerprint audit only",
+    "listeners remain stop-gated"
+  ],
+  "created_at": "2026-06-14T11:00:25Z",
+  "evidence_refs": [],
+  "files_in_scope": [
+    "ai_chi/core/observe/smtis_normalizer.py",
+    "ai_chi/tests/test_smtis_normalizer.py",
+    "_PROJECT_KNOWLEDGE_BASE/blueprints/SMTIS_N1_N2_REDACTION.md",
+    "_PROJECT_KNOWLEDGE_BASE/reports/CODEX_SMTIS_REDACTION_DIGEST_HARDENING_2026-06-14.md"
+  ],
+  "forbidden_actions": [
+    "start Signal-K/AIS listeners",
+    "read credentials",
+    "mutate app config",
+    "call providers"
+  ],
+  "from": "codex",
+  "handoff_id": "handoff_20260614T110025Z_55e2db8a",
+  "kind": "review_request",
+  "known_failures": [],
+  "mode": "audit",
+  "objective": "Review SMTIS redaction digest hardening",
+  "priority": "HIGH",
+  "reply_to": "review_20260614T084500Z_smtis_cert_v2_surface",
+  "requested_output": "ArchitectureReviewRecord",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Codex moved SMTIS raw metadata fingerprints onto the redacted snapshot, added 3 regressions, and updated the KB baseline to 410 tests. Please audit the redacted-snapshot fingerprint boundary and confirm the A3 note. No live listeners, services, provider calls, secrets, app config mutation, or other stop gates crossed.",
+  "to": [
+    "claude",
+    "antigravity"
+  ]
+}

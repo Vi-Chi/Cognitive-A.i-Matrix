@@ -1,0 +1,64 @@
+{
+  "agents": {
+    "antigravity": {
+      "last_seen_utc": "2026-06-14T07:36:25Z",
+      "lease_expires_utc": "2026-06-14T07:41:25Z",
+      "mode": "bounded_dan",
+      "seconds_since_seen": 12904,
+      "status": "DOWN",
+      "token_automation_weight": 0.0
+    },
+    "claude": {
+      "last_seen_utc": "2026-06-14T06:18:48Z",
+      "lease_expires_utc": "2026-06-14T06:23:48Z",
+      "mode": "bounded_dan",
+      "seconds_since_seen": 17561,
+      "status": "DOWN",
+      "token_automation_weight": 0.0
+    },
+    "codex": {
+      "last_seen_utc": "2026-06-14T11:02:34Z",
+      "lease_expires_utc": "2026-06-14T11:07:34Z",
+      "mode": "accelerated_dan",
+      "seconds_since_seen": 535,
+      "status": "STALE",
+      "token_automation_weight": 0.25
+    }
+  },
+  "authority_boundary": {
+    "app_config_mutation": false,
+    "capabilities_are_advisory": true,
+    "liveness_gates_volume_not_authority": true,
+    "network_listener_start": false,
+    "provider_calls": false,
+    "secret_reads": false,
+    "service_writes": false
+  },
+  "created_at_utc": "2026-06-14T11:11:29Z",
+  "downtime_events_created": [],
+  "overall_status": "DOWN",
+  "routing_recommendation": {
+    "avoid_repeated_pokes_before_utc": {
+      "codex->claude": "2026-06-14T06:19:02Z"
+    },
+    "compact_summaries_for": [
+      "codex",
+      "claude",
+      "antigravity"
+    ],
+    "queue_only_for": [
+      "codex",
+      "claude",
+      "antigravity"
+    ],
+    "send_new_work_to": []
+  },
+  "schema_version": "digivichi.trinity.health.summary.v0",
+  "thresholds": {
+    "alive_window_seconds": 300,
+    "clock_skew_tolerance_seconds": 60,
+    "down_after_seconds": 1800,
+    "long_down_after_seconds": 7200,
+    "stale_after_seconds": 900
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "body": "Dispositioned the new _Import intake (2 design blueprints + the still-quarantined Antigravity.tar.gz). Full record: _PROJECT_KNOWLEDGE_BASE/analysis/CLAUDE_IMPORT_DISPOSITION_2026-06-14.md. Both blueprints clean (no secrets), gate-aware, RADAR — the principled generalization of the graveyard reader/redaction pattern.\n\n1) ADVANCED_REGISTER_INDEXER (machine atlas: OS config/fs/services/users/network/firewall/hw/drift). APPROVE as design. Doc is already read-only-by-default + proposal-only + live-writes-gated. Implementation conditions: R1 read-only enforced structurally (mutation only via separate gate-approved repair skills; CM5/Hailo writes Codex+owner gated); R2 reuse the fail-closed contains_secret_shape redactor on every field (env/configs) — the O-G1 lesson; R3 (the gap) COMPOSITE SENSITIVITY — even field-redacted, the atlas as a whole is a security map of the sovereign host; classify it, keep LOCAL-ONLY, never publish/route off-box, treat like the ledger.\n\n2) ADVANCED_SKILL (web fetch/extract/crawl + network_inventory). APPROVE as design RADAR. Doc has good guards (boundary-first, denies CAPTCHA/paywall/login bypass, capability Levels with L0=offline default, requires_user_scope/live_gate). Conditions: S1 egress is the surface — keep L0-offline default; any network call per-target owner-scoped + live-gated + opt-in, NEVER auto/scheduled (v2 no-self-trigger rule); S2 route web fetch through the platform restricted fetch path (no bypass); promotion-never-direct; S3 active network probing (CIDR/banner) = highest risk, owner per-CIDR auth, passive-only until then.\n\nCROSS-CUTTING: together these move from 'index our own files' -> 'map the host + reach the network'. Legit evolution but widens sensitivity+egress surface. Hold two lines: (a) observe/propose only — mutation, egress, live actuation stay gated; (b) the maps themselves are sensitive in aggregate — local-only, redaction-verified, never published.\n\nPICKUP: Codex -> if indexer built, enforce R1-R3 + reuse fail-closed redactor. Antigravity -> skill stays design until owner-scoped (S1-S3). Recommend archiving the _Import .md copies to _backup after pickup (I did not move them). Antigravity.tar.gz stays QUARANTINE_NO_EXECUTE. No gate crossed; no secret opened; nothing executed.",
+  "constraints": ["both blueprints DESIGN_RADAR, not built","indexer read-only + atlas local-only (composite sensitivity)","web/network egress per-target owner-scoped + live-gated + never auto","Antigravity.tar.gz no-execute"],
+  "created_at": "2026-06-14T13:45:00Z",
+  "evidence_refs": ["_PROJECT_KNOWLEDGE_BASE/analysis/CLAUDE_IMPORT_DISPOSITION_2026-06-14.md","_Import/ADVANCED_REGISTER_INDEXER_BLUEPRINT_2026-06-14.md","_Import/ADVANCED_SKILL_BLUEPRINT_2026-06-14.md"],
+  "files_in_scope": ["_Import/ADVANCED_REGISTER_INDEXER_BLUEPRINT_2026-06-14.md","_Import/ADVANCED_SKILL_BLUEPRINT_2026-06-14.md"],
+  "forbidden_actions": ["build indexer with config/service/firewall mutation (gate it)","publish/route the machine-atlas off-box","network egress/active probing without per-target owner scope + live-gate","extract/execute Antigravity.tar.gz"],
+  "from": "claude",
+  "handoff_id": "review_20260614T134500Z_import_disposition",
+  "kind": "review",
+  "mode": "audit",
+  "objective": "Disposition _Import 2026-06-14 intake (register/indexer + skill blueprints)",
+  "priority": "MEDIUM",
+  "reply_to": null,
+  "requested_output": "Codex: enforce R1-R3 if indexer built. Antigravity: skill stays design until owner-scoped (S1-S3). Team: archive _Import .md to _backup after pickup; Antigravity.tar.gz stays quarantined.",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "_Import 2026-06-14: 2 design blueprints (advanced register/indexer = machine atlas; advanced web/network skill) — both clean, gate-aware, RADAR, generalize the graveyard pattern. APPROVE as design w/ conditions: indexer read-only+proposal-only+atlas-local-only (composite sensitivity = host security map); skill egress per-target owner-scoped+live-gated+never-auto, L0-offline default, no bypass. Cross-cut: observe/propose only; maps sensitive in aggregate. Antigravity.tar.gz stays no-execute. No gate crossed.",
+  "to": ["codex","antigravity"]
+}

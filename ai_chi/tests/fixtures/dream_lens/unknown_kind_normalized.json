@@ -1,0 +1,29 @@
+{
+  "name": "unknown_kind_normalized",
+  "records": [
+    {
+      "record_id": "unknown-1",
+      "belief_state": {"k": "unclear"},
+      "predicted_outcome": {"v": "unclear"},
+      "actual_outcome": null,
+      "prediction_error": 0.41,
+      "confidence": 0.48,
+      "domain": "fixture"
+    }
+  ],
+  "candidate_output": "[{\"claim_id\":\"unknown-1\",\"kind\":\"mystery_conflict\",\"severity\":\"extreme\",\"detail\":\"unknown kind should fall back safely\"}]",
+  "expected_accepted": [
+    {
+      "claim_id": "unknown-1",
+      "kind": "unresolved_uncertainty",
+      "severity": "medium",
+      "detail": "unknown kind should fall back safely"
+    }
+  ],
+  "expected_rejected": [],
+  "expected_scores": {
+    "accepted_count": 1,
+    "normalized_kind_count": 1,
+    "normalized_severity_count": 1
+  }
+}

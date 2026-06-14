@@ -1,0 +1,13 @@
+[
+  {
+    "claim": "Claim: The physical CM5 node will stay thermally safe under load next 5 minutes.",
+    "state": "+",
+    "timestamp": 1781466791.2973127,
+    "embedding": [],
+    "time": {
+      "past": "origin unspecified",
+      "present": "2026-06-14 21:53:11",
+      "future": "implications pending"
+    }
+  }
+]

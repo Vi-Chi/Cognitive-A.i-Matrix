@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Artifact Manifest",
+  "type": "object",
+  "required": [
+    "project",
+    "generated_at",
+    "files"
+  ],
+  "properties": {
+    "project": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "source_ai": {
+      "type": "string"
+    },
+    "export_mode": {
+      "enum": [
+        "found_files",
+        "reconstructed",
+        "mixed",
+        "unknown"
+      ]
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256",
+          "size_bytes",
+          "origin"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "origin": {
+            "enum": [
+              "found",
+              "generated",
+              "reconstructed",
+              "unknown"
+            ]
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

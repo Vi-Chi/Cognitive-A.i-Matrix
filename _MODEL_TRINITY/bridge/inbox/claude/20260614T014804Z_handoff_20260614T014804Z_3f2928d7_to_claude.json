@@ -1,0 +1,39 @@
+{
+  "approval_required": false,
+  "body": "User requested faster workflow automation via Windows notification/event signals for DAN handoff and Claude session-limit awareness. Codex updated the existing Codex app heartbeat trinity-claude-signal-watch to run every 5 minutes, added _MODEL_TRINITY/WINDOWS_SIGNAL_WATCH_PROTOCOL.md, indexed it in _MODEL_TRINITY/README.md, added it to _MODEL_TRINITY/CLAUDE_NEXT_SESSION_HANDOFF_2026-06-14.md, and logged the config change. Immediate probe scripts/trinity_windows_signal_probe.py returned signals=[dan_handoff_hint] with privacy invariants raw_notification_text_read=false, credential_files_read=false, app_config_mutated=false, service_started=false. Bridge status outboxes were all 0 and rejected 0; check_trinity_secret_refs returned raw_secret_scan=pass. Claude should treat Windows Push Notification Platform data as metadata hints only and should not scrape raw notification bodies, mutate app config, install plugins/MCP, read credentials, start services/sockets, call providers, spend, deploy, or perform service writes without exact scoped approval.",
+  "bridge": {
+    "executes_contents": false,
+    "packet_sha256": "8d83000335caeb794ab200cffcbfaf03f8ab0ac6782c94deb850d6dad834dae0",
+    "routed_at": "2026-06-14T01:48:04Z",
+    "routing_mode": "file_relay"
+  },
+  "constraints": [
+    "metadata-only Windows signal watching;bridge-first handoff loop;no raw notification body scraping;no new live authority"
+  ],
+  "created_at": "2026-06-14T01:48:04Z",
+  "evidence_refs": [
+    "_backup/20260614-windows-signal-watch-protocol/;_PROJECT_KNOWLEDGE_BASE/reports/CODEX_LEDGER_INTEGRITY_AND_WINDOWS_SIGNAL_WATCH_2026-06-14.md"
+  ],
+  "files_in_scope": [
+    "_MODEL_TRINITY/WINDOWS_SIGNAL_WATCH_PROTOCOL.md;_MODEL_TRINITY/README.md;_MODEL_TRINITY/CLAUDE_NEXT_SESSION_HANDOFF_2026-06-14.md;_MODEL_TRINITY/CONFIG_CHANGE_LOG.md;scripts/trinity_windows_signal_probe.py"
+  ],
+  "forbidden_actions": [
+    "raw notification body scraping;credential reads;app config mutation;MCP/plugin installs;service/socket starts;provider calls;service writes;public deploy;spending"
+  ],
+  "from": "codex",
+  "handoff_id": "handoff_20260614T014804Z_3f2928d7",
+  "kind": "config_update",
+  "known_failures": [],
+  "mode": "documentation",
+  "objective": "Notify Claude of accelerated Windows signal watch protocol",
+  "priority": "HIGH",
+  "reply_to": null,
+  "requested_output": "Claude should read _MODEL_TRINITY/WINDOWS_SIGNAL_WATCH_PROTOCOL.md and audit whether its own watcher/wake workflow can follow the same metadata-only rules.",
+  "requires_user_approval": false,
+  "schema": "digivichi.trinity.handoff.v0",
+  "status": "DRAFT",
+  "summary": "Codex updated the Trinity Windows signal watch protocol and accelerated the Codex heartbeat trinity-claude-signal-watch to every 5 minutes. Claude may use the same metadata-only boundary for DAN handoff and session-limit signals.",
+  "to": [
+    "claude"
+  ]
+}

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.i Console — Urbi/Orbi Reality Loop</title>
+<style>
+  :root{
+    --bg:#0b0e13; --panel:#11161f; --panel2:#161d29; --line:#222c3a; --line2:#2c3850;
+    --txt:#e6edf6; --txt2:#9fb0c6; --txt3:#67788f; --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --yang:#e8b341; --yin:#5db0ff; --ok:#46d39a; --no:#ff6b7a; --susp:#c79bff;
+    --warn:#ff9f43; --acc:#5db0ff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:radial-gradient(1200px 700px at 80% -10%,#13203a22,transparent),var(--bg);
+    color:var(--txt);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+  .app{display:grid;grid-template-columns:230px 1fr 320px;grid-template-rows:48px 1fr;height:100vh}
+  /* top bar */
+  .top{grid-column:1/4;display:flex;align-items:center;gap:14px;padding:0 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .brand{font-weight:700;letter-spacing:.5px}
+  .brand b{color:var(--yin)} .brand i{color:var(--yang);font-style:normal}
+  .tag{font:11px var(--mono);color:var(--txt3);border:1px solid var(--line2);border-radius:20px;padding:2px 9px}
+  .spacer{flex:1}
+  .mu{display:flex;gap:4px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px}
+  .mu button{background:none;border:0;color:var(--txt3);font:600 11px var(--mono);padding:4px 9px;border-radius:5px;cursor:pointer}
+  .mu button.on{color:var(--bg)}
+  .mu button[data-m=WAKE].on{background:var(--ok)} .mu button[data-m=LIMINAL].on{background:var(--warn)} .mu button[data-m=DREAM].on{background:var(--susp)}
+  .conn{display:flex;align-items:center;gap:6px;font:11px var(--mono);color:var(--txt2)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--no);box-shadow:0 0 8px var(--no)}
+  .dot.live{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+  .api{background:var(--panel2);border:1px solid var(--line);color:var(--txt2);border-radius:6px;padding:4px 7px;font:11px var(--mono);width:170px}
+  /* sidebar */
+  .side{background:var(--panel);border-right:1px solid var(--line);padding:12px 10px;overflow:auto}
+  .side h4{font:600 10px var(--mono);letter-spacing:.12em;color:var(--txt3);margin:8px 6px 6px;text-transform:uppercase}
+  .ws{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;cursor:pointer;color:var(--txt2);font-weight:500}
+  .ws:hover{background:var(--panel2);color:var(--txt)}
+  .ws.on{background:#16223a;color:var(--txt);box-shadow:inset 2px 0 0 var(--yin)}
+  .ws .ic{width:18px;text-align:center;opacity:.9}
+  .ws.lock{opacity:.45;cursor:not-allowed}
+  .legend{margin:14px 6px 4px;border-top:1px solid var(--line);padding-top:10px}
+  .legend div{display:flex;gap:7px;align-items:center;font:11px var(--mono);color:var(--txt3);margin:4px 0}
+  .pill{font:700 11px var(--mono);width:22px;text-align:center;border-radius:4px;padding:1px 0}
+  .pill.p{color:var(--ok);background:#0f2a20} .pill.m{color:var(--no);background:#2a1316} .pill.s{color:var(--susp);background:#221833}
+  /* main */
+  .main{display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+  .vh{padding:12px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+  .vh h2{margin:0;font-size:15px} .vh p{margin:0;color:var(--txt3);font-size:12px}
+  .stream{flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+  .msg{max-width:760px}
+  .msg.me{align-self:flex-end}
+  .bubble{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+  .msg.me .bubble{background:#16223a;border-color:var(--line2)}
+  .who{font:600 10px var(--mono);color:var(--txt3);letter-spacing:.1em;margin:0 4px 4px;text-transform:uppercase}
+  .verdict{border:1px solid var(--line);border-radius:12px;overflow:hidden;max-width:760px}
+  .verdict .vt{display:flex;align-items:center;gap:10px;padding:10px 14px;font-weight:600}
+  .verdict.v\+ .vt{background:#0f2a2055;color:var(--ok)} .verdict.v\- .vt{background:#2a131655;color:var(--no)} .verdict.v\= .vt{background:#22183355;color:var(--susp)}
+  .verdict .vb{padding:10px 14px;background:var(--panel);color:var(--txt2);font-size:13px}
+  .vmeta{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font:11px var(--mono);color:var(--txt3)}
+  .vmeta b{color:var(--txt2);font-weight:600}
+  .sigma{font:11px var(--mono);color:var(--yin);background:#0e1a2e;border:1px solid var(--line2);padding:1px 7px;border-radius:5px}
+  /* composer */
+  .composer{border-top:1px solid var(--line);padding:12px 16px;display:flex;gap:10px;background:var(--panel)}
+  .composer textarea{flex:1;resize:none;height:42px;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;color:var(--txt);padding:10px 12px;font:14px system-ui}
+  .composer button{background:var(--yin);color:#062038;border:0;border-radius:10px;padding:0 18px;font-weight:700;cursor:pointer}
+  .composer button:active{transform:translateY(1px)}
+  .hint{font:11px var(--mono);color:var(--txt3);padding:0 16px 8px;background:var(--panel)}
+  /* right intel panel */
+  .intel{background:var(--panel);border-left:1px solid var(--line);overflow:auto;padding:14px}
+  .intel h3{font:600 10px var(--mono);letter-spacing:.12em;color:var(--txt3);text-transform:uppercase;margin:2px 0 10px}
+  .card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+  .big{font:700 26px var(--mono);display:flex;align-items:center;gap:10px}
+  .kv{display:flex;justify-content:space-between;font:12px var(--mono);color:var(--txt2);padding:4px 0;border-bottom:1px dashed var(--line)}
+  .kv:last-child{border:0} .kv b{color:var(--txt)}
+  .bar{height:7px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--yin),var(--ok))}
+  .omega{font:11px var(--mono);color:var(--txt3);display:flex;justify-content:space-between;padding:3px 0}
+  .omega b{color:var(--ok)} .omega.bad b{color:var(--no)}
+  .lin{font:11px var(--mono);color:var(--txt3);word-break:break-all}
+  .feed{font:12px var(--mono)}
+  .feedrow{display:grid;grid-template-columns:64px 1fr 70px;gap:8px;padding:7px 8px;border-bottom:1px solid var(--line);align-items:center}
+  .feedrow:hover{background:var(--panel2)}
+  .badge{font:10px var(--mono);padding:2px 6px;border-radius:5px;text-align:center;color:var(--txt2);border:1px solid var(--line2)}
+  .muted{color:var(--txt3)} .right{text-align:right}
+  .hide{display:none}
+  .note{font-size:12px;color:var(--txt3);line-height:1.7}
+  .note code{color:var(--yin);font-family:var(--mono)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .stat{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px}
+  .stat .n{font:700 20px var(--mono);color:var(--txt)} .stat .l{font:11px var(--mono);color:var(--txt3);margin-top:2px}
+  .scroll{overflow:auto}
+  ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:#22304a;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- TOP -->
+  <div class="top">
+    <div class="brand"><b>A.i</b> Console <i>·</i> <span style="color:var(--txt3);font-weight:500">Reality Loop</span></div>
+    <span class="tag">membrane · NL ⇄ formal</span>
+    <div class="spacer"></div>
+    <div class="mu" id="mu">
+      <button data-m="WAKE" class="on">WAKE</button>
+      <button data-m="LIMINAL">LIMINAL</button>
+      <button data-m="DREAM">DREAM</button>
+    </div>
+    <input class="api" id="api" value="http://127.0.0.1:8889" title="A.i Core sidecar URL">
+    <div class="conn"><span class="dot" id="dot"></span><span id="connTxt">MOCK</span></div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <nav class="side">
+    <h4>Workspaces</h4>
+    <div class="ws on" data-view="core"><span class="ic">◎</span> A.i Core</div>
+    <div class="ws" data-view="urbi"><span class="ic">☯</span> Urbi Audit</div>
+    <div class="ws" data-view="feed"><span class="ic">≋</span> Reality Feed</div>
+    <div class="ws" data-view="cm5"><span class="ic">▣</span> CM5 Witness</div>
+    <div class="ws" data-view="codex"><span class="ic">⌥</span> Codex Review</div>
+    <div class="ws lock"><span class="ic">⚓</span> Vento-Vivere <span class="muted" style="margin-left:auto;font:10px var(--mono)">locked</span></div>
+
+    <div class="legend">
+      <h4 style="margin-left:0">Tri-state · 3-6-9</h4>
+      <div><span class="pill p">+</span> confirmed → <span class="sigma">m.belief</span></div>
+      <div><span class="pill m">−</span> rejected → <span class="sigma">m.belief</span></div>
+      <div><span class="pill s">=</span> suspended → <span class="sigma">m.prediction_record</span></div>
+    </div>
+    <div class="legend">
+      <div class="omega"><span>Ω₆ language ∉ core</span><b>✓</b></div>
+      <div class="omega"><span>Ω₇ provenance</span><b>✓</b></div>
+      <div class="omega" id="om8"><span>Ω₈ μ-gate</span><b>WAKE</b></div>
+      <div class="omega" id="om4"><span>Ω₄ drift</span><b>ok</b></div>
+    </div>
+    <div class="note" style="margin-top:14px;padding:0 6px">Urbi <b style="color:var(--yin)">audits</b>, never acts. The console serves data — it generates no beliefs and enacts no changes.</div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- CORE / chat -->
+    <section id="view-core" class="main" style="display:flex">
+      <div class="vh"><h2>A.i Core</h2><p>— inject a claim → 3-6-9 audit → ledger → outcome → CAL/Ω₄</p></div>
+      <div class="stream" id="stream"></div>
+      <div class="hint" id="hint">Try: “The CM5 stays thermally safe under sustained load” · “Water is always wet” (overconfident → =) · “” (empty → −)</div>
+      <div class="composer">
+        <textarea id="inp" placeholder="State a claim for Urbi to audit…  (Enter to send, Shift+Enter newline)"></textarea>
+        <button id="send">Audit ▸</button>
+      </div>
+    </section>
+
+    <!-- URBI -->
+    <section id="view-urbi" class="scroll hide" style="padding:18px">
+      <div class="vh" style="border:0;padding:0 0 12px"><h2>Urbi Audit · ☯ 3-6-9 axis</h2><p>the out-of-loop verifier — lenses & the dream queue</p></div>
+      <div class="grid2">
+        <div class="card"><div class="l muted" style="font:11px var(--mono)">LENS 3 · coherence</div><div class="big" style="font-size:18px;color:var(--ok)">BRE + GSS</div><div class="note">does the claim hold together internally?</div></div>
+        <div class="card"><div class="l muted" style="font:11px var(--mono)">LENS 6 · contradiction</div><div class="big" style="font-size:18px;color:var(--warn)">CGM</div><div class="note">does it conflict with what we know? (embedding + negation)</div></div>
+        <div class="card"><div class="l muted" style="font:11px var(--mono)">LENS 9 · integrity</div><div class="big" style="font-size:18px;color:var(--susp)">CAL + INV</div><div class="note">over/under-confident? structurally stable? the Ω control point.</div></div>
+        <div class="card"><div class="l muted" style="font:11px var(--mono)">[=] DREAM queue</div><div class="big" id="dreamN" style="font-size:26px;color:var(--susp)">0</div><div class="note">genuine suspensions awaiting ΦΔ replay (errors, not episodes)</div></div>
+      </div>
+      <div class="card"><h3>Why [=] is precious</h3><div class="note">Model indecision ≠ epistemic uncertainty. <code>[=]</code> is reserved for genuinely unresolvable claims — it routes to the dream layer, never collapses to a confident guess.</div></div>
+    </section>
+
+    <!-- FEED -->
+    <section id="view-feed" class="scroll hide" style="padding:18px">
+      <div class="vh" style="border:0;padding:0 0 12px"><h2>Reality Feed · ≋ the black box</h2><p>append-only MΣBUS ledger — every envelope, by σ class</p></div>
+      <div class="card feed" id="feed"></div>
+    </section>
+
+    <!-- CM5 -->
+    <section id="view-cm5" class="scroll hide" style="padding:18px">
+      <div class="vh" style="border:0;padding:0 0 12px"><h2>CM5 Witness · ▣ edge node</h2><p>192.168.2.2 · Debian 13.5 · kernel 6.18.33 · Hailo-10H @ 0001:01:00.0</p></div>
+      <div class="grid2" id="cm5grid"></div>
+      <div class="card"><h3>μ-mode gate (Ω₈)</h3><div class="note">In <b>DREAM</b>, action-class σ are audited-but-not-delivered; cognition (<code>m.*</code>) and carried data (<code>ext.*</code>) still flow so consolidation can proceed.</div></div>
+    </section>
+
+    <!-- CODEX -->
+    <section id="view-codex" class="scroll hide" style="padding:18px">
+      <div class="vh" style="border:0;padding:0 0 12px"><h2>Codex Review · ⌥ out-of-loop</h2><p>handoff bus state — generators propose, the canon audits</p></div>
+      <div class="card" id="codex"></div>
+    </section>
+  </main>
+
+  <!-- INTEL SIDEBAR -->
+  <aside class="intel">
+    <h3>Urbi Intelligence · sidecar</h3>
+    <div class="card">
+      <div class="big" id="iV"><span class="pill s" style="font-size:22px;width:34px">=</span><span id="iVt" style="font-size:15px;color:var(--txt3)">awaiting claim</span></div>
+      <div class="kv"><span>σ class</span><b class="sigma" id="iSig">—</b></div>
+      <div class="kv"><span>loop route</span><b id="iRoute">—</b></div>
+      <div class="kv"><span>μ mode</span><b id="iMu">WAKE</b></div>
+      <div style="margin-top:8px"><div class="kv" style="border:0"><span>confidence κ</span><b id="iConfN">—</b></div><div class="bar"><i id="iConf" style="width:0%"></i></div></div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">CAL · Ω₄ integrity</h3>
+      <div class="kv"><span>status</span><b id="calStat" style="color:var(--ok)">calibrated</b></div>
+      <div class="kv"><span>mean Brier</span><b id="calBrier">—</b></div>
+      <div class="kv"><span>window</span><b id="calWin">0</b></div>
+      <div class="note" style="margin-top:6px">resolve a prediction to feed CAL ↓</div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="badge" style="cursor:pointer;flex:1;color:var(--ok);border-color:#1d4" onclick="resolveLast(true)">outcome ✓ matched</button>
+        <button class="badge" style="cursor:pointer;flex:1;color:var(--no);border-color:#511" onclick="resolveLast(false)">outcome ✗ missed</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Causal lineage · π</h3>
+      <div class="lin" id="iLin">—</div>
+    </div>
+    <div class="note" style="text-align:center">Orbi <b style="color:var(--yang)">2-4-6-8</b> acts · Urbi <b style="color:var(--yin)">3-6-9</b> audits · MΣBUS connects</div>
+  </aside>
+</div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const state={mu:"WAKE", api:$("#api").value, live:false, lastPred:null, ledger:[], dream:0,
+  cal:{n:0, brier:[], shift:"calibrated"}};
+
+/* ---------- view routing ---------- */
+$$(".ws").forEach(w=>w.onclick=()=>{
+  if(w.classList.contains("lock"))return;
+  $$(".ws").forEach(x=>x.classList.remove("on")); w.classList.add("on");
+  const v=w.dataset.view; ["core","urbi","feed","cm5","codex"].forEach(id=>{
+    const el=$("#view-"+id); if(!el)return; el.classList.toggle("hide", id!==v);
+    if(id==="core") el.style.display = (id===v)?"flex":"none";
+  });
+  if(v==="feed")renderFeed(); if(v==="cm5")renderCM5(); if(v==="codex")renderCodex();
+});
+
+/* ---------- μ mode ---------- */
+$$("#mu button").forEach(b=>b.onclick=()=>{
+  $$("#mu button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+  state.mu=b.dataset.m; $("#iMu").textContent=state.mu;
+  const o8=$("#om8"); o8.querySelector("b").textContent=state.mu;
+  o8.classList.toggle("bad", state.mu==="DREAM");
+});
+
+/* ---------- connectivity ---------- */
+$("#api").onchange=()=>{state.api=$("#api").value; ping();};
+async function ping(){
+  try{
+    const r=await fetch(state.api.replace(/\/$/,"")+"/api/core/health",{method:"GET"});
+    state.live=r.ok;
+  }catch(e){state.live=false;}
+  $("#dot").classList.toggle("live",state.live);
+  $("#connTxt").textContent=state.live?"LIVE :8889":"MOCK (offline)";
+}
+
+/* ---------- mock 3-6-9 auditor (used when sidecar offline) ---------- */
+function mockAudit(claim){
+  const c=claim.trim().toLowerCase();
+  if(c.length<3) return {state:"-",confidence:0.95,route:"reject",reason:"[L3] too short / empty to evaluate"};
+  if(/\b(always|never|definitely|certainly|100%|undeniable|impossible|guaranteed)\b/.test(c))
+    return {state:"=",confidence:0.5,route:"dream_layer",reason:"[L9] overconfident assertion — structurally unstable"};
+  if(/\b(not|n't|isn't|won't|false|wrong)\b/.test(c) && /\b(is|are|will)\b/.test(c))
+    return {state:"-",confidence:0.88,route:"reject",reason:"[L6] negation contradiction with context"};
+  if(/\b(maybe|might|could|perhaps|possibly|unsure|unknown)\b/.test(c))
+    return {state:"=",confidence:0.4,route:"dream_layer",reason:"[L9] genuinely unresolved — held for dream review"};
+  return {state:"+",confidence:0.92,route:"surface",reason:"All 3 lenses pass"};
+}
+
+/* ---------- submit claim ---------- */
+const SIG={"+":"m.belief","-":"m.belief","=":"m.prediction_record"};
+async function submit(){
+  const inp=$("#inp"); const claim=inp.value.trim(); if(!claim)return; inp.value="";
+  bubble("operator",claim,true);
+  let v;
+  if(state.live){
+    try{
+      const r=await fetch(state.api.replace(/\/$/,"")+"/api/core/claim",{method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({text_payload:claim,provenance:"urn:console:anythingllm:user"})});
+      const j=await r.json(); v=j.verdict_data||j.verdict||mockAudit(claim);
+    }catch(e){ v=mockAudit(claim); }
+  } else { v=mockAudit(claim); }
+  const sigma=SIG[v.state];
+  const predId = v.state==="=" ? ("urbi-audit-"+Date.now()) : null;
+  state.lastPred = {id:predId||("belief-"+Date.now()), conf:v.confidence, claim};
+  if(v.state==="=") state.dream++;
+  renderVerdict(claim,v,sigma);
+  updateIntel(claim,v,sigma);
+  pushLedger("ext.observation",{raw_data:claim});
+  pushLedger(sigma,{state:v.state,confidence:v.confidence});
+  $("#dreamN").textContent=state.dream;
+}
+function bubble(who,txt,me){
+  const w=document.createElement("div"); w.className="msg"+(me?" me":"");
+  w.innerHTML=`<div class="who">${who}</div><div class="bubble">${esc(txt)}</div>`;
+  $("#stream").append(w); scrollEnd();
+}
+function renderVerdict(claim,v,sigma){
+  const map={"+":["p","confirmed"],"-":["m","rejected"],"=":["s","suspended"]};
+  const [cls,word]=map[v.state];
+  const el=document.createElement("div"); el.className="msg";
+  el.innerHTML=`<div class="who">Urbi · 3-6-9</div>
+   <div class="verdict v${v.state}">
+     <div class="vt"><span class="pill ${cls}" style="font-size:16px;width:28px">${v.state}</span> ${word}
+        <span style="flex:1"></span><span class="sigma">${sigma}</span></div>
+     <div class="vb">${esc(v.reason||"")}
+       <div class="vmeta">
+         <span><b>κ</b> ${(v.confidence).toFixed(2)}</span>
+         <span><b>route</b> ${v.route}</span>
+         <span><b>μ</b> ${state.mu}</span>
+         <span><b>provenance</b> urbi · tri_state_369_v2.1</span>
+       </div></div></div>`;
+  $("#stream").append(el); scrollEnd();
+}
+function updateIntel(claim,v,sigma){
+  const map={"+":["p","confirmed"],"-":["m","rejected"],"=":["s","suspended"]};
+  const [cls,word]=map[v.state];
+  $("#iV").innerHTML=`<span class="pill ${cls}" style="font-size:22px;width:34px">${v.state}</span><span style="font-size:15px">${word}</span>`;
+  $("#iSig").textContent=sigma; $("#iRoute").textContent=v.route; $("#iMu").textContent=state.mu;
+  $("#iConfN").textContent=v.confidence.toFixed(2); $("#iConf").style.width=(v.confidence*100)+"%";
+  $("#iLin").textContent=`${state.lastPred.id}  ◂  ext.observation("${claim.slice(0,40)}${claim.length>40?'…':''}")`;
+}
+
+/* ---------- outcomes → CAL/Ω₄ ---------- */
+async function resolveLast(matched){
+  if(!state.lastPred){return;}
+  const p=state.lastPred;
+  if(state.live){
+    try{ await fetch(state.api.replace(/\/$/,"")+"/api/core/outcome",{method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({prediction_id:p.id,original_confidence:p.conf,actual_state:matched?"held":"diverged",matched})});}catch(e){}
+  }
+  // local windowed Brier (mirror of calibration.py)
+  const truth=matched?1:0, brier=(p.conf-truth)**2;
+  state.cal.brier.push(brier); if(state.cal.brier.length>20)state.cal.brier.shift(); state.cal.n++;
+  const mean=state.cal.brier.reduce((a,b)=>a+b,0)/state.cal.brier.length;
+  const enough=state.cal.brier.length>=5;
+  let shift="calibrated", halt=false;
+  const me=state.cal.brier.length? (p.conf-truth):0;
+  if(enough&&mean>=0.45){shift="divergent_halt";halt=true;}
+  else if(enough&&!matched&&p.conf>0.65)shift="overconfident";
+  else if(enough&&matched&&p.conf<0.40)shift="underconfident";
+  $("#calStat").textContent=shift; $("#calStat").style.color=halt?"var(--no)":(shift==="calibrated"?"var(--ok)":"var(--warn)");
+  $("#calBrier").textContent=mean.toFixed(3); $("#calWin").textContent=state.cal.brier.length;
+  const o4=$("#om4"); o4.classList.toggle("bad",halt); o4.querySelector("b").textContent=halt?"HALT":"ok";
+  pushLedger("ext.outcome",{prediction_id:p.id,matched});
+  pushLedger(halt?"cm.alert":"m.calibration",{brier:mean.toFixed(3),shift});
+  bubble("CAL · Ω₄", `outcome ${matched?"matched ✓":"missed ✗"} → Brier ${mean.toFixed(3)} · ${shift}${halt?" · Ω₄ HALT":""}`,false);
+}
+
+/* ---------- ledger / feed ---------- */
+function pushLedger(sigma,payload){ state.ledger.unshift({sigma,payload,tau:Date.now()}); if(state.ledger.length>200)state.ledger.pop(); }
+const SIGMETA={"ext.observation":["evidence","var(--txt2)"],"m.belief":["verdict","var(--yin)"],
+  "m.prediction_record":["prediction","var(--susp)"],"ext.outcome":["outcome","var(--txt2)"],
+  "m.calibration":["calibration","var(--ok)"],"cm.alert":["Ω₄ alert","var(--no)"],"sys.health":["health","var(--txt3)"]};
+function renderFeed(){
+  const f=$("#feed");
+  if(!state.ledger.length){f.innerHTML='<div class="note">No envelopes yet — audit a claim in A.i Core.</div>';return;}
+  f.innerHTML=state.ledger.map(e=>{
+    const m=SIGMETA[e.sigma]||["·","var(--txt3)"];
+    return `<div class="feedrow"><span class="badge" style="color:${m[1]}">${m[0]}</span>
+      <span class="muted">${e.sigma} · ${esc(JSON.stringify(e.payload)).slice(0,80)}</span>
+      <span class="right muted">τ${(e.tau%100000)}</span></div>`;}).join("");
+}
+
+/* ---------- CM5 telemetry ---------- */
+async function renderCM5(){
+  let h=null;
+  if(state.live){try{const r=await fetch(state.api.replace(/\/$/,"")+"/api/core/health");h=await r.json();}catch(e){}}
+  const cards=[["307.63","ResNet50 FPS"],["76.17","YOLOv8m FPS"],["11.6","qwen2.5:1.5b tok/s (CPU)"],
+    ["5.1.1","HailoRT CLI"],["40.8→58.4°C","thermal (5-run)"],["x1 Gen3","PCIe link"]];
+  $("#cm5grid").innerHTML=cards.map(c=>`<div class="stat"><div class="n">${c[0]}</div><div class="l">${c[1]}</div></div>`).join("")
+    + `<div class="stat" style="grid-column:1/3"><div class="l">runtime</div><div class="n" style="font-size:14px;color:${state.live?'var(--ok)':'var(--txt3)'}">${state.live?'LIVE via sidecar :8889':'snapshot (sidecar offline) — /api/core/health when up'}</div></div>`;
+}
+
+/* ---------- Codex handoff (static snapshot) ---------- */
+function renderCodex(){
+  const rows=[["…348a9bbe","T3 true-Hailo benchmark","needs_approval","var(--warn)"],
+    ["…8c76c615","housekeeping + publish","open","var(--txt2)"],
+    ["…1e4477a5","review of 3 modules → done by Claude","open","var(--ok)"]];
+  $("#codex").innerHTML=`<div class="note" style="margin-bottom:10px">Claude↔Codex handoff bus · Codex offline ~2 days.</div>`+
+    rows.map(r=>`<div class="feedrow" style="grid-template-columns:96px 1fr 110px"><span class="badge">${r[0]}</span>
+      <span class="muted">${r[1]}</span><span class="badge right" style="color:${r[3]}">${r[2]}</span></div>`).join("");
+}
+
+/* ---------- utils ---------- */
+function esc(s){return (s+"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function scrollEnd(){const s=$("#stream");s.scrollTop=s.scrollHeight;}
+$("#send").onclick=submit;
+$("#inp").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}});
+
+/* ---------- boot ---------- */
+bubble("A.i Core","Reality Loop ready. State a claim — Urbi will audit it through the 3-6-9 lenses, route the verdict onto MΣBUS, and log it to the black box. Resolve a prediction to feed CAL/Ω₄.",false);
+ping(); setInterval(ping,15000);
+</script>
+</body>
+</html>
