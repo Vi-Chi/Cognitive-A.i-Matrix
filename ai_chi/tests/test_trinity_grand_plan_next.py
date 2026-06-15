@@ -166,6 +166,82 @@ class TrinityGrandPlanNextTests(unittest.TestCase):
         self.assertTrue(ack)
         self.assertTrue(ack[0]["completion_hint"])
 
+    def test_dated_trinity_reports_are_stale_against_current_state(self):
+        self.write(
+            "_PROJECT_KNOWLEDGE_BASE/STATE_OF_SYSTEM_2026-06-14.md",
+            "# State\n\n## Current Verified Baseline\n\n- Result: **434/434 tests green** on 2026-06-14.\n",
+        )
+        self.write(
+            "_MODEL_TRINITY/bridge/BRIDGE_IMPLEMENTATION_REPORT.md",
+            "\n".join(
+                [
+                    "# Bridge Implementation Report",
+                    "",
+                    "Date: 2026-06-13",
+                    "",
+                    "## Next Agent Handoff",
+                    "- Next safe task: Claude should read its inbox packet and return an ArchitectureReviewRecord.",
+                ]
+            ),
+        )
+        self.write(
+            "docs/ROADMAP.md",
+            "NEXT: add current scanner staleness regression tests.\n",
+        )
+
+        report = grand_plan.build_report(self.root, limit=3)
+
+        self.assertIn("scanner staleness regression", report["selected_tasks"][0]["title"])
+        stale = [
+            task
+            for task in report["selected_tasks"]
+            if task["source_path"].endswith("BRIDGE_IMPLEMENTATION_REPORT.md")
+        ]
+        self.assertTrue(stale)
+        self.assertTrue(stale[0]["stale_source"])
+
+    def test_bridge_packets_with_old_baselines_are_down_ranked(self):
+        self.write(
+            "_PROJECT_KNOWLEDGE_BASE/STATE_OF_SYSTEM_2026-06-14.md",
+            "# State\n\n## Current Verified Baseline\n\n- Result: **434/434 tests green** on 2026-06-14.\n",
+        )
+        self.write(
+            "docs/ROADMAP.md",
+            "NEXT: add current bridge metadata regression tests.\n",
+        )
+        inbox = self.root / "_MODEL_TRINITY" / "bridge" / "inbox" / "codex"
+        inbox.mkdir(parents=True)
+        packet = {
+            "objective": "Claude sleep-cycle marker",
+            "summary": "State: 402 green; Open: Codex owns an already closed local task.",
+            "requested_output": "NoAction",
+        }
+        (inbox / "old-baseline.json").write_text(json.dumps(packet), encoding="utf-8")
+
+        report = grand_plan.build_report(self.root, role="codex", limit=2)
+
+        self.assertIn("bridge metadata regression", report["selected_tasks"][0]["title"])
+        stale = [task for task in report["selected_tasks"] if task["source_type"] == "bridge_inbox"]
+        self.assertTrue(stale)
+        self.assertTrue(stale[0]["stale_source"])
+
+    def test_pass_colon_is_completion_hint(self):
+        self.write(
+            "docs/ROADMAP.md",
+            "NEXT: add fresh local scanner work.\n",
+        )
+        self.write(
+            "_PROJECT_KNOWLEDGE_BASE/reports/OLD_PASS.md",
+            "Next safe task: verify ledger checker PASS: already covered by tests.\n",
+        )
+
+        report = grand_plan.build_report(self.root, limit=2)
+
+        self.assertIn("fresh local scanner work", report["selected_tasks"][0]["title"])
+        completed = [task for task in report["selected_tasks"] if "ledger checker" in task["title"]]
+        self.assertTrue(completed)
+        self.assertTrue(completed[0]["completion_hint"])
+
     def test_grand_plan_packet_routes_as_non_action_handoff(self):
         report = {
             "mode": "Accelerated DAN / Grand Plan Local Operator Mode",

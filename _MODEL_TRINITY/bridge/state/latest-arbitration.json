@@ -1,9 +1,0 @@
-{
-  "capabilities_path": "C:\\Users\\Vi Chi\\Desktop\\Projectz\\A.i\\_MODEL_TRINITY\\bridge\\agent-capabilities.json",
-  "created_at": "2026-06-14T19:36:55Z",
-  "ledger_path": "C:\\Users\\Vi Chi\\Desktop\\Projectz\\A.i\\_MODEL_TRINITY\\bridge\\ledger\\arbitration-ledger.jsonl",
-  "records": [],
-  "root": "C:\\Users\\Vi Chi\\Desktop\\Projectz\\A.i\\_MODEL_TRINITY\\bridge",
-  "schema": "digivichi.trinity.arbitration-state.v0",
-  "summary": {}
-}

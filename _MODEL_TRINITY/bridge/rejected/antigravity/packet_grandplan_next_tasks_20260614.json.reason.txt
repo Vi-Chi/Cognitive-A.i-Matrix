@@ -1,1 +1,0 @@
-packet must include objective, summary, or body

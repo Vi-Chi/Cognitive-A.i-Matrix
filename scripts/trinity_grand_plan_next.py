@@ -79,8 +79,13 @@ TASK_LINE_RE = re.compile(
     re.I,
 )
 DATE_RE = re.compile(r"(20\d{2})[-_](\d{2})[-_](\d{2})")
+TEXT_DATE_RE = re.compile(r"(?im)^\s*(?:date|created|updated)\s*:\s*(20\d{2}-\d{2}-\d{2})\b")
+TEST_BASELINE_RE = re.compile(
+    r"\b(?P<count>\d{2,5})\s*(?:/\s*\d{2,5})?\s*(?:tests?\s*)?(?:green|ok|passed|pass(?:ed)?)\b",
+    re.I,
+)
 COMPLETION_RE = re.compile(
-    r"\b(done|closed|completed|implemented|verified)\b|\bcomplete\s*(?:[-\u2013\u2014:.,]|$)|\bcomplete for\b|no action required|none required|\bpass:\b",
+    r"\b(done|closed|completed|implemented|verified)\b|\bcomplete\s*(?:[-\u2013\u2014:.,]|$)|\bcomplete for\b|no action required|none required|\bpass\s*:",
     re.I,
 )
 HANDOFF_MARKERS = ("recommended model", "handoff target", "next agent handoff", "next handoff")
@@ -175,6 +180,33 @@ def source_date(path: Path) -> str:
     if not match:
         return ""
     return "-".join(match.groups())
+
+
+def source_date_from_text(text: str) -> str:
+    match = TEXT_DATE_RE.search(text)
+    return match.group(1) if match else ""
+
+
+def current_test_baseline(root: Path) -> int | None:
+    latest = latest_state_snapshot(root)
+    if not latest:
+        return None
+    try:
+        text = read_text_limited(latest)
+    except OSError:
+        return None
+    match = re.search(r"Result:\s*\*\*(\d{2,5})\s*/\s*\d{2,5}\s+tests\s+green", text, re.I)
+    if match:
+        return int(match.group(1))
+    counts = [int(match.group("count")) for match in TEST_BASELINE_RE.finditer(text)]
+    return max(counts) if counts else None
+
+
+def stale_baseline_hint(text: str, current_baseline: int | None) -> bool:
+    if current_baseline is None:
+        return False
+    counts = [int(match.group("count")) for match in TEST_BASELINE_RE.finditer(text)]
+    return bool(counts and max(counts) < current_baseline)
 
 
 def latest_state_snapshot(root: Path) -> Path | None:
@@ -313,6 +345,7 @@ def extract_candidates_from_file(
     superseded_paths: set[str] | None = None,
     current_state_path: str | None = None,
     current_state_date: str = "",
+    current_baseline: int | None = None,
 ) -> list[Candidate]:
     source_type = source_type_for(path, root)
     if not contributes_task_candidates(path, root, source_type):
@@ -325,9 +358,9 @@ def extract_candidates_from_file(
     source_rel = path.relative_to(root).as_posix()
     source_is_superseded = source_rel in (superseded_paths or set())
     source_is_current_state = source_rel == current_state_path
-    dated_source = source_date(path)
+    dated_source = source_date(path) or source_date_from_text(text)
     source_is_stale = bool(
-        source_type == "report"
+        source_type in {"report", "trinity_policy"}
         and current_state_date
         and dated_source
         and dated_source < current_state_date
@@ -352,6 +385,7 @@ def extract_candidates_from_file(
         gates = find_gates(context)
         base_score = score_text(context, source_type)
         line_completion_hint = completion_hint(context)
+        line_stale_baseline_hint = stale_baseline_hint(context, current_baseline)
         if source_is_current_state:
             base_score += 22
         if source_is_stale:
@@ -359,7 +393,9 @@ def extract_candidates_from_file(
         if source_is_superseded:
             base_score -= 30
         if line_completion_hint:
-            base_score -= 20
+            base_score -= 30
+        if line_stale_baseline_hint:
+            base_score -= 16
         if gates:
             base_score -= 15
         candidates.append(
@@ -388,7 +424,12 @@ def load_bridge_packet(path: Path) -> dict[str, Any] | None:
     return parsed if isinstance(parsed, dict) else None
 
 
-def extract_candidates_from_bridge_inbox(root: Path, role: str = "codex") -> list[Candidate]:
+def extract_candidates_from_bridge_inbox(
+    root: Path,
+    role: str = "codex",
+    *,
+    current_baseline: int | None = None,
+) -> list[Candidate]:
     inbox = root / "_MODEL_TRINITY" / "bridge" / "inbox" / role
     if not inbox.exists():
         return []
@@ -409,16 +450,23 @@ def extract_candidates_from_bridge_inbox(root: Path, role: str = "codex") -> lis
             continue
         gates = find_gates(text)
         line_completion_hint = completion_hint(text)
+        line_stale_baseline_hint = stale_baseline_hint(text, current_baseline)
         candidates.append(
             Candidate(
                 source_type="bridge_inbox",
                 source_path=path.relative_to(root).as_posix(),
                 evidence=f"{path.relative_to(root).as_posix()}:metadata",
                 title=text,
-                score=score_text(text, "bridge_inbox") - (15 if gates else 0) - (20 if line_completion_hint else 0),
+                score=(
+                    score_text(text, "bridge_inbox")
+                    - (15 if gates else 0)
+                    - (30 if line_completion_hint else 0)
+                    - (16 if line_stale_baseline_hint else 0)
+                ),
                 gated_actions=gates,
                 recommended_model=recommended_model(text, "bridge_inbox"),
                 completion_hint=line_completion_hint,
+                stale_source=line_stale_baseline_hint,
             )
         )
     return candidates
@@ -458,6 +506,7 @@ def build_report(root: Path, *, role: str = "codex", limit: int = DEFAULT_LIMIT)
     latest_state = latest_state_snapshot(root)
     latest_state_rel = latest_state.relative_to(root).as_posix() if latest_state else None
     latest_state_date = state_snapshot_date(latest_state) if latest_state else ""
+    latest_baseline = current_test_baseline(root)
     for path in iter_candidate_files(root):
         files_checked.append(path.relative_to(root).as_posix())
         candidates.extend(
@@ -467,9 +516,10 @@ def build_report(root: Path, *, role: str = "codex", limit: int = DEFAULT_LIMIT)
                 superseded_paths=superseded_paths,
                 current_state_path=latest_state_rel,
                 current_state_date=latest_state_date,
+                current_baseline=latest_baseline,
             )
         )
-    candidates.extend(extract_candidates_from_bridge_inbox(root, role=role))
+    candidates.extend(extract_candidates_from_bridge_inbox(root, role=role, current_baseline=latest_baseline))
 
     deduped: dict[tuple[str, str], Candidate] = {}
     for candidate in candidates:
@@ -516,6 +566,7 @@ def build_report(root: Path, *, role: str = "codex", limit: int = DEFAULT_LIMIT)
             "superseded_sources_detected": sorted(superseded_paths),
             "current_state_snapshot": latest_state_rel,
             "current_state_date": latest_state_date,
+            "current_test_baseline": latest_baseline,
         },
         "selected_tasks": selected_records,
         "still_forbidden_without_exact_approval": [

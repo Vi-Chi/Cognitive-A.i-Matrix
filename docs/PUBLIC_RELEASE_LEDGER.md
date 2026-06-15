@@ -19,6 +19,6 @@
 - Artifacts: `docs/DRAFT_DISCORD_UPDATE_V2_5.md`, `docs/DRAFT_GITHUB_RELEASE_V2_5.md`
 - Channel: Discord (`#ai-core-updates`), GitHub (README / Release).
 - URL / commit / release tag: Pending manual operator execution.
-- Claims level: OBSERVED / VERIFIED (backed by 434/434 local tests).
+- Claims level: OBSERVED / VERIFIED (backed by 446/446 local tests).
 - Redaction completed: YES. Scrubbed of secrets, PII, and vessel location.
 - Next public step: Operator to copy and paste the approved text from the artifact files to Discord and GitHub.

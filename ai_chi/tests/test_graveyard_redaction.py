@@ -97,6 +97,8 @@ class GraveyardRedactionTests(unittest.TestCase):
         self.assertFalse(redaction.contains_secret_shape('secret = "sk-" + ("a" * 32)'))
         self.assertFalse(redaction.contains_secret_shape("password: required"))
         self.assertFalse(redaction.contains_secret_shape("token={raw_value}"))
+        self.assertFalse(redaction.contains_secret_shape('TOKEN = os.getenv("DISCORD_BOT_TOKEN")'))
+        self.assertFalse(redaction.contains_secret_shape('TOKEN = env.get("DISCORD_BOT_TOKEN", "")'))
 
     def test_assignment_detector_keeps_secret_values_toxic(self):
         redaction = load_script("graveyard_redaction")

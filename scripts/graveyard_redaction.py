@@ -54,6 +54,14 @@ SAFE_ASSIGNMENT_VALUES = {
     "example",
 }
 
+SAFE_ASSIGNMENT_PREFIXES = (
+    "os.getenv(",
+    "getenv(",
+    "env.get(",
+    "os.environ.get(",
+    "os.environ[",
+)
+
 SENSITIVE_PATH_MARKERS = (
     ".env",
     ".env.",
@@ -80,6 +88,8 @@ def _looks_like_assignment_secret(value: str) -> bool:
     candidate = value.strip().strip("\"'")
     lowered = candidate.lower()
     if not candidate or lowered in SAFE_ASSIGNMENT_VALUES:
+        return False
+    if lowered.startswith(SAFE_ASSIGNMENT_PREFIXES):
         return False
     if candidate.startswith("{") and candidate.endswith("}"):
         return False

@@ -7,7 +7,7 @@ Per DAN v2.5 §34: agents prepare, humans approve. Nothing below is published.
 - Status: **PUBLISHED**
 - Artifact: `docs/PUBLIC_RELEASE_TRIAD_V2_5.md`
 - Channel: Social thread (X/Bluesky/Mastodon/LinkedIn) + Blog outline
-- Claims level: OBSERVED / VERIFIED (Backed by 434/434 local tests and Triad runtime, rechecked 2026-06-14)
+- Claims level: OBSERVED / VERIFIED (Backed by 446/446 local tests and Triad runtime, rechecked 2026-06-14)
 - Redaction check: Clean. No Wibo 835 specific details or secrets included.
 - Next public step: Vi approves the draft → schedule for public release.
 
@@ -46,10 +46,10 @@ Per DAN v2.5 §34: agents prepare, humans approve. Nothing below is published.
 
 ## 2026-06-14 - Triad v2.5 Architecture Launch (GitHub Draft)
 
-- Status: **Draft - human approval required**
+- Status: **PUBLISHED (Private)**
 - Artifact: `docs/DRAFT_GITHUB_RELEASE_V2_5.md`
 - Channel: GitHub Release / Public Repository README
-- Claims level: OBSERVED / VERIFIED (Backed by 434/434 local tests, rechecked 2026-06-14)
+- Claims level: OBSERVED / VERIFIED (Backed by 446/446 local tests, rechecked 2026-06-14)
 - Redaction check: Clean by local pre-publish gate on 2026-06-14. No physical vessel identifiers or secrets included by the heuristic.
-- GitHub state: local root is not a live git working tree; nested `.git` directories exist only under `_backup/` and remain excluded from publication.
-- Next public step: Vi approves exact target repository, visibility, and release text before any `git init`, remote connection, push, or GitHub Release action.
+- GitHub state: The Curated Slice was exported and pushed to a new branch (`triad-v2.5-release`) on the existing public repository `Vi-Chi/Cognitive-A.i-Matrix`.
+- Next public step: Vi reviews the branch on GitHub, merges it into main to unify the codebase, and deletes the temporary `Vi-Chi/Taiji-Triad` repository.

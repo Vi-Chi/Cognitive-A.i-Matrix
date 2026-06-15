@@ -3,14 +3,14 @@
 **Status:** `DRAFT` (Requires Owner Approval)
 **Target:** LinkedIn / X (Twitter) / Developer Blog
 **Tags:** #EdgeAI #OpenSource #CognitiveArchitecture #Autopoiesis
-**Claims Level:** OBSERVED / VERIFIED (Backed by local 434-test suite and live Triad implementation, rechecked 2026-06-14)
+**Claims Level:** OBSERVED / VERIFIED (Backed by local 446-test suite and live Triad implementation, rechecked 2026-06-14)
 
 ---
 
 ## 🧵 Social Thread Draft (X/Bluesky/Mastodon)
 
 **[1/6]**
-We just hit a massive milestone in autonomous edge AI. The Omni-AI "Triad" architecture (v2.5) is now live and stable at a 434/434 green test baseline. The core thesis: cognitive architecture must be self-auditing before it is allowed to act.
+We just hit a massive milestone in autonomous edge AI. The Omni-AI "Triad" architecture (v2.5) is now live and stable at a 446/446 green test baseline. The core thesis: cognitive architecture must be self-auditing before it is allowed to act.
 
 **[2/6]**
 The system is built on a strict separation of powers:

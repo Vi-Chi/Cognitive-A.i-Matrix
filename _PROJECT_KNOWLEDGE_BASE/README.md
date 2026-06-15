@@ -6,7 +6,7 @@ Current as of 2026-06-14, with the Autopoiesis economics promotion,
 drift synthesis, and Trinity liveness state linked below._
 
 > **⭐ Start here for current state:** **[STATE_OF_SYSTEM_2026-06-14.md](STATE_OF_SYSTEM_2026-06-14.md)**
-> — what's built & green (the live `ai_chi/` monorepo, **434 tests, self-contained**),
+> — what's built & green (the live `ai_chi/` monorepo, **446 tests, self-contained**),
 > what's canon, what's RADAR, and the next action. Supersedes the 06-12 snapshot.
 > New term unsure? **[GLOSSARY.md](GLOSSARY.md)** defines every named concept.
 
@@ -37,12 +37,27 @@ drift synthesis, and Trinity liveness state linked below._
 > records the redacted SQLite rebuild and the target/args exclusion-zone hardening.
 > 2026-06-14 Codex DAN GitHub readiness:
 > `reports/CODEX_DAN_GITHUB_READINESS_2026-06-14.md`
-> records the no-push GitHub readiness pass, current 434/434 test evidence,
+> records the no-push GitHub readiness pass, then-current 434/434 test evidence,
 > pre-publish gate result, and root publication gate.
+> 2026-06-14 imported GitHub instruction execution:
+> `repo_assimilation_2026-06-14/README.md`
+> records the local-only multi-repo assimilation branches, `projectz-kb`
+> heavy-update scaffold, Cognitive-A.i-Matrix verification-surface restoration,
+> repo cleanup proposal, and explicit no-push/no-PR/no-delete gate status.
 > 2026-06-14 Google Workspace stewardship:
 > `reports/CODEX_GOOGLE_WORKSPACE_STEWARDSHIP_2026-06-14.md`
 > records the read-only Drive connector probe, service-write gates, and private
 > staging plan for Google Drive / Docs / Sheets.
+> 2026-06-14 DataVision / Observe import research:
+> `reports/CODEX_IMPORT_DATAVISION_RESEARCH_2026-06-14.md`
+> distills `_Import` Edge Vision and DAN-GP material into the current
+> Observe-first data concept: raw data becomes provenance-bound feature records,
+> claims, graphs, rasters, and replay surfaces before Urbi audit.
+> 2026-06-14 scanner baseline refresh:
+> `reports/CODEX_DAN_SCANNER_BASELINE_REFRESH_2026-06-14.md`
+> records the current-state baseline wording correction that restored
+> parseable test-baseline extraction in the Grand Plan scanner; the current
+> baseline is now 446/446.
 
 ## Read order (orientation → canon → current)
 
@@ -111,11 +126,11 @@ drift synthesis, and Trinity liveness state linked below._
 
 | Area | State |
 |------|-------|
-| **Live core `ai_chi/`** | **434 tests green, self-contained** (vendored mebus+bridge+audit) — see STATE_OF_SYSTEM_2026-06-14 |
+| **Live core `ai_chi/`** | **446 tests green, self-contained** (vendored mebus+bridge+audit) — see STATE_OF_SYSTEM_2026-06-14 |
 | Built & green | MΣBUS · Reality Loop+CAL · Urbi auditor/memory/primitives/audit-signal · AIDICT · Orbi v0+PolicyGate · **AION+search** · **CM-Realm** · **DPHA heralds** · **Omni** · **bypass suite** · **DREAM Replay Auditor** · **DreamLens prompt/config** · **MSDT Capability Gate** · **SMTIS bridge** |
 | CANON naming | Triad · 7-field envelope+Ω₈ · DPHA 12-fold (Lumen…Nomos + Omni/Aegis/Nexus/Taijitu) |
 | ACTIVE economics | Autopoiesis economic constitution, compute-economy docs, ΣCredit local accounting, BudgetEnvelope/ComputeReceipt/EconomicAuditSignal/CycleReceipt schemas; no runtime writes |
-| RADAR (candidate) | SMTIS P1 real sensors · Aegis/Nexus/Taijitu · LOGOS_GRAPH · DataVision · Control Gap · JEPA/GSS/formula layer · transport/persistence stack |
+| RADAR (candidate) | SMTIS P1 real sensors · Aegis/Nexus/Taijitu · LOGOS_GRAPH · DataVision / Observe-first data concept · Control Gap · JEPA/GSS/formula layer · transport/persistence stack |
 | Sign-off only | 10 Core CM Laws as numbered law-set · AION evidence levels as constitutional gates · Orbi Executor live handlers (simulated stub only is built) |
 | `_Import` | 2026-06-12 intake read; credential-like token redacted; DreamLens patch applied; smart recon scaffold generated |
 | Codex reconstruction | `_PROJECT_KNOWLEDGE_BASE/codex_reconstruction_2026-06-12/` is filled through Phase 2: clean-room reconstruction, relation graph, concept lineage, old-to-new crosscheck, contradiction/drift map, and Claude KB cross-examination. Relation edges are inferred navigation hints, not authority |
